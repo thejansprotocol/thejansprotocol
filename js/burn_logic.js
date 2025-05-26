@@ -28,7 +28,7 @@ let jansGameABI_loaded = null; // This will be loaded
 // For this example, let's assume you have a way to get it (e.g., a JSON file)
 // Or, if wallet.js is used, getJansGameABI would be imported.
 // To keep this script more standalone for now, I'll show a fetch example for JansGame ABI:
-const JANS_GAME_ABI_PATH = '../../abi/JansPredictionGameABI.json'; // ADJUST PATH if using this
+const JANS_GAME_ABI_PATH = 'abi/JansPredictionGameABI.json'; // ADJUST PATH if using this
 
 let provider;
 let jansGameContract;
