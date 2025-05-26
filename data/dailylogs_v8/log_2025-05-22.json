@@ -1,0 +1,54 @@
+{
+  "logTimestamp": "2025-05-22T02:16:51.901Z",
+  "contractAddress": "0x7Cd64b80DA74d37bACc7e808c073e7F984123dE6",
+  "currentChainTimestamp": "2025-05-22T02:16:49.000Z",
+  "currentBlockNumber": "18462603",
+  "currentRoundIdOnChain": "2",
+  "currentRoundDetails": {
+    "startTime": "2025-05-22T01:47:13.000Z",
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": false,
+    "resultsEvaluated": false,
+    "prizePoolJANS": "3488914475.814297815940072444",
+    "calculatedTicketPriceTara": "2.848442898689431679 TARA",
+    "calculatedTicketPriceUsdCents": "1 USD Cents",
+    "calculatedShareAllocation": "1.482638888888888889x"
+  },
+  "evaluatedRoundInfo": {
+    "roundId": "1",
+    "evaluatedThisLogRun": true,
+    "actualOutcomes": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true
+    ],
+    "highestScoreAchieved": "6",
+    "winningTicketCount": 0,
+    "totalPrizeJansDistributedThisRound": "0.0",
+    "startTokens": [],
+    "endTokens": []
+  },
+  "generalContractState": {
+    "owner": "0xfB8aED...DeeCe0",
+    "currentTaraWeiPerUsdCent": "2848442898689431679",
+    "configuredStartPriceUsdCents": "1",
+    "configuredEndPriceUsdCents": "10",
+    "ticketSalesDurationSeconds": "79200",
+    "totalJansBurnedInGame": "341913618.629801185962127098",
+    "currentTotalTrackedShares": "3.225694444444444446",
+    "totalNativeTaraAccumulatedForLPSide": "0.0",
+    "totalJansAccumulatedForLPSide": "0.0",
+    "totalNativeTaraRewardForLPFormers": "0.0",
+    "contractGameLpTokenBalance": "46657.633814460838332033",
+    "currentLpDistributionId": "0",
+    "isCurrentLpDistributionFinalized": false,
+    "isLpDistributionTriggerable": false
+  }
+}

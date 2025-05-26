@@ -1,0 +1,649 @@
+/* === Configuración Global y Body === */
+html, body {
+    height: 100%; 
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box;
+    display: flex;            /* For sticky footer layout */
+    flex-direction: column; /* Stacks children (main, footer) vertically */
+    font-family: Arial, sans-serif;
+    background-color: #ffed91; /* Your page background color */
+    color: #000000; /* Default text color */
+}
+
+/* Apply box-sizing to all elements for easier layout */
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+main { /* Main content area, grows to push footer down */
+    flex: 1 0 auto;   /* flex-grow: 1, flex-shrink: 0, flex-basis: auto */
+    width: 100%;      /* Ensures main content can span width if its children are centered */
+}
+
+/* --- Header --- */
+/* The header itself will span the full width of its container.
+   To constrain header *content* (title, logo) like other sections:
+   1. Add an inner div: <header><div class="header-content-constrained">...</div></header>
+   2. Style .header-content-constrained: { width: 100%; max-width: [YOUR_VALUE]; margin: 0 auto; display: flex; ... } */
+header {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    padding: 20px; /* Your original padding */
+    margin-bottom: 0; 
+}
+.header-container { text-align: center; flex: 1; }
+.title { font-family: 'Shrikhand', cursive; font-size: 4rem; font-weight: bold; font-style: italic; text-align: left; color: hsl(88, 72%, 27%); margin: 0; letter-spacing: 1px; }
+.slogan { font-style: italic; text-align: left; margin-top: -5px; font-size: 1.6rem; color: #181818; line-height: 1; max-width: 90%; margin-left:0%; margin-right: auto; margin-bottom: 0; }
+
+/* --- Top Right (Wallet Button & Logo) --- */
+.top-right { display: flex; flex-direction: column; align-items: flex-end; position: absolute; top: 10px; right: 10px; padding: 10px; }
+
+/* #connect-wallet will use the new button structure */
+/* Specific margins for #connect-wallet for its position in .top-right */
+#connect-wallet {
+    margin-bottom: 10px;     /* TWEAK THIS: Space below wallet button */
+    /* Other styles like padding, font-size will come from its button class */
+}
+
+.logo-container { margin-top: 8px; transform: translate(-110px, -18px); /* Your specific positioning */ }
+.logo-img { width: 300px; height: auto; display: block; }
+
+
+/* --- Barra de Navegación Principal (Styling "untouched" as per your request for its width behavior) --- */
+.main-nav {
+    border-top: 2px solid rgb(0, 0, 0); 
+    padding: 5px 0 5px 20px; /* Your original left padding */
+    margin-top: 0;  
+    width: 100%;
+}
+.nav-list { display: flex; justify-content: left; list-style: none; margin: 4px 0 0 0; padding: 0; }
+.nav-list li { margin-right: 50px; /* TWEAK THIS: Space between nav items */ }
+.nav-list li:last-child { margin-right: 0; }
+.nav-list li a { text-decoration: none; color: rgb(0, 0, 0); font-size: 1.1rem; }
+.nav-list li a:hover, .nav-list li a.active { color: #ec502d; }
+
+
+/* --- Page Header Info (Snapshot time, round, ticket price etc.) --- */
+.page-header-info {
+    text-align: center;
+    width: 100%;                /* Occupy available width */
+    max-width: 1000px;          /* TWEAK THIS: Max width for this info section (e.g., 800px, 1200px) */
+    margin: 20px auto;          /* Centers the section and adds vertical margin */
+    padding: 10px 15px;         /* Internal padding */
+    font-size: 0.9rem;
+}
+.page-header-info p { margin: 5px 0; }
+#snapshot-time, #current-round, #ticket-price, #sales-status-message, #time-remaining, #current-time-utc {
+  color: #FF6347; font-weight: normal;
+}
+.status-open { color: green !important; font-weight: bold !important; }
+.status-closed { color: red !important; font-weight: bold !important; }
+.status-pending, .status-error { color: #b97700 !important; font-weight: normal !important; }
+
+
+/* --- Daily Page Wrapper (Holds Sidebars and Main Content Table) --- */
+.daily-page-wrapper {
+    display: flex;
+    flex-wrap: wrap;       
+    gap: 20px;             /* TWEAK THIS: Space between sidebars and main content (e.g., 15px, 25px) */
+    width: 100%;
+    max-width: 1600px;     /* TWEAK THIS: Max width for this 3-column section (e.g., 1400px, 1300px) */
+    margin: 10px auto;
+    margin-bottom: 00px; /* Or smaller */
+    padding-bottom: 0;     /* Centers this section */
+    padding: 0 15px;       /* TWEAK THIS: Side gutters for the group when max-width is active. */
+}
+
+.daily-logs-sidebar, .ticket-transactions-sidebar {
+    flex-basis: 270px; /* TWEAK THIS: Initial desired width of the sidebars. */
+    flex-shrink: 0;    
+    background-color: transparent; border: none; padding: 0;      
+    max-height: 60vh;  
+    overflow-y: auto;  
+}
+
+.daily-logs-sidebar {
+    margin-left: 50px; /* Adjust this value to taste */
+}
+
+
+
+
+.daily-main-content-area {
+    flex-grow: 1;      
+    flex-basis: 0; 
+    min-width: 350px;  /* TWEAK THIS: Minimum width for main content. */
+}
+
+.daily-logs-sidebar h3, .ticket-transactions-sidebar h3 {
+    margin-top: 0; margin-left: 50px; font-size: 1.1em; padding-bottom: 5px; margin-bottom: 10px; color: #333; 
+}
+
+#daily-log-list { list-style-type: none; padding: 0; margin: 0; }
+#daily-log-list a { 
+    color: #282828; text-decoration: none; display: block; 
+    padding: 5px 2px; font-size: 0.9em; border-radius: 3px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+#daily-log-list a:hover { color: #ec502d; }
+
+#transaction-list { /* CORRECTED ID */
+    list-style-type: none; padding: 0; margin: 0;
+}
+#transaction-list li { padding: 3px 0; font-size: 0.85em; line-height: 1.3; }
+
+
+.action-and-stats-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: -20px; /* space between button row and stats row */
+  margin: 30px auto;
+  max-width: 1100px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.status-message {
+  font-size: 0.9em;
+  min-height: 1.2em;
+  margin: 5px 0;
+  text-align: center;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;    /* Center the row's content horizontally */
+  align-items: stretch;       /* Make all .stat-blocks equal height */
+  flex-wrap: nowrap;          /* <- KEY: Keeps them on one line */
+  gap: 0px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 10px;
+}
+
+
+.stat-block {
+  padding: 12px 15px;
+  text-align: center;
+  min-width: 180px;
+  flex: 1 1 200px;
+  max-width: 240px;
+}
+
+
+.stat-block h2 { 
+    font-size: 1.8em; 
+    font-weight: bolder; 
+    color: #212121; 
+    margin-top: 0; 
+    margin-bottom: 10px; 
+    line-height: 1.1; 
+    text-transform: uppercase; 
+}
+
+.stat-block p { 
+    font-size: 1em; 
+    color: #333; 
+    margin: 5px 0; 
+}
+
+.stat-block p.usd-value, 
+.stat-block p.percentage-value { 
+    font-size: 0.85em; 
+    color: #555; 
+}
+
+#lp-creation-status, #lp-claim-status {
+    margin-top: 10px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+
+
+/* --- Secciones de Texto (e.g., .explain, .snapshot-sentence from your CSS) --- */
+.explain, .snapshot-sentence {
+    text-align: center; font-size: 1rem; margin: 20px auto; line-height: 1.5; 
+    max-width: 800px;  /* TWEAK THIS */
+    padding: 0 20px;   /* Your original padding */
+}
+
+/* --- Snapshot Info (text above table, if different from .page-header-info) --- */
+.snapshot-info {
+    text-align: center; margin: 20px auto; width: 100%;
+    max-width: 800px; /* TWEAK THIS */
+    padding: 0 15px;
+}
+.snapshot-info p { font-size: 0.8rem; margin: 10px 0; }
+
+
+/* --- Token Table Section & Gecko Link --- */
+.token-table-section {
+    margin: 20px auto; padding: 0 10px; display: flex; flex-direction: column;
+    align-items: center; width: 100%;
+    max-width: 900px;  /* TWEAK THIS: Max width for table area */
+}
+.gecko-link-container { text-align: center; margin-bottom: 10px; width: 100%; }
+.gecko-link-container a { font-size: 0.8em; color: #ff5507; text-decoration: none; }
+.gecko-link-container a:hover { text-decoration: underline; }
+
+/* Your table.token-table, th, td styles - kept as you provided */
+table.token-table { border-collapse: collapse; width: auto; margin-top: 10px; border: none; }
+table.token-table th { padding: 4.5px 8px; text-align: center; font-weight: bold; font-size: 10.5px; border-bottom: 0.75px solid black; border-right: 0.75px solid black; }
+table.token-table th:last-child { border-right: none; }
+table.token-table td { padding: 6.5px 8px; text-align: center; font-weight: normal; font-size: 12.5px; white-space: nowrap; border-bottom: 0.75px solid black; border-right: 0.75px solid black; }
+table.token-table td:last-child { border-right: none; }
+table.token-table tbody tr:last-child td { border-bottom: none; }
+
+
+/* --- Button Styling --- */
+/* This uses your original .buy-button as the template for all three requested buttons */
+
+/* Orange Button (Your original .buy-button) */
+.buy-button { 
+    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
+    color: #ffffff;
+    background-color: #e67e22; /* ORANGE */
+    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+    margin: 5px; min-width: 180px;
+}
+.buy-button:hover {
+    background-color: #d35400; /* Darker Orange */
+    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.buy-button:active {
+    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Green Button (e.g., for Form LP, Connect Wallet) */
+.lp-create-button, #connect-wallet { /* Apply same structure to #connect-wallet too if desired, or keep its own unique style */
+    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
+    color: #ffffff;
+    background-color: #27ae60; /* GREEN */
+    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+    margin: 5px; min-width: 180px;
+}
+.lp-create-button:hover, #connect-wallet:hover { /* Grouped hover for same structure */
+    background-color: #229954; /* Darker Green */
+    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.lp-create-button:active, #connect-wallet:active { /* Grouped active for same structure */
+    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+/* Note: #connect-wallet also had specific top/bottom margins from your original CSS. Those will still apply due to ID specificity if you don't remove them from the #connect-wallet rule in the .top-right section.
+   If you want #connect-wallet to ONLY use the .lp-create-button style, remove all properties from the #connect-wallet { ... } rule except its specific margins.
+   Or, add the .lp-create-button class to the #connect-wallet button in HTML and remove its separate CSS definition.
+   For now, I've duplicated structure here and kept your #connect-wallet's specific background, assuming it might be different.
+   If you want connect-wallet to be green and like others:
+   In HTML: <button id="connect-wallet" class="lp-create-button">...</button>
+   Then the CSS for #connect-wallet only needs its margins:
+   #connect-wallet { margin-bottom: 12px; margin-top: 15px; margin-right: 10px; }
+   For the MOST minimal approach, I'll use the method of applying existing classes as requested.
+   So the Connect wallet button can be green if you add class="lp-create-button" to it in HTML.
+   The #connect-wallet selector CSS above for color etc. will then be overridden if HTML has the class.
+   I will keep your original specific #connect-wallet styles for now. If you want it to match others, add the class in HTML and remove specific background/padding from its ID rule.
+*/
+
+
+/* Blue Button (e.g., for Claim Reward) */
+.lp-claim-button {
+    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
+    color: #ffffff;
+    background-color: #3498db; /* BLUE */
+    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
+    margin: 5px; min-width: 180px;
+}
+.lp-claim-button:hover {
+    background-color: #2980b9; /* Darker Blue */
+    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.lp-claim-button:active {
+    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Your original .action-button class - if you use this for other buttons, it's here.
+   It's very similar to the above, so consider if it's needed or if all buttons can use the specific ones. */
+.action-button {
+    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
+    color: #ffffff; border: none; border-radius: 6px; cursor: pointer;
+    text-decoration: none; text-align: center;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15); margin: 5px; min-width: 180px;
+    /* Note: This .action-button does not define a background-color itself. */
+}
+.action-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.action-button:active { transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+
+/* Container for the main "Predict & Buy Ticket!" button on daily.html */
+.buy-button-container {
+    text-align: center; 
+    margin: 30px auto; /* Your original margin, also centers it if it has a max-width */
+    width: 100%;
+    max-width: 900px; /* TWEAK THIS: To constrain its width if needed */
+    padding: 0 10px;
+}
+/* The main "Predict & Buy Ticket!" button in HTML should be:
+   <button id="buy-ticket-button" class="buy-button">Predict & Buy Ticket!</button> 
+   This uses your .buy-button (orange) style defined above. */
+
+
+/* --- Footer --- */
+footer { 
+    width: 100%; padding: 30px 20px; margin-top: auto; 
+    background-color: #222; color: #fff; text-align: center; 
+}
+.footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; }
+.footer-links { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; }
+.footer-links a { display: flex; flex-direction: column; align-items: center; color: #fff; text-decoration: none; font-size: 16px; transition: color 0.3s; }
+.footer-links a:hover { color: #1db954; }
+.footer-links a img { width: 30px; height: 30px; object-fit: contain; display: block; background-color: transparent; padding: 4px; border-radius: 12px; margin-bottom: 5px; }
+.footer-note { text-align: center; font-size: 14px; width: 100%; margin-top: 20px; }
+
+
+/* --- Message Container Styles --- */
+.message-container {
+    padding: 10px 15px; margin: 15px auto; border-radius: 5px; 
+    font-size: 0.9em; text-align: center; display: none; 
+    border: 1px solid transparent; 
+    max-width: 600px;  /* TWEAK THIS: Max width for messages */
+    width: calc(100% - 30px); 
+}
+.message-info { color: #00529B; background-color: #BDE5F8; border-color: #75c5f0; }
+.message-success { color: #270; background-color: #DFF2BF; border-color: #b2d393; }
+.message-error { color: #D8000C; background-color: #FFD2D2; border-color: #ffb8b8; }
+.message-warning { color: #9F6000; background-color: #FEEFB3; border-color: #f8de7e; }
+#modal-ticket-submission-status.message-container { 
+    font-weight: bold; font-size: 0.85rem; margin-top: 15px; min-height: 18px; 
+}
+/* Your #global-error-display-daily styles */
+#global-error-display-daily { display: none; /* Controlled by JS */ }
+
+
+/* --- Responsive Adjustments --- */
+/* TWEAK THESE BREAKPOINTS AND STYLES for your specific needs */
+@media (max-width: 1200px) { /* Example: When wider sections might start feeling too stretched */
+    .daily-page-wrapper, .stats-row, .token-table-section, .buy-button-container, .page-header-info {
+        max-width: 95%; /* Make sections use percentage of viewport width */
+        padding-left: 10px; 
+        padding-right: 10px;
+    }
+     .main-nav { padding-left: 10px; padding-right: 10px; }
+}
+
+@media (max-width: 992px) { /* Tablet: Sidebars might stack under main content */
+    .daily-page-wrapper {
+        flex-direction: column; 
+        align-items: center;    
+        gap: 20px; 
+    }
+    .daily-logs-sidebar, .ticket-transactions-sidebar, .daily-main-content-area {
+        flex-basis: 100%; 
+        width: 100%;      
+        max-width: 680px; /* TWEAK THIS: Max width for stacked items */
+        max-height: none; 
+    }
+    .title { font-size: 3rem; }
+    .slogan { font-size: 1.3rem; }
+    /* Consider how .top-right (absolute positioned) behaves here. */
+}
+
+@media (max-width: 768px) { /* Smaller tablets / large phones */
+    .stats-row { gap: 5px; max-width: 95%; }
+    .stat-block {
+        flex-basis: calc(50% - 10px); /* Two stat blocks per row */
+        max-width: calc(50% - 10px);
+        min-width: 160px;
+    }
+    .title { font-size: 2.5rem; text-align: center; }
+    .slogan { font-size: 1.1rem; text-align: center; max-width: 95%;}
+    .logo-img { width: 200px; }
+    .nav-list { justify-content: space-around; } 
+    .nav-list li { margin: 0 10px; } /* TWEAK: Nav item spacing */
+}
+
+@media (max-width: 480px) { /* Small phones */
+    .page-header-info, .stats-row, .token-table-section, .buy-button-container, .message-container {
+        padding-left: 5px; padding-right: 5px;
+    }
+    .daily-page-wrapper { padding-left: 5px; padding-right: 5px; }
+    .daily-logs-sidebar, .ticket-transactions-sidebar, .daily-main-content-area {
+        max-width: 100%; 
+    }
+    .stat-block { flex-basis: 100%; max-width: 100%; } /* One stat block per row */
+    .title { font-size: 2rem; }
+    .slogan { font-size: 1rem; }
+    .nav-list { flex-direction: column; gap: 8px; align-items: center; }
+    /* Buttons: Use existing class names from HTML */
+    .buy-button, .lp-create-button, .lp-claim-button, #connect-wallet { 
+      min-width: 90%; margin-left: auto; margin-right: auto; display:block; 
+    }
+    .token-table-section { max-width: 100%; } 
+    /* .top-right { display:none; } /* Option: hide top-right on very small screens */
+}
+
+/* In ../styles/main.css */
+.zero-count-superscript {
+    font-size: 0.7em;       /* Makes the text smaller */
+    vertical-align: super;  /* Positions it like a superscript */
+    /* You can adjust color or add slight padding/margin if needed */
+    /* color: #555; */      /* Optional: slightly different color for the count */
+    /* margin: 0 1px; */
+}
+
+/* Minimalist Styles for Player Info Page */
+
+/* Resetting body/main background if they are too distinct from each other
+   Assuming your overall page background is set on 'body' in main.css
+   If not, you might need to set a consistent background, e.g., white or a very light gray.
+   For this example, let's assume a default white background for the page for extreme minimalism.
+   Adjust if your 'main.css' already defines a specific overall background. */
+body {
+    /* background-color: #fff; /* Example: plain white background */
+    /* color: #000;          /* Example: plain black text */
+    /* Ensure your main.css fonts are what you want for this minimal look */
+}
+
+/* Remove visual styling from the input section wrapper */
+.input-section {
+    background-color: transparent;
+    padding: 20px 0; /* Only vertical padding, or remove if not needed */
+    border: none;
+    box-shadow: none;
+    margin-bottom: 20px; /* Space before content */
+}
+
+.input-row {
+    /* display: flex; (already there) */
+    /* width: 100%; (already there) */
+    /* max-width: 700px; (already there) */
+    /* gap: 20px; (already there) */
+    /* No changes needed here unless you want to adjust spacing */
+}
+
+/* Minimal input fields - match page background */
+.input-section input[type="text"],
+.input-section input[type="number"] {
+    background-color: transparent; /* Match page background */
+    color: inherit; /* Inherit text color from body */
+    border: none;
+    border-bottom: 1px solid #000000; /* Simple underline */
+    border-radius: 0; /* No rounded corners */
+    padding: 8px 2px; /* Minimal padding */
+    font-size: 1em;
+    flex: 1;
+}
+
+.input-section input[type="text"]::placeholder,
+.input-section input[type="number"]::placeholder {
+    color: #050505; /* Subdued placeholder text */
+    opacity: 1;
+}
+
+.input-section input[type="text"]:focus,
+.input-section input[type="number"]:focus {
+    border-bottom: 1px solid #000; /* Darker underline on focus */
+    outline: none;
+}
+
+/* Player summary - just plain text */
+#playerSummaryDisplay, .player-summary-block {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 15px; /* Space before columns */
+}
+.player-summary-block h3 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    font-weight: bold; /* Keep summary title distinct */
+}
+
+/* Columns container and the dividing line */
+.info-columns-container {
+    display: flex;
+    gap: 0; /* No gap, the border will be the separator */
+    margin-top: 20px;
+    padding-top: 10px; /* Space above if needed */
+}
+
+.info-column {
+    flex: 1;
+    padding: 0 15px; /* Padding inside columns, away from the central line */
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#allTicketsColumn {
+    /* The left column */
+    padding-right: 15px; /* Space before the dividing line */
+}
+
+#specificRoundColumn {
+    /* The right column, gets a left border to act as the divider */
+    border-left: 1px solid #000; /* Thin black dividing line */
+    padding-left: 15px; /* Space after the dividing line */
+}
+
+/* Headers within columns - very minimal */
+.info-column h3, .info-column h4 {
+    font-size: 1.1em;
+    margin-top: 0; /* Remove default top margin if desired */
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    /* border-bottom: 1px solid #ccc; /* Optional subtle separator below headers */
+    font-weight: bold;
+}
+
+/* Ticket blocks - no distinct container */
+.ticket-block {
+    background-color: transparent !important; /* Override JS color, ensure it's plain */
+    border: none;
+    /* border-bottom: 1px dotted #ccc; /* Optional: very light separator between tickets */
+    padding: 5px 0; /* Minimal vertical padding */
+    margin-bottom: 15px; /* Space between tickets */
+    color: inherit; /* Inherit text color */
+    border-radius: 0;
+    box-shadow: none;
+}
+.ticket-block p {
+    margin: 3px 0; /* Minimal margin for paragraphs within a ticket */
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+.ticket-block p strong {
+    font-weight: 600; /* Slightly bolder for labels */
+}
+
+
+/* Picks display - very minimal grid, text colors */
+.picks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Adjust minmax for "UP P1" */
+    gap: 5px 10px; /* Small gap */
+    margin-top: 5px;
+    padding: 0;
+}
+
+.pick-item {
+    padding: 2px 0; /* Minimal padding */
+    text-align: left; /* Or center if preferred */
+    font-weight: normal; /* Regular weight */
+    font-size: 0.9em;
+    background-color: transparent !important; /* Ensure no background */
+    border: none !important; /* Ensure no border */
+    border-radius: 0 !important;
+}
+
+.pick-item.pick-text-up { /* Class to be added by JS */
+    color: green;
+}
+
+.pick-item.pick-text-down { /* Class to be added by JS */
+    color: red;
+}
+
+/* Correct/Incorrect pick styling (very minimal) */
+.pick-item.correct {
+    font-weight: bold; /* Make correct picks bold */
+    /* No border or background */
+}
+.pick-item.incorrect {
+    opacity: 0.7; /* Slightly fade incorrect picks */
+    /* No border or background */
+}
+
+/* Message styles */
+#global-error-display {
+    padding: 10px;
+    margin: 15px 0; /* Only vertical margin */
+    text-align: center;
+    font-weight: normal; /* Less shouty */
+    border-radius: 0;
+    border: 1px solid transparent; /* Keep structure but hide by default */
+}
+#global-error-display.error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;}
+#global-error-display.success { background-color: #d4edda; color: #155724; border-color: #c3e6cb;}
+#global-error-display.warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba;}
+#global-error-display.info { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb;}
+
+/* Initial/Loading messages in columns */
+.initial-message, .loading-message {
+    font-style: italic;
+    color: #000000;
+    text-align: left;
+    padding: 10px 0;
+    font-size: 0.9em;
+}
+
+
+.input-row {
+    display: flex;
+    width: 100%;
+    max-width: 700px; /* Or your preferred max width for the input area */
+    gap: 20px; /* Space between the two input fields */
+}
+
+.input-row input[type="text"],
+.input-row input[type="number"] {
+    flex: 1; /* Each input takes up equal available space */
+    /* Minimal styling from previous response (transparent bg, border-bottom) should be kept */
+}

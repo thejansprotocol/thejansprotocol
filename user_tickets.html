@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Info - The Jans Protocol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
+    <script type="module" src="./js/wallet.js" defer></script>
+    <script type="module" src="./js/player_info_logic.js"></script>
+    
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="title">The Jans Protocol</h1>
+            <p class="slogan">
+                "Watch the charts, buy a ticket and make your call!<br>
+                Play for the Daily Pool or earn a share of The Jans Pool!"
+            </p>
+        </div>
+        <div class="top-right">
+        <div class="logo-container">
+            <img src="./assets/jans_geckpng0.png" alt="Jans" class="logo-img">
+        </div>
+    </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="./index.html">Home</a></li>
+            <li><a href="./daily.html" id="nav-daily-snapshot">Daily Pool</a></li>
+            <li><a href="./mechanics.html">Game Mechanics</a></li>
+            <li><a href="./user_tickets.html">Players Info</a></li>
+            <li><a href="./burning.html">The Burn</a></li>
+            <li><a href="./about.html">About Jans</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div id="global-error-display" style="display: none;"></div>
+
+        <section class="input-section">
+              <div class="input-row">
+                <input type="text" id="playerAddressInput" placeholder="Player Wallet Address (Required)">
+                <input type="number" id="roundIdInput" placeholder="Round ID (Optional)">
+              </div>
+        </section>
+
+        <div id="playerSummaryDisplay" style="display:none;">
+            
+        </div>
+
+        <div class="info-columns-container">
+            <section id="allTicketsColumn" class="info-column">
+                    <div id="allTicketsDisplayArea">
+                    </div>
+            </section>
+            <section id="specificRoundColumn" class="info-column">
+                <div id="specificRoundDisplayArea">
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://fomo.biz">Fomo.biz</a>
+            <a href="https://twitter.com">Twitter</a>
+            <a href="https://telegram.org">Telegram</a>
+            <a href="https://taraxa.io">Taraxa Project</a>
+            <p>Made with 💚 on Taraxa</p>
+        </div>
+    </footer>
+</body>
+</html>

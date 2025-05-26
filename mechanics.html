@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jans Game - Game Mechanics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js" defer></script>
+    <script type="module" src="./wallet.js" defer></script>
+    <style>
+        .mechanics-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff; /* Assuming a light background for content */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .mechanics-container h2 {
+            color: #e74c3c; /* Theme color for section titles */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .mechanics-container h3 {
+            color: #34495e; /* Darker subheading color */
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .mechanics-container p, .mechanics-container ul li {
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .mechanics-container ul {
+            list-style-type: disc;
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+        .tip {
+            background-color: #e8f6fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        .mechanics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .mechanics-table th, .mechanics-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .mechanics-table th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+        }
+        .mechanics-table .token-type-tara { color: #27ae60; font-weight: bold;}
+        .mechanics-table .token-type-jans { color: #e67e22; font-weight: bold;}
+        .mechanics-table .percentage-col { text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="title">The Jans Protocol</h1>
+            <p class="slogan">
+                "Watch the charts, buy a ticket and make your call!<br>
+                Play for the Daily Pool or earn a share of The Jans Pool!"
+            </p>
+        </div>
+        <div class="top-right">
+            <div class="logo-container">
+                <img src="./assets/jans_geckpng0.png" alt="Jans" class="logo-img"> </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./daily.html">The Snapshot</a></li>
+            <li><a href="./mechanics.html" class="active">Game Mechanics</a></li>
+            <li><a href="./user_tickets.html">My Tickets</a></li>
+            <li><a href="./burning.html">The Burn</a></li>
+            <li><a href="./about.html">About Jans</a></li>
+        </ul>
+    </nav>
+
+    <main class="mechanics-container">
+        <h1>Jans Prediction Game – How It Works</h1>
+        <p>Welcome to the Jans Prediction Game! It's a fun, daily challenge where you predict if the prices of selected crypto tokens will go <strong>UP or DOWN</strong>. Get your predictions right, and you can win crypto rewards!</p>
+
+        <section id="game-rounds">
+            <h2>🔁 Daily Game Rounds: A Fresh Start Every Day!</h2>
+            <ul>
+                <li><strong>New Round, New Chance:</strong> A new game round typically begins each day around <strong>21:00 UTC</strong> (this is our target time, managed by our automated system).</li>
+                <li><strong>Token Lineup:</strong> At the start, 10 different tokens from the Taraxa ecosystem are randomly selected for the game.</li>
+                <li><strong>Make Your Call:</strong> For each of the 10 tokens, you predict if its price will be <strong>HIGHER (UP)</strong> or <strong>LOWER (DOWN)</strong> by the end of the round.</li>
+                <li><strong>Sales Window:</strong> You have a set period to buy tickets and make predictions (e.g., typically the first <strong>22 hours</strong> of the round).</li>
+                <li><strong>Results Time:</strong> After the sales window closes and a full <strong>24-hour period</strong> from the round's start has passed, the ending prices are recorded. If your predictions are among the best, you win a share of the prize pool!</li>
+            </ul>
+        </section>
+
+        <section id="buying-tickets">
+            <h2>🎟️ Getting Your Tickets: Join the Game!</h2>
+            <p>You'll use <strong>TARA</strong> (the native coin of the Taraxa blockchain) to buy your tickets. Each ticket allows you to submit one set of predictions for all 10 tokens in the current round.</p>
+            <h3>Ticket Limits:</h3>
+            <ul>
+                <li>You can hold a maximum of <strong>10 tickets per round</strong> in a single wallet.</li>
+                <li>Want to buy a few at once? You can purchase up to <strong>3 tickets in a single transaction</strong>. *(The game interface might offer an option to randomize predictions for these bulk buys!)*</li>
+            </ul>
+        </section>
+
+        <section id="price-curve">
+            <h2>💸 Ticket Price Curve: The Early Bird Gets the Worm!</h2>
+            <p>The price of a ticket isn't fixed! It starts low and gradually increases as the sales window for the round progresses. This rewards players who jump in early.</p>
+            <ul>
+                <li><strong>Price in USD, Paid in TARA:</strong> Ticket prices are set in USD Cents to provide stable value. You'll pay the equivalent amount in TARA based on a regularly updated conversion rate within the game.</li>
+                <li><strong>The Curve (Example Values):</strong>
+                    <ul>
+                        <li><strong>Starts Low:</strong> Begins at just $0.01 USD equivalent in TARA right when sales open.</li>
+                        <li><strong>Phase 1 (First 12 Hours):</strong> The USD Cent price gradually increases (e.g., from $2.00 to $4.00).</li>
+                        <li><strong>Phase 2 (Hour 12 to End of Sales - e.g., Hour 22):</strong> The USD Cent price continues to rise, potentially more steeply (e.g., from $4.00 up to a maximum of $20.00).</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="tip">
+                <p>👉 <strong>Tip:</strong> Buy your tickets as early as possible in the round to get the best price!</p>
+                <p>But... this is crypto — anything can change in the last few hours.</p>
+                <p>If you buy later, you’ll pay more — but you’ll also have more market info to help with your predictions.<br>
+                It’s a trade-off:</p>
+                <ul>
+                    <li><strong>Early =</strong> cheaper tickets & more JANS Pool Shares (see below!)</li>
+                    <li><strong>Late =</strong> potentially better market information, but more expensive tickets & fewer shares.</li>
+                </ul>
+                <p>Choose your strategy wisely!</p>
+            </div>
+            <p><small><em>Note: The exact USD cent values (e.g., 1c, 2c, 10c) and the TARA conversion rate are set by the game contract and can be verified on-chain. The $ examples are illustrative.</em></small></p>
+        </section>
+
+        <section id="share-curve">
+            <h2>📊 JANS Pool Shares: Earn Future Rewards!</h2>
+            <p>Every ticket you purchase doesn't just give you a chance at the daily prize; it also earns you <strong>JANS Pool Shares</strong>. Think of these as your stake in a community rewards pool that pays out over the long term.</p>
+            <h3>The Share Curve:</h3>
+            <ul>
+                <li><strong>Starts Highest:</strong> You get the most shares per ticket (e.g., starting at a 1.5x rate) if you buy right when sales open.</li>
+                <li><strong>Phase 1 (First 12 Hours):</strong> The number of shares per ticket gradually decreases (e.g., from 1.5x down to a 1.0x standard rate).</li>
+                <li><strong>Phase 2 (Hour 12 to End of Sales):</strong> The shares per ticket continue to decrease (e.g., from 1.0x down to 0.75x).</li>
+            </ul>
+            <p class="tip">👉 <strong>Tip:</strong> Buy early not only for cheaper tickets but also to accumulate more JANS Pool Shares for those valuable long-term LP rewards!</p>
+        </section>
+
+        <section id="fund-allocation">
+            <h2>💰 Where Does Your TARA Go? (Ticket Fund Allocation)</h2>
+            <p>When you buy a ticket with TARA, here’s how it’s transparently allocated by the smart contract:</p>
+            <table class="mechanics-table">
+                <thead>
+                    <tr>
+                        <th>Use Purpose</th>
+                        <th class="percentage-col">% of Initial TARA</th>
+                        <th>Final Token</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>💧 TARA to LP Side</td>
+                        <td class="percentage-col">19.5%</td>
+                        <td class="token-type-tara">TARA</td>
+                        <td>Goes directly to a pool to be paired with JANS for liquidity.</td>
+                    </tr>
+                    <tr>
+                        <td>🎁 TARA to LP Caller Reward Pool</td>
+                        <td class="percentage-col">1.0%</td>
+                        <td class="token-type-tara">TARA</td>
+                        <td>Rewards users who help form the LP.</td>
+                    </tr>
+                    <tr>
+                        <td>🛠️ TARA to Maintenance Wallet</td>
+                        <td class="percentage-col">0.1%</td>
+                        <td class="token-type-tara">TARA</td>
+                        <td>For game upkeep and development.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center; font-style:italic; background-color: #f9f9f9;">The remaining 79.4% of TARA is swapped for JANS tokens. This JANS is then split:</td>
+                    </tr>
+                    <tr>
+                        <td>🏆 JANS to Daily Prize Pool</td>
+                        <td class="percentage-col">(~50.0%)</td>
+                        <td class="token-type-jans">JANS</td>
+                        <td>Forms the prize pool for the current round's winners.</td>
+                    </tr>
+                    <tr>
+                        <td>🔥 JANS to Burn</td>
+                        <td class="percentage-col">(~4.9%)</td>
+                        <td class="token-type-jans">JANS</td>
+                        <td>Permanently removed from supply.</td>
+                    </tr>
+                    <tr>
+                        <td>💧 JANS to LP Side</td>
+                        <td class="percentage-col">(~19.5%)</td>
+                        <td class="token-type-jans">JANS</td>
+                        <td>To be paired with the TARA set aside for liquidity.</td>
+                    </tr>
+                    <tr>
+                        <td>🧰 JANS to Game Wallet</td>
+                        <td class="percentage-col">(~2.5%)</td>
+                        <td class="token-type-jans">JANS</td>
+                        <td>For game operations and ecosystem development.</td>
+                    </tr>
+                    <tr>
+                        <td>🌍 JANS to Community Wallet</td>
+                        <td class="percentage-col">(~2.5%)</td>
+                        <td class="token-type-jans">JANS</td>
+                        <td>Funds community initiatives and rewards.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><small><em>Note: Percentages for JANS portions are approximate based on the initial TARA value and assume no price impact during the TARA-to-JANS swap. The actual JANS amounts are derived from the 79.4% of TARA that gets swapped.</em></small></p>
+        </section>
+
+        <section id="winning-prizes">
+            <h2>🎉 Winning the Game & Prize Distribution!</h2>
+            <h3>1. Snapshots Lock the Prices:</h3>
+            <ul>
+                <li><strong>Start Snapshot:</strong> When a round begins, the game owner records the starting prices of the 10 selected tokens.</li>
+                <li><strong>End Snapshot:</strong> After the 24-hour result period (and after ticket sales have closed), the owner records the ending prices of those same 10 tokens.</li>
+            </ul>
+            <h3>2. Determining Winners:</h3>
+            <ul>
+                <li>Once both snapshots are in, the owner triggers the evaluation.</li>
+                <li>The contract compares start and end prices for each token to determine the actual <strong>UP/DOWN outcome</strong>.</li>
+                <li>Your ticket's predictions are compared against these actual outcomes. Each correct pick adds to your ticket's <strong>score (0-10)</strong>.</li>
+            </ul>
+            <h3>3. Who Wins?</h3>
+            <ul>
+                <li>The contract identifies the <strong>highest score achieved</strong> by any ticket in that round.</li>
+                <li>To win a share of the prize pool, your ticket must, at least:
+                    <ul>
+                        <li>Score <strong>8, 9, or 10</strong>.</li>
+                        <li>AND your score must be <strong>equal to the highest score achieved</strong> in that round.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>4. Prize Distribution:</h3>
+            <ul>
+                <li>A percentage of the total JANS Prize Pool for that round is allocated based on the winning score:
+                    <ul>
+                        <li><strong>Score 10 (Perfect!):</strong> 90% of the JANS Prize Pool.</li>
+                        <li><strong>Score 9:</strong> 50% of the JANS Prize Pool -  only if there is no Score 10 .</li>
+                        <li><strong>Score 8:</strong> 25% of the JANS Prize Pool - only if there is no Score 10 or 9.</li>
+                    </ul>
+                </li>
+                <li>This allocated JANS amount is then <strong>divided equally</strong> among all tickets that achieved that top winning score.</li>
+                <li><strong>Prizes are automatically sent in JANS directly to the winners' wallets!</strong> No need to claim daily prizes.</li>
+            </ul>
+        </section>
+
+        <section id="lp-pool">
+            <h2>💧 The JANS LP Pool: Earning with Jans Pool Shares</h2>
+            <p>The "Jans Pool" refers to the growing Liquidity Pool (LP) of JANS and TARA tokens. This pool is partly funded by ticket sales. Owning `GAME_LP_TOKEN`s means you own a share of this liquidity pool.</p>
+            <h3>1. Creating Liquidity (`formAndDepositLPFromAccumulated`):</h3>
+            <ul>
+                <li>TARA and JANS tokens allocated from ticket sales accumulate in the game contract.</li>
+                <li><strong>Anyone can help!</strong> Any user can call a function in the contract. This function takes the accumulated TARA and JANS and adds them as liquidity to the JANS/TARA pool on a Decentralized Exchange (like Slingshot on Taraxa).</li>
+                <li><strong>Caller Reward:</strong> If you're the one to successfully trigger this LP creation, you'll receive a reward in TARA from a dedicated "LP Caller Reward Pool" (which is funded by 1% of all ticket sales).</li>
+                <li>The LP tokens generated from this process are held by the Jans Game contract, ready for distribution.</li>
+            </ul>
+            <h3>2. LP Reward Distribution (for JANS Pool Share Holders):</h3>
+            <p>This is where your JANS Pool Shares (earned from buying tickets) become really valuable!</p>
+            <ul>
+                <li><strong>When is it Triggered?</strong> A new LP reward distribution period can be started by the game owner when certain conditions are met, such as:
+                    <ul>
+                        <li>A significant amount of time has passed (e.g., ~2 years).</li>
+                        <li>OR, a notable portion of the total JANS supply has been burned by the game (e.g., every time an additional X% of the JANS total supply is burned – this target is configurable).</li>
+                    </ul>
+                </li>
+                <li><strong>Snapshot for Rewards:</strong> When triggered, a snapshot is taken. This records the game contract's total balance of `GAME_LP_TOKEN`s and the total JANS Pool Shares held by all players at that moment.</li>
+                <li><strong>Claim Your Share (`claimMyLpReward`):</strong>
+                    <ul>
+                        <li>If you hold JANS Pool Shares, you can then claim your portion of the LP tokens from any finalized distribution period you haven't claimed from yet.</li>
+                        <li><strong>70% for Claimers:</strong> For each distribution, **70%** of the snapshotted `GAME_LP_TOKEN`s are made available for players to claim, proportional to their shares.</li>
+                        <li><strong>30% Rolls Over (Share Conservation):</strong> When you claim your LP token reward, your JANS Pool Shares are reduced by 70% (meaning **30% of your shares remain**). These remaining shares continue to count towards all future LP reward distributions. This system ensures long-term holders who continuously participate are consistently rewarded.</li>
+                        <li>The claimed `GAME_LP_TOKEN`s are sent to your wallet. You can hold these LP tokens, or you can go to the Decentralized Exchange to remove your share of liquidity and receive the underlying JANS and TARA.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://fomo.biz">Fomo.biz</a>
+            <a href="https://twitter.com">Twitter</a>
+            <a href="https://telegram.org">Telegram</a>
+            <a href="https://taraxa.io">Taraxa Project</a>
+            <p>Made with 💚 on Taraxa</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+/* Burning page */
+.burning-page {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .burning-content {
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .burning-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .burning-rate {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+  
+  .burning-img {
+    width: 400px;
+    height: auto;
+    margin-top: 20px;
+  }
+  

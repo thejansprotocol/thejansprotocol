@@ -1,0 +1,2063 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_routerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_jansTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_gameLpTokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_taraWethAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_communityWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_gameWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_maintenanceWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialStartPriceUsdCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialMidPriceUsdCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialEndPriceUsdCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialTicketSalesDurationSeconds",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialLpDistributionBurnTargetDivisor",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__AddLiquidityFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__CalculatedLpRewardZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__ChecksumMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__DeadlineExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__EndSnapshotAlreadySubmitted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__EndSnapshotNotSubmitted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__IncorrectNativeValueSent",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InsufficientContractLpBalance",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidBurnTargetDivisor",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidDistributionId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidDuration",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidRoundId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__InvalidTicketId",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LPSlippageParamsRequiredIfFormingLP",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LpDistributionConditionsNotMet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LpDistributionPeriodAlreadyFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LpDistributionPeriodNotFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LpDistributionSnapshotTotalSharesZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__LpRewardAlreadyClaimed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__MaxBulkTicketsExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__MinSwapOutputCannotBeZeroIfSwapping",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__NoAccumulatedFundsForLP",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__NoJansPoolSharesToClaimLpWith",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__NoLpBalanceToSnapshotForDistribution",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__NoNativeCryptoToWithdraw",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__NoTokensToWithdraw",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__OptimalAmountIsZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__PairQueryFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__PreviousRoundNotEvaluated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__PriceConfigInvalid",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__ResultsAlreadyEvaluated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundAbortedCannotEvaluate",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundAlreadyAborted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundDurationNotElapsed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundNotActiveOrNotStarted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundNotActiveOrStarted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__ShareAllocationIsZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__StartSnapshotAlreadySubmitted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__StartSnapshotNotSubmitted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__SwapFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__SwapReturnedZeroOutput",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TaraRateNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TicketPurchaseLimitReached",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TicketSalesClosed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TotalSharesUnderflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TotalSharesZeroForLpDistribution",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__TransferFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__UnderflowOrConfigurationError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "SafeERC20FailedOperation",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "EmergencyWithdrawal",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[10]",
+        "name": "endPrices",
+        "type": "uint256[10]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "endChecksum",
+        "type": "bytes32"
+      }
+    ],
+    "name": "EndSnapshotSubmittedByOwner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountNativeTara",
+        "type": "uint256"
+      }
+    ],
+    "name": "FeeToMaintenanceTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "JansBurned",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "jansForLPSide",
+        "type": "uint256"
+      }
+    ],
+    "name": "JansFundsAccumulatedForLP",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "recipientWallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountJans",
+        "type": "uint256"
+      }
+    ],
+    "name": "JansToWalletTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "jansAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nativeTaraAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lpTokensMinted",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "LiquidityFormedByCaller",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newDivisor",
+        "type": "uint256"
+      }
+    ],
+    "name": "LpDistributionBurnTargetDivisorUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "distributionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lpTokenAmountSnapshotted",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalSharesSnapshotted",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "LpDistributionPeriodFinalized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "distributionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lpTokenAmountClaimed",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesConsumed",
+        "type": "uint256"
+      }
+    ],
+    "name": "LpRewardClaimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "ticketOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "ticketId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "PrizeToTicketOwnerFailed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "RoundAborted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[10]",
+        "name": "startPrices",
+        "type": "uint256[10]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "startChecksum",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RoundOfficiallyStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "winningTicketCount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "highestScore",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalPrizeJansDistributedThisRound",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool[10]",
+        "name": "actualOutcomes",
+        "type": "bool[10]"
+      }
+    ],
+    "name": "RoundWinnersEvaluated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nativeTaraForLPSide",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nativeTaraForLPReward",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaraFundsAccumulatedForLP",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newRateTaraWeiPerUsdCent",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaraUsdRateUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newStartPriceUsdCents",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newMidPriceUsdCents",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newEndPriceUsdCents",
+        "type": "uint256"
+      }
+    ],
+    "name": "TicketPricesUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "ticketId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pricePaidNative",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAllocated",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool[10]",
+        "name": "picks",
+        "type": "bool[10]"
+      }
+    ],
+    "name": "TicketPurchased",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newDurationSeconds",
+        "type": "uint256"
+      }
+    ],
+    "name": "TicketSalesDurationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newTotalShares",
+        "type": "uint256"
+      }
+    ],
+    "name": "TotalSharesUpdated",
+    "type": "event"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "inputs": [],
+    "name": "GAME_LP_TOKEN",
+    "outputs": [
+      {
+        "internalType": "contract ILpToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "JANS_TOKEN",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ROUND_RESULT_DURATION_SECONDS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ROUTER",
+    "outputs": [
+      {
+        "internalType": "contract IUniswapV2Router02",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "TARA_WETH_ADDRESS",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "allRoundTicketIds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool[10][]",
+        "name": "_predictionsArray",
+        "type": "bool[10][]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountOutMinSwap",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyMultipleTickets",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool[10]",
+        "name": "_picks",
+        "type": "bool[10]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountOutMinSwap",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyTicket",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_distroId",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimMyLpReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "communityWallet",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "configuredEndPriceUsdCents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "configuredMidPriceUsdCents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "configuredStartPriceUsdCents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentLpDistributionId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentRoundId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentTaraWeiPerUsdCent",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentTotalTrackedShares",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "distributionSnapshots",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalGameLpBalanceAtSnapshot",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalJansPoolSharesAtSnapshot",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "finalized",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "emergencyAbortCurrentRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amt",
+        "type": "uint256"
+      }
+    ],
+    "name": "emergencyWithdrawERC20",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amt",
+        "type": "uint256"
+      }
+    ],
+    "name": "emergencyWithdrawNative",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "evaluateWinners",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "finalizeLpDistributionPeriod",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amountJansMinForLP",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountNativeTaraMinForLP",
+        "type": "uint256"
+      }
+    ],
+    "name": "formAndDepositLPFromAccumulated",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gameWallet",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAccumulatedLpFormingFunds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "taraForLPSide_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "jansForLPSide_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "taraForReward_",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAllTicketIdsForRound",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getConfiguredTicketPriceCurveUsdCents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "startCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "midCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endCents",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getContractLpTokenBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentShareAllocation",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentTicketPriceNative",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "taraWeiPrice_",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentTicketPriceUsdCents",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "priceUsdCents_",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_distributionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_player",
+        "type": "address"
+      }
+    ],
+    "name": "getLpClaimStatus",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_distributionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getLpDistributionSnapshot",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "totalGameLpBalanceAtSnapshot",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalJansPoolSharesAtSnapshot",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "finalized",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct JansGame_V8_UsdPricing_Refactored.DistributionSnapshot",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_player",
+        "type": "address"
+      }
+    ],
+    "name": "getPlayerTicketIdsForRound",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRoundData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[10]",
+            "name": "startPrices",
+            "type": "uint256[10]"
+          },
+          {
+            "internalType": "uint256[10]",
+            "name": "endPrices",
+            "type": "uint256[10]"
+          },
+          {
+            "internalType": "bool",
+            "name": "startSnapshotSubmitted",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "endSnapshotSubmitted",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "startChecksum",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "endChecksum",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bool[10]",
+            "name": "actualOutcomes",
+            "type": "bool[10]"
+          },
+          {
+            "internalType": "bool",
+            "name": "resultsEvaluated",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint8",
+            "name": "highestScoreAchieved",
+            "type": "uint8"
+          },
+          {
+            "internalType": "address[]",
+            "name": "winningPlayers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "isAborted",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct JansGame_V8_UsdPricing_Refactored.RoundData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_ticketId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTicketById",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "roundId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "player",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountPaidNative",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sharesEarned",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool[10]",
+            "name": "picks",
+            "type": "bool[10]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "score",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct JansGame_V8_UsdPricing_Refactored.Ticket",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "hasClaimedLpReward",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isLpDistributionTriggered",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "jansPoolShares",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lastLpDistributionTriggerTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lpDistributionBurnTargetDivisor",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maintenanceWallet",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nextTicketId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "playerRoundTicketIds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "prizePoolJANS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "roundsData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "startSnapshotSubmitted",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "endSnapshotSubmitted",
+        "type": "bool"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "startChecksum",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "endChecksum",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bool",
+        "name": "resultsEvaluated",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint8",
+        "name": "highestScoreAchieved",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "isAborted",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newDivisor",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLpDistributionBurnTargetDivisor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_time",
+        "type": "uint256"
+      }
+    ],
+    "name": "setLpDistributionTriggerTimestamp",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newStartUsdCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newMidUsdCents",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newEndUsdCents",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTicketPriceCurveUsdCents",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newDurationSeconds",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTicketSalesDuration",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "_comm",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_game",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_maint",
+        "type": "address"
+      }
+    ],
+    "name": "setWallets",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_rId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[10]",
+        "name": "_endPrices",
+        "type": "uint256[10]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_endChecksum",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitEndSnapshot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[10]",
+        "name": "_startPrices",
+        "type": "uint256[10]"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_startChecksum",
+        "type": "bytes32"
+      }
+    ],
+    "name": "submitStartSnapshot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "ticketBuyersPerRound",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ticketSalesDurationSeconds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "tickets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "player",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountPaidNative",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "sharesEarned",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "score",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalJansAccumulatedForLPSide",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalJansBurnedInGame",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalNativeTaraAccumulatedForLPSide",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalNativeTaraRewardForLPFormers",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newRateTaraWeiPerUsdCent",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTaraUsdRate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
+]

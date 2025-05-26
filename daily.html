@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Jans Protocol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shrikhand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/main.css" /> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
+    <script type="module" src="./js/wallet.js" defer></script> 
+    <script type="module" src="./js/main_page_logic.js" defer></script>   
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="title">The Jans Protocol</h1>
+            <p class="slogan">
+                "Watch the charts, buy a ticket and make your call!<br>
+                Play for the Daily Pool or earn a share of The Jans Pool!"
+            </p>
+        </div>
+        <div class="top-right">
+            <div class="logo-container">
+                <img src="./assets/jans_geckpng0.png" alt="Jans" class="logo-img">
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="./index.html">Home</a></li>
+            <li><a href="./mechanics.html">Game Mechanics</a></li>
+            <li><a href="./user_tickets.html">Players Info</a></li>
+            <li><a href="./burning.html">The Burn</a></li>
+            <li><a href="./about.html">About Jans</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-header-info" style="text-align: center; padding: 10px; ">
+        <p style="margin: 5px 0;">Latest Snapshot From: <strong id="snapshot-time">Loading...</strong></p>
+        <p style="margin: 5px 0;">
+            Current Round: <strong id="current-round">Loading...</strong> | 
+            Ticket Price: <strong id="ticket-price">Loading...</strong> |
+            Status: <strong id="sales-status-message">Loading...</strong>
+        </p>
+        <p style="margin: 5px 0;">Time until next snapshot (approx. end of round): <strong id="time-remaining">Loading...</strong></p>
+   </div>
+    
+    <div id="global-message-main" class="message-container" style="display:none; margin: 10px auto; width: 90%; max-width: 800px;"></div>
+
+
+    <div class="daily-page-wrapper">
+
+        <aside id="daily-logs-sidebar" class="daily-logs-sidebar">
+            <h3>Daily Logs</h3>
+            <ul id="daily-log-list">
+                <li>Loading summaries...</li>
+            </ul>
+            </aside>
+
+        <main id="daily-main-content" class="daily-main-content-area">
+            <div class="gecko-link-container" style="text-align:center; margin-bottom:15px;">
+                <a href="https://www.geckoterminal.com/taraxa/pools" target="_blank" class="info-link">
+                    See live prices at GeckoTerminal
+                </a>
+            </div>
+            <section class="token-table-section">
+                <table class="token-table"> <thead>
+                        <tr>
+                            <th class="th">Token</th>
+                            <th class="th">Price (USD)</th>
+                            <th class="th">1h (%)</th>
+                            <th class="th">6h (%)</th>
+                            <th class="th">24h (%)</th>
+                            <th class="th">FDV (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="token-table-body"> 
+                        <tr><td colspan="6" style="text-align:center;">Loading snapshot...</td></tr>
+                    </tbody>
+                </table>
+            </section>
+            <div class="buy-button-container" style="text-align: center; margin-top: 20px;">
+                <button id="buy-ticket-button" class="buy-button">Make your Call!</button>
+            </div>
+        </main>
+
+        <aside id="ticket-transactions-sidebar" class="ticket-transactions-sidebar">
+            <h3>Ticket Purchases </h3>
+            <div id="ticket-tx-list-container"> <ul id="transaction-list">
+                    <li>Loading recent transactions...</li>
+                </ul>
+            </div>
+        </aside>
+
+    </div> 
+    
+    <section class="stats-row" id="game-stats-section" style="margin-top: 2px; padding: 5px;">
+        <div class="stat-block">
+            <h2>Daily Pool</h2>
+            <p id="stats-prize-pool">Loading...</p>
+            <p id="stats-prize-pool-usd" class="usd-value"></p>
+        </div>
+        <div class="stat-block">
+            <h2>Jans Pool (LP)</h2> <p id="stats-lp-balance">Loading...</p>
+            <p id="stats-lp-balance-usd" class="usd-value"></p> 
+        </div>
+        <div class="stat-block">
+            <h2>Jans Burned</h2>
+            <p id="stats-jans-burned">Loading...</p>
+            <p id="stats-jans-burned-usd" class="usd-value"></p>
+            <p id="stats-jans-burned-percentage" class="percentage-value"></p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://fomo.biz">Fomo.biz</a>
+            <a href="https://twitter.com">Twitter</a>
+            <a href="https://telegram.org">Telegram</a>
+            <a href="https://taraxa.io">Taraxa Project</a>
+            <p>Made with 💚 on Taraxa</p>
+        </div>
+    </footer>
+</body>
+</html>

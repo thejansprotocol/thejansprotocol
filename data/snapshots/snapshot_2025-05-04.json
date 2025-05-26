@@ -1,0 +1,112 @@
+[
+  {
+    "id": "taraxa_0x5394ec36ef1402a9add019a616738a34270e86b5",
+    "name": "BTR / WTARA",
+    "address": "0x5394ec36ef1402a9add019a616738a34270e86b5",
+    "base_token_id": "taraxa_0xf9ba22c56c04040115224c8048c21406fc8ac1a7",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "3806.041465217",
+    "quote_token_price_usd": "0.00385221",
+    "price_change_percentage_24h": "-1.47",
+    "fdv_usd": "380604.1465217"
+  },
+  {
+    "id": "taraxa_0x94bc05babea3af14095df25bc172fe96c79da749",
+    "name": "LARA / WTARA 0.3%",
+    "address": "0x94bc05babea3af14095df25bc172fe96c79da749",
+    "base_token_id": "taraxa_0xe6a69cd4ff127ad8e53c21a593f7bac4c608945e",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.000821096537627924",
+    "quote_token_price_usd": "0.00376411",
+    "price_change_percentage_24h": "0",
+    "fdv_usd": "821096.537627924"
+  },
+  {
+    "id": "taraxa_0x46d5d286f970df89ce4b21fd5eef19a3c16d7da1",
+    "name": "BTCH / WTARA",
+    "address": "0x46d5d286f970df89ce4b21fd5eef19a3c16d7da1",
+    "base_token_id": "taraxa_0xa3d5277a5480488e8e81c851fd879035da75acef",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "244.847528129435",
+    "quote_token_price_usd": "0.00384995",
+    "price_change_percentage_24h": "-21.17",
+    "fdv_usd": "24729.6003410729"
+  },
+  {
+    "id": "taraxa_0x8dbc01aa2a3ef01abb3309548b9be044ae36e96f",
+    "name": "NEWGUY / WTARA",
+    "address": "0x8dbc01aa2a3ef01abb3309548b9be044ae36e96f",
+    "base_token_id": "taraxa_0x0d437e6681901ed7110e8298b045af73cf82a784",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.00000122667240506566",
+    "quote_token_price_usd": "0.00384611",
+    "price_change_percentage_24h": "-0.4",
+    "fdv_usd": "12266.7240506566"
+  },
+  {
+    "id": "taraxa_0x6f4918d754a090ef01346bb0d2e3f0c088801dc7",
+    "name": "aaaBTC / WTARA",
+    "address": "0x6f4918d754a090ef01346bb0d2e3f0c088801dc7",
+    "base_token_id": "taraxa_0x63b590dc9847466d68afde0c56ed2b4e9f06e36e",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "1608.1679828287",
+    "quote_token_price_usd": "0.00496464",
+    "price_change_percentage_24h": "0",
+    "fdv_usd": "17689.8478111157"
+  },
+  {
+    "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+    "name": "TSWAP / WTARA 1%",
+    "address": "0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+    "base_token_id": "taraxa_0x712037beab9a29216650b8d032b4d9a59af8ad6c",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.00400207583858883",
+    "quote_token_price_usd": "0.00384698",
+    "price_change_percentage_24h": "-0.91",
+    "fdv_usd": "4002075.83858883"
+  },
+  {
+    "id": "taraxa_0xfaed48da90faad88a388478fe28f38a075c5d410",
+    "name": "FARTAX / WTARA",
+    "address": "0xfaed48da90faad88a388478fe28f38a075c5d410",
+    "base_token_id": "taraxa_0x2f38cab64a252a87c68414bf24a1d01f977e6fbe",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.000000230009308957615",
+    "quote_token_price_usd": "0.00384995",
+    "price_change_percentage_24h": "3.72",
+    "fdv_usd": "23000.9308957615"
+  },
+  {
+    "id": "taraxa_0x0541b28802cf1eec95a0004eaf804f8e97ad30ca",
+    "name": "CHDPU / WTARA 1%",
+    "address": "0x0541b28802cf1eec95a0004eaf804f8e97ad30ca",
+    "base_token_id": "taraxa_0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.000144980995826004",
+    "quote_token_price_usd": "0.0038487",
+    "price_change_percentage_24h": "-1.39",
+    "fdv_usd": "144972.296966255"
+  },
+  {
+    "id": "taraxa_0x567da8261f03f2ff3fde8317ac31fbab686aedd0",
+    "name": "EYE / WTARA",
+    "address": "0x567da8261f03f2ff3fde8317ac31fbab686aedd0",
+    "base_token_id": "taraxa_0xd48d8da8b25a1160fec6022884dc84afc73a11a2",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.0000000738133835084008",
+    "quote_token_price_usd": "0.00377238",
+    "price_change_percentage_24h": "20.27",
+    "fdv_usd": "10334.3202621463"
+  },
+  {
+    "id": "taraxa_0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
+    "name": "ARC / WTARA",
+    "address": "0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
+    "base_token_id": "taraxa_0x1b40957f94e4e5640c8e4317dacfc70b4a0f5154",
+    "quote_token_id": "taraxa_0x5d0fa4c5668e5809c83c95a7cef3a9dd7c68d4fe",
+    "base_token_price_usd": "0.0000329407789396613",
+    "quote_token_price_usd": "0.00385209",
+    "price_change_percentage_24h": "-16.13",
+    "fdv_usd": "32940.7789396613"
+  }
+]

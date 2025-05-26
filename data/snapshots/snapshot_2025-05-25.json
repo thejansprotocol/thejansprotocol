@@ -1,0 +1,65 @@
+{
+  "date": "2025-05-25",
+  "processedAtUTC": "2025-05-25T12:05:00.464Z",
+  "roundClosedInfo": {
+    "roundId": "0",
+    "status": "NoPriorRound"
+  },
+  "roundStartedInfo": {
+    "roundId": "1",
+    "status": "SuccessfullyStarted",
+    "startedOnUTC": "2025-05-25T12:05:16.000Z",
+    "startTokens": [
+      {
+        "id": "taraxa_0x6b14ceb4b7071d734e355c5f48f6fcb99a73736a",
+        "name": "ETH / WTARA 1%",
+        "startPriceUSD_str": "2466.3647676329"
+      },
+      {
+        "id": "taraxa_0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
+        "name": "ARC / WTARA",
+        "startPriceUSD_str": "0.0000089079142612205"
+      },
+      {
+        "id": "taraxa_0x6f4918d754a090ef01346bb0d2e3f0c088801dc7",
+        "name": "aaaBTC / WTARA",
+        "startPriceUSD_str": "1313.4561971263"
+      },
+      {
+        "id": "taraxa_0x4a0582a5e322a0020ae38448c77cbffc97593fa4",
+        "name": "GRUMPY / WTARA",
+        "startPriceUSD_str": "0.0000000677282290974371"
+      },
+      {
+        "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+        "name": "TSWAP / WTARA 1%",
+        "startPriceUSD_str": "0.00457987888011469"
+      },
+      {
+        "id": "taraxa_0x567da8261f03f2ff3fde8317ac31fbab686aedd0",
+        "name": "EYE / WTARA",
+        "startPriceUSD_str": "0.000000037717293056328"
+      },
+      {
+        "id": "taraxa_0xf94effc57e379f27e470d10651d12bd0e7e127c0",
+        "name": "TXTR / WTARA 1%",
+        "startPriceUSD_str": "0.0323035939947157"
+      },
+      {
+        "id": "taraxa_0x4b063f020eeac940cbf8ea11471627c737c887ff",
+        "name": "ZZZ / WTARA 0.01%",
+        "startPriceUSD_str": "0.00589910680042573"
+      },
+      {
+        "id": "taraxa_0xa4256bfbd9e048e1876d1e83ddf754154564bc82",
+        "name": "CHDPU / WTARA",
+        "startPriceUSD_str": "0.0000694827539392938"
+      },
+      {
+        "id": "taraxa_0x9c3ceb6224c58bf39f40e50ad13da81aa8655898",
+        "name": "FOMOG / WTARA",
+        "startPriceUSD_str": "1.03241150337363"
+      }
+    ]
+  }
+}

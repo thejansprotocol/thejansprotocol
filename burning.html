@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JANS Burn Status</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
+    <script type="module" src="./js/burn_logic.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+
+        .image-text-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+            max-width: 90%;
+        }
+
+        .burning-img {
+            display: block;
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .burn-text-overlay {
+            position: absolute;
+            top: -5%;
+            left: -155%;
+            right: 5%;
+            width: 400%;
+            color: #f0f0f0;
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            font-size: 1.2em;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-around;
+            gap: 10px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 15px 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            overflow-x: auto;
+            margin-top: -70px; /* Lo sube */
+            z-index: 2;         /* Asegura que quede por encima si hace falta */
+            position: relative; /* Necesario para que z-index tenga efecto */
+
+        }
+
+        .stat-block {
+            flex: 1 1 0;
+            min-width: 120px;
+            padding: 10px 5px;
+            text-align: center;
+        }
+
+        .stat-block h4 {
+            font-size: 0.8em;
+            color: #bbb;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: normal;
+            line-height: 1.2;
+            min-height: 2.4em;
+        }
+
+        .stat-block p {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 0;
+            color: #f0f0f0;
+            word-wrap: break-word;
+        }
+
+        .stat-block p.alfa-slab {
+            font-family: Verdana, Geneva, Tahoma, sans-serif, cursive;
+            font-size: 1.6em;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-text-container">
+        <img src="./assets/jans_fire.png" alt="Jans in a pyre" class="burning-img" />
+        <p class="burn-text-overlay"> 
+            That's Jans, burning money and smoking some shit.... That's what he does...
+            Every time that 5% of the total Jans supply is burned the Jans Pool distribution is activated and players can claim their LP rewards.
+        </p>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-block">
+            <h4>Total JANS Supply</h4>
+            <p id="total-supply" class="alfa-slab">Loading...</p>
+        </div>
+        <div class="stat-block">
+            <h4>Total JANS Burned (In-Game)</h4>
+            <p id="total-burned" class="alfa-slab">Loading...</p>
+        </div>
+        <div class="stat-block">
+            <h4>% of Original Burned</h4>
+            <p id="percent-burned" class="alfa-slab">Loading...</p>
+        </div>
+        <div class="stat-block">
+            <h4>Current Burning Cycle</h4>
+            <p id="burning-cycle" class="alfa-slab">Loading...</p>
+        </div>
+        <div class="stat-block">
+            <h4>24h Burning ratio (Aprox)</h4> 
+            <p id="burn-ratio-24hs" class="alfa-slab">N/A</p>
+        </div>
+    </div>
+</body>
+</html>

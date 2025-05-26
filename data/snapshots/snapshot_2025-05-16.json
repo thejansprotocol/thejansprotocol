@@ -1,0 +1,66 @@
+{
+  "date": "2025-05-16",
+  "processedAtUTC": "2025-05-16T11:31:00.611Z",
+  "roundClosed": {
+    "roundId": "2",
+    "status": "NoStartDataFound",
+    "note": "Start snapshot from previous day missing or invalid."
+  },
+  "roundStarted": {
+    "roundId": "2",
+    "status": "SuccessfullyPrepared",
+    "startedOnUTC": "2025-05-16T11:26:53.000Z",
+    "startTokens": [
+      {
+        "id": "taraxa_0x4a0582a5e322a0020ae38448c77cbffc97593fa4",
+        "name": "GRUMPY / WTARA",
+        "startPriceUSD_str": "0.0000000895566123139374"
+      },
+      {
+        "id": "taraxa_0xfaed48da90faad88a388478fe28f38a075c5d410",
+        "name": "FARTAX / WTARA",
+        "startPriceUSD_str": "0.000000236883583317446"
+      },
+      {
+        "id": "taraxa_0x6b14ceb4b7071d734e355c5f48f6fcb99a73736a",
+        "name": "ETH / WTARA 1%",
+        "startPriceUSD_str": "2448.89612607214"
+      },
+      {
+        "id": "taraxa_0xc01ad2bacac61cfdf7813f826de86a7ff28b572f",
+        "name": "SNAPPS / WTARA",
+        "startPriceUSD_str": "0.000000385204487471158"
+      },
+      {
+        "id": "taraxa_0x5394ec36ef1402a9add019a616738a34270e86b5",
+        "name": "BTR / WTARA",
+        "startPriceUSD_str": "1686.87396975157"
+      },
+      {
+        "id": "taraxa_0x0769305c2b7e7b1de96f49f7a87be470adde3a80",
+        "name": "FOMOG / WTARA 1%",
+        "startPriceUSD_str": "0.910791307571161"
+      },
+      {
+        "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+        "name": "TSWAP / WTARA 1%",
+        "startPriceUSD_str": "0.00194027512571036"
+      },
+      {
+        "id": "taraxa_0x567da8261f03f2ff3fde8317ac31fbab686aedd0",
+        "name": "EYE / WTARA",
+        "startPriceUSD_str": "0.0000000902789794283999"
+      },
+      {
+        "id": "taraxa_0xcf32f2ce34ee173e45f44dbb8f9497fd6750e799",
+        "name": "LARA / WTARA 1%",
+        "startPriceUSD_str": "0.00100050029789263"
+      },
+      {
+        "id": "taraxa_0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
+        "name": "ARC / WTARA",
+        "startPriceUSD_str": "0.0000206681868894551"
+      }
+    ]
+  }
+}

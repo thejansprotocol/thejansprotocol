@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Jans Protocol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
+    <script type="module" src="./js/wallet.js"></script>
+    <script type="module" src="./js/index_logic.js"></script>
+    <style>
+        .usd-value, .percentage-value, .details-small {
+            font-size: 0.85em;
+            color: #555; /* Adjust color as needed */
+            margin-top: 2px;
+        }
+        .percentage-value {
+            color: #3498db; /* Adjust color as needed */
+        }
+        #global-error-display { /* Styling for the global message div */
+            padding: 12px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        #global-error-display.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;}
+        #global-error-display.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;}
+        #global-error-display.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba;}
+        #global-error-display.info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;}
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="title">The Jans Protocol</h1>
+            <p class="slogan">
+                "Watch the charts, buy a ticket and make your call!<br>
+                Play for the Daily Pool or earn a share of The Jans Pool!"
+            </p>
+        </div>
+        <div class="top-right">
+        <div class="logo-container">
+            <img src="./assets/jans_geckpng0.png" alt="Jans" class="logo-img">
+        </div>
+    </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><a href="./daily.html" id="nav-daily-snapshot">Daily Pool</a></li>
+            <li><a href="./mechanics.html">Game Mechanics</a></li>
+            <li><a href="./user_tickets.html">Players Info</a></li>
+            <li><a href="./burning.html">The Burn</a></li>
+            <li><a href="./about.html">About Jans</a></li>
+        </ul>
+    </nav>
+
+    <p class="explain">
+        "Everyday 9pm (UTC) a snapshot of full Taraxa ecosystem is taken at GeckoTerminal and 10 tokens are selected randomly.<br>
+        Predict their price action before the next snapshot is taken and win the Daily Pool. Tickets start at 2 USD (TARA), but prices increase fast!"  <a href="./mechanics.html">(Read more)</a>
+    </p>
+
+    <main>
+  <div id="global-error-display" style="display: none;"></div>
+
+  <section class="action-and-stats-wrapper">
+    <!-- Top Button Row -->
+    <div class="button-row">
+      <a href="./daily.html" class="buy-button" id="buy-ticket-link" title="See the daily snapshot and make your call!">Buy Your Ticket</a>
+      <button id="create-lp-button" class="action-button lp-create-button" title="Call the contract to form LP and get your TARA reward.">Form LP & Get Reward</button>
+      <button id="claim-lp-rewards-button" class="action-button lp-claim-button" title="Claim your share every time that 5% Jans is burned.">Claim LP Rewards</button>
+    </div>
+
+    <!-- Optional status messages -->
+    <p id="lp-creation-status" class="status-message"></p>
+    <p id="lp-claim-status" class="status-message"></p>
+
+    <!-- Stats Row -->
+    <div class="stats-row" id="lp-stats-section">
+      <div class="stat-block">
+        <h2>Daily Pool</h2>
+        <p id="current-daily-pool">Loading...</p>
+        <p id="daily-pool-usd" class="usd-value"></p>
+      </div>
+      <div class="stat-block">
+        <h2>Jans Pool</h2>
+        <p id="jans-lp-pool-balance">Loading...</p>
+        <p id="jans-lp-pool-balance-usd" class="usd-value"></p>
+      </div>
+      <div class="stat-block">
+        <h2>Burned</h2>
+        <p id="total-jans-burned">Loading...</p>
+        <p id="total-burned-percentage" class="percentage-value"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="https://fomo.biz">Fomo.biz</a>
+            <a href="https://twitter.com">Twitter</a>
+            <a href="https://telegram.org">Telegram</a>
+            <a href="https://taraxa.io">Taraxa Project</a>
+            <p>Made with 💚 on Taraxa</p>
+        </div>
+    </footer>
+
+</body>
+</html>
