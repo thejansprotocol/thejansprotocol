@@ -7,6 +7,7 @@ export const TARGET_CHAIN_ID = 841n; // Taraxa Mainnet Chain ID
 export const TARGET_NETWORK_NAME = "Taraxa Mainnet";
 export const TARAXA_RPC_URL = "https://rpc.mainnet.taraxa.io/";
 
+
 // --- DEX and Token Addresses (Ensure these are correct for Taraxa Mainnet and your V8 setup) ---
 export const DEX_ROUTER_ADDRESS = "0x329553E2706859Ab82636950c96A8dbbEb28f14A"; // Example, verify this
 export const TARA_WETH_ADDRESS = "0x5d0Fa4C5668E5809c83c95A7CeF3a9dd7C68d4fE"; // Example, verify (WETH equivalent on Taraxa)
