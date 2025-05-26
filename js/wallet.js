@@ -244,7 +244,7 @@ export async function getJansGameABI() {
     if (cachedJansGameABI) return cachedJansGameABI;
     // Path relative to HTML file (e.g., from frontend/index.html to frontend/abi/...)
     // Assumes wallet.js is in frontend/js/ and ABIs are in frontend/abi/
-    const abiPath = './abi/JansPredictionGameABI.json'; // Corrected path
+    const abiPath = 'abi/JansPredictionGameABI.json'; // Corrected path
     console.log(`Wallet.js: Attempting to load JansGame ABI from: ${abiPath}`);
     try {
         const response = await fetch(abiPath); // Use fetch for client-side
@@ -270,7 +270,7 @@ export async function getJansTokenABI() {
     if (cachedJansTokenABI) return cachedJansTokenABI;
     // Path relative to HTML file
     // Assumes wallet.js is in frontend/js/ and ABIs are in frontend/abi/
-    const abiPath = '../abi/JansTokenABI.json'; // Corrected path
+    const abiPath = 'abi/JansTokenABI.json'; // Corrected path
     console.log(`Wallet.js: Attempting to load JANS Token ABI from: ${abiPath}`);
     try {
         const response = await fetch(abiPath); // Use fetch for client-side
