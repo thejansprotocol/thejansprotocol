@@ -1,9 +1,62 @@
 {
   "date": "2025-05-27",
-  "processedAtUTC": "2025-05-27T01:58:42.327Z",
-  "roundClosedInfo": {
-    "roundId": "4",
-    "status": "MissingOrInvalidPendingDataForEnd"
-  },
-  "roundStartedInfo": null
+  "processedAtUTC": "2025-05-27T21:33:48.957Z",
+  "roundClosedInfo": null,
+  "roundStartedInfo": {
+    "roundId": "5",
+    "status": "SuccessfullyStarted",
+    "startedOnUTC": "2025-05-27T21:33:57.000Z",
+    "startTokens": [
+      {
+        "id": "taraxa_0xf4f556217ff8f33366f6d74d1ddd99fb84030ce7",
+        "name": "BTR / WTARA 1%",
+        "price": "1162.06271791522"
+      },
+      {
+        "id": "taraxa_0x0541b28802cf1eec95a0004eaf804f8e97ad30ca",
+        "name": "CHDPU / WTARA 1%",
+        "price": "0.0000907000065467417"
+      },
+      {
+        "id": "taraxa_0x46d5d286f970df89ce4b21fd5eef19a3c16d7da1",
+        "name": "BTCH / WTARA",
+        "price": "57.5066517899457"
+      },
+      {
+        "id": "taraxa_0xf94effc57e379f27e470d10651d12bd0e7e127c0",
+        "name": "TXTR / WTARA 1%",
+        "price": "0.0430266484803896"
+      },
+      {
+        "id": "taraxa_0x4a0582a5e322a0020ae38448c77cbffc97593fa4",
+        "name": "GRUMPY / WTARA",
+        "price": "0.0000000805127540467487"
+      },
+      {
+        "id": "taraxa_0x2f35216c538b3d0a1ea12b3ff741a8053d430868",
+        "name": "ZZZ / WTARA 1%",
+        "price": "0.008162588046"
+      },
+      {
+        "id": "taraxa_0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
+        "name": "ARC / WTARA",
+        "price": "0.0000113569994660723"
+      },
+      {
+        "id": "taraxa_0xcf32f2ce34ee173e45f44dbb8f9497fd6750e799",
+        "name": "LARA / WTARA 1%",
+        "price": "0.000946108767838048"
+      },
+      {
+        "id": "taraxa_0xc01ad2bacac61cfdf7813f826de86a7ff28b572f",
+        "name": "SNAPPS / WTARA",
+        "price": "0.000000183058618291036"
+      },
+      {
+        "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+        "name": "TSWAP / WTARA 1%",
+        "price": "0.00598699335508044"
+      }
+    ]
+  }
 }
