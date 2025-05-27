@@ -1,8 +1,8 @@
 {
-  "logTimestamp": "2025-05-27T02:10:09.917Z",
+  "logTimestamp": "2025-05-27T02:40:01.506Z",
   "contractAddress": "0x33a72517BDb8632e485C995612a37Ea514a56BD9",
-  "currentChainTimestamp": "2025-05-27T02:10:04.000Z",
-  "currentBlockNumber": "18583028",
+  "currentChainTimestamp": "2025-05-27T02:40:04.000Z",
+  "currentBlockNumber": "18583528",
   "currentRoundIdOnChain": "4",
   "currentRoundDetails": {
     "startTime": "2025-05-25T21:00:20.000Z",
