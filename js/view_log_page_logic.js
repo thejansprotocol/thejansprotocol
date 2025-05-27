@@ -2,7 +2,7 @@
 // Handles fetching, displaying a specific daily log, and applying random readable colors.
 
 // --- Constants for this page ---
-const LOG_FILES_BASE_URL = '../../public/data/dailylogs_v8/';
+const LOG_FILES_BASE_URL = data/dailylogs_v8/';
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 const GLOBAL_MESSAGE_DISPLAY_ID_LOG_VIEW = "global-message-log-view";
