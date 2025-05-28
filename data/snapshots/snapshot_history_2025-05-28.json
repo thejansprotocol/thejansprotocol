@@ -1,9 +1,9 @@
 {
   "date": "2025-05-28",
-  "processedAtUTC": "2025-05-28T21:31:29.842Z",
+  "processedAtUTC": "2025-05-28T21:32:29.404Z",
   "roundClosedInfo": {
     "roundId": "5",
-    "status": "DurationNotMetForEnd"
+    "status": "MissingPendingDataForEndSnapshot"
   },
   "roundStartedInfo": null
 }
