@@ -86,35 +86,39 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
         font-family: Arial, sans-serif;
     `;
 
-    modalOverlay.innerHTML = `
-        <div id="${MODAL_CONTENT_ID}" style="background-color: #ffed91; color: #000000; padding: 15px 20px; border-radius: 8px; border: 1px solid #000000; width: 95%; max-width: 450px; max-height: 90vh; overflow-y: auto; box-shadow: 0 3px 10px rgba(0,0,0,0.3);">
-            <h3 style="text-align: center; margin-top: 0; margin-bottom: 10px; color: #181818;">Make Your Predictions!</h3>
-            <p style="text-align: center; margin-bottom: 15px; font-size: 0.85rem; color: #333;">
-                Current Ticket Price: <strong>${ethersInstance.formatUnits(currentTicketPriceAtModalOpenNativeWei, NATIVE_TARA_DECIMALS)} TARA</strong>
-            </p>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                <thead>
-                    <tr style="border-bottom: 1px solid #555;">
-                        <th style="padding: 5px; text-align: left; font-size: 0.75rem;">Token</th>
-                        <th style="padding: 5px; text-align: right; font-size: 0.75rem;">Snapshot Price (USD)</th>
-                        <th style="padding: 5px; text-align: center; font-size: 0.75rem;">Your Call (24h)</th>
-                    </tr>
-                </thead>
-                <tbody id="${PREDICTION_TABLE_BODY_ID}"></tbody>
-            </table>
-            <div style="text-align:center; margin-bottom: 15px;">
-                <button id="${SINGLE_SUBMIT_BTN_ID}" class="buy-button" style="padding: 8px 15px; font-size: 0.95rem; margin-right: 10px;">Submit Predictions</button>
+    
+modalOverlay.innerHTML = `
+    <div id="${MODAL_CONTENT_ID}" style="background-color: #ffed91; color: #000000; padding: 15px 20px; border-radius: 8px; border: 1px solid #000000; width: 95%; max-width: 600px; /* Increased max-width for horizontal space */ max-height: 95vh; /* Allow slightly more height */ overflow-y: auto; box-shadow: 0 3px 10px rgba(0,0,0,0.3);">
+        <h3 style="text-align: center; margin-top: 0; margin-bottom: 10px; color: #181818;">Make Your Predictions!</h3>
+        <p style="text-align: center; margin-bottom: 15px; font-size: 0.85rem; color: #333;">
+            Current Ticket Price: <strong>${ethersInstance.formatUnits(currentTicketPriceAtModalOpenNativeWei, NATIVE_TARA_DECIMALS)} TARA</strong>
+        </p>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            {/* ... table headers and body ... */}
+        </table>
+
+        {/* --- BUTTONS AND ACTIONS AREA --- */}
+        <div style="display: flex; flex-direction: column; gap: 15px;"> {/* Main container for action sections */}
+
+            {/* Single Submit Section */}
+            <div style="text-align:center;">
+                <button id="${SINGLE_SUBMIT_BTN_ID}" class="buy-button" style="padding: 10px 20px; font-size: 1rem; min-width: 200px;">Submit Predictions</button>
             </div>
-            <div style="border-top: 1px dashed #888; padding-top: 15px; margin-top:15px;">
-                <p style="text-align:center; margin-top:0; margin-bottom: 8px; font-size: 0.8rem; color: #333;">Or, buy with random predictions:</p>
+
+            {/* Bulk Submit Section - More Horizontal */}
+            <div style="border-top: 1px dashed #888; padding-top: 15px;">
+                <p style="text-align:center; margin-top:0; margin-bottom: 10px; font-size: 0.85rem; color: #333;">Or, buy with random predictions:</p>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <input type="number" id="${BULK_AMOUNT_INPUT_ID}" value="1" min="1" max="${MAX_BULK_TICKETS_MODAL}" style="width: 50px; padding: 5px; border-radius: 4px; border: 1px solid #777; text-align: center;">
-                    <button id="${BULK_SUBMIT_BTN_ID}" class="buy-button" style="background-color: #e67e22; padding: 8px 12px; font-size: 0.9rem;">Buy Bulk Random</button>
+                    <label for="${BULK_AMOUNT_INPUT_ID}" style="font-size:0.85rem;">Amount:</label>
+                    <input type="number" id="${BULK_AMOUNT_INPUT_ID}" value="1" min="1" max="${MAX_BULK_TICKETS_MODAL}" style="width: 60px; padding: 8px; border-radius: 4px; border: 1px solid #777; text-align: center; font-size: 0.9rem;">
+                    <button id="${BULK_SUBMIT_BTN_ID}" class="buy-button" style="background-color: #e67e22; padding: 10px 15px; font-size: 0.95rem;">Buy Bulk Random</button>
                 </div>
             </div>
-            <div id="${MODAL_STATUS_ID}" style="text-align:center; margin-top: 15px; min-height: 18px; font-weight: bold; font-size: 0.85rem;"></div>
-            <button id="${CANCEL_BTN_ID}" class="buy-button" style="background-color:#c0392b; padding: 8px 15px; font-size: 0.9rem; display: block; margin: 20px auto 0 auto;">Cancel</button>
         </div>
+
+        <div id="${MODAL_STATUS_ID}" style="text-align:center; margin-top: 20px; min-height: 20px; font-weight: bold; font-size: 0.9rem;"></div>
+        <button id="${CANCEL_BTN_ID}" class="buy-button" style="background-color:#c0392b; padding: 10px 20px; font-size: 0.95rem; display: block; margin: 25px auto 5px auto; min-width: 150px;">Cancel</button>
+    </div>
     `;
     document.body.appendChild(modalOverlay);
     isModalOpen = true;
@@ -173,57 +177,102 @@ function formatPriceWithZeroCount(priceStr, opts = {}) {
 }
 */
 
+// In ticket_modal_logic.js
+
 function fillPredictionTableInModal() {
-    const tbody = document.getElementById(PREDICTION_TABLE_BODY_ID); // Assumes PREDICTION_TABLE_BODY_ID is defined
-    if (!tbody) { 
-        console.error("Modal prediction table body not found."); 
-        return; 
+    const tbody = document.getElementById(PREDICTION_TABLE_BODY_ID);
+    if (!tbody) {
+        console.error("Modal prediction table body (PREDICTION_TABLE_BODY_ID) not found.");
+        return;
     }
     tbody.innerHTML = ""; // Clear previous rows
+
+    if (!currentSnapshotTokensInModal || currentSnapshotTokensInModal.length === 0) {
+        console.warn("Modal: No snapshot tokens available to display.");
+        // Optionally, display a message in the table:
+        // tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No token data available.</td></tr>';
+        return;
+    }
 
     currentSnapshotTokensInModal.forEach((token, index) => {
         const row = document.createElement("tr");
         row.style.borderBottom = (index === currentSnapshotTokensInModal.length - 1) ? "none" : "1px solid #ddd";
+
+        // --- DEBUGGING START ---
+        // console.log("Modal Table - Full token object:", JSON.parse(JSON.stringify(token))); // For deep copy inspection
+        console.log(`Modal Table (Token ${index}) - token.name type:`, typeof token.name);
+        console.log(`Modal Table (Token ${index}) - token.name value:`, token.name);
+        // --- DEBUGGING END ---
+
+        // MODIFICATION FOR BASE TOKEN NAME
+        let baseTokenNameModal = 'N/A'; // Default value
+        if (token && typeof token.name === 'string') {
+            baseTokenNameModal = token.name; // Start with the full name
+            if (baseTokenNameModal.includes('/')) {
+                baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
+            }
+        } else if (token && token.name !== undefined && token.name !== null) {
+            // If token.name exists but isn't a string, try to convert it.
+            console.warn(`Modal Table (Token ${index}) - token.name is not a string:`, token.name, "Converting to string.");
+            baseTokenNameModal = String(token.name);
+             // Optionally, try to split again if it might be like "TOKENA / TOKENB" after conversion
+            if (baseTokenNameModal.includes('/')) {
+                baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
+            }
+        }
         
-        // Define options for price formatting
-        const priceDisplayOptions = { 
-            zeroCountThreshold: 4,      // Trigger custom format if more than 4 leading zeros after "0."
-            significantDigits: 4,       // Show this many significant digits after the zero count
-            defaultDisplayDecimals: 6,  // For numbers not using custom format
-            minNormalDecimals: 2        // Always show at least 2 decimals for "normal" prices like 1.50
+        console.log(`Modal Table (Token ${index}) - Parsed baseTokenNameModal:`, baseTokenNameModal); // See the result of parsing
+        // --- END MODIFICATION FOR BASE TOKEN NAME ---
+
+
+        const priceDisplayOptions = {
+            zeroCountThreshold: 4,
+            significantDigits: 4,
+            defaultDisplayDecimals: 6,
+            minNormalDecimals: 2
         };
-        // Format the price using the new function
         const displayModalPrice = formatPriceWithZeroCount(token.base_token_price_usd, priceDisplayOptions);
-        
+
+        // Prepare logo cell content (assuming 'token.base_token_logo_url' might come from your snapshot later)
+        const logoUrl = token.base_token_logo_url;
+        const logoCellHtml = logoUrl
+            ? `<img src="${logoUrl}" alt="${baseTokenNameModal} logo" style="width: 24px; height: 24px; vertical-align: middle;">`
+            : `<span style="display:inline-block; width:24px; height:24px; text-align:center; line-height:24px; font-size:0.7em; border:1px solid #ccc; border-radius:50%; background-color: #eee;">?</span>`; // Placeholder
+
         row.innerHTML = `
-            <td style="padding: 6px 4px; text-align: left; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;" title="${token.name || 'N/A'}">${token.name || 'N/A'}</td>
-            <td style="padding: 6px 4px; text-align: right; font-size: 0.8rem;">$${displayModalPrice}</td> 
-            <td style="padding: 6px 4px; text-align: center;">
+            <td style="padding: 6px 4px; text-align: left; vertical-align: middle;">${logoCellHtml}</td>
+            <td style="padding: 6px 4px; text-align: left; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; vertical-align: middle;" title="${token.name || 'N/A'}">${baseTokenNameModal}</td>
+            <td style="padding: 6px 4px; text-align: right; font-size: 0.8rem; vertical-align: middle;">${displayModalPrice}</td>
+            <td style="padding: 6px 4px; text-align: center; vertical-align: middle;">
                 <button type="button" class="prediction-btn up" data-index="${index}" data-value="true" style="background-color: #2ecc71; border: 1px solid #27ae60; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▲ Up</button>
                 <button type="button" class="prediction-btn down" data-index="${index}" data-value="false" style="background-color: #e74c3c; border: 1px solid #c0392b; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▼ Down</button>
             </td>`;
         tbody.appendChild(row);
     });
 
-    // Re-attach event listeners for prediction buttons (your existing highlighting logic)
+    // Re-attach event listeners for prediction buttons
     tbody.querySelectorAll(".prediction-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const clickedButton = e.currentTarget;
             const index = parseInt(clickedButton.dataset.index, 10);
             const predictionValue = (clickedButton.dataset.value === "true");
 
-            if (isNaN(index) || index < 0 || index >= currentSnapshotTokensInModal.length) return;
+            if (isNaN(index) || index < 0 || index >= currentSnapshotTokensInModal.length) {
+                console.error("Invalid index for prediction button:", index);
+                return;
+            }
             currentSnapshotTokensInModal[index].prediction = predictionValue;
 
+            // Visually update buttons in the same row
             const rowButtons = clickedButton.parentElement.querySelectorAll('.prediction-btn');
-            rowButtons.forEach(b => { 
-                b.style.fontWeight = 'normal'; 
-                b.style.opacity = '0.7'; 
-                b.style.boxShadow = 'none'; 
+            rowButtons.forEach(b => {
+                b.style.fontWeight = 'normal';
+                b.style.opacity = '0.7';
+                b.style.boxShadow = 'none';
             });
             clickedButton.style.fontWeight = 'bold';
             clickedButton.style.opacity = '1';
-            clickedButton.style.boxShadow = '0 0 5px yellow';
+            clickedButton.style.boxShadow = '0 0 5px yellow'; // Or some other highlight
         });
     });
 }

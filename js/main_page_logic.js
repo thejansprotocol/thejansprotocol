@@ -247,46 +247,49 @@ async function loadAndDisplaySnapshotTable() {
 
 // In main_page_logic.js
 
+// In main_page_logic.js
+
 function renderSnapshotTable() {
     const tableBody = document.getElementById(DOM_IDS.snapshotTableBody);
-    if (!tableBody) { 
-        console.warn("MainPageLogic: Snapshot table body not found."); 
-        return; 
+    if (!tableBody) {
+        console.warn("MainPageLogic: Snapshot table body not found.");
+        return;
     }
 
     if (!localSnapshotTokens || localSnapshotTokens.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No token data in current snapshot.</td></tr>`;
         return;
     }
-    tableBody.innerHTML = ''; 
+    tableBody.innerHTML = '';
     localSnapshotTokens.forEach(token => {
         const tr = document.createElement('tr');
 
-        // Helper to add cells, differentiating between text and HTML content
         const addCell = (content, isHtml = false) => {
             const td = document.createElement('td');
             if (isHtml) {
-                td.innerHTML = content; // Use innerHTML for content with HTML tags
+                td.innerHTML = content;
             } else {
-                td.textContent = content; // Use textContent for plain text
+                td.textContent = content;
             }
-            // Apply text-align center here if all cells in this table need it
-            // Or you can add a class to td and style it in CSS
-            td.style.textAlign = 'center'; // As per your original table td styling
+            td.style.textAlign = 'center';
             return td;
         };
 
-        tr.appendChild(addCell(token.name || 'N/A'));
+        // MODIFICATION FOR BASE TOKEN NAME
+        let baseTokenName = token.name || 'N/A';
+        if (baseTokenName.includes('/')) {
+            baseTokenName = baseTokenName.split('/')[0].trim();
+        }
+        tr.appendChild(addCell(baseTokenName)); // Use the parsed baseTokenName
 
-        // Use the new formatting function for the price
-        const priceDisplayOptions = { 
-            zeroCountThreshold: 4, 
+        const priceDisplayOptions = {
+            zeroCountThreshold: 4,
             significantDigits: 4,
-            defaultDisplayDecimals: 6, // How many decimals for "normal" numbers
+            defaultDisplayDecimals: 6,
             minNormalDecimals: 2
         };
         const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, priceDisplayOptions);
-        tr.appendChild(addCell(formattedPrice, true)); // Pass true because it might contain HTML (<span>)
+        tr.appendChild(addCell(formattedPrice, true));
 
         tr.appendChild(addCell(token.price_change_percentage_1h ? `${parseFloat(token.price_change_percentage_1h).toFixed(2)}%` : 'N/A'));
         tr.appendChild(addCell(token.price_change_percentage_6h ? `${parseFloat(token.price_change_percentage_6h).toFixed(2)}%` : 'N/A'));
@@ -298,7 +301,6 @@ function renderSnapshotTable() {
         tableBody.appendChild(tr);
     });
 }
-
 // --- Current Round & Ticket Price Display ---
 async function updateCurrentRoundDisplay() {
     const roundSpan = document.getElementById(DOM_IDS.currentRound);
