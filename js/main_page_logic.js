@@ -106,6 +106,12 @@ const DOM_IDS = {
     currentTimeDisplay: "current-time-utc" // For current UTC time
 };
 
+// NEW: DOM IDs for Mobile Elements
+const DOM_IDS_MOBILE = {
+    mobileTokenTableBody: "mobile-token-table-body",
+    mobileLastTransaction: "mobile-last-transaction"
+};
+
 // --- Initialization ---
 async function initializeMainPage() {
     if (localIsAppInitialized) return;
@@ -219,10 +225,21 @@ function getRandomHexColor() {
 // ... (rest of your code, then the modified function below) ...
 
 // --- Snapshot Display ---
+
 async function loadAndDisplaySnapshotTable() {
-    const snapshotTableBody = document.getElementById(DOM_IDS.snapshotTableBody);
-    if (!snapshotTableBody) { console.warn("MainPageLogic: Snapshot table body not found."); return; }
-    snapshotTableBody.innerHTML = `<tr><td colspan="6">Loading snapshot...</td></tr>`;
+    const snapshotTableBody = document.getElementById(DOM_IDS.snapshotTableBody); // For desktop
+    if (!snapshotTableBody) { 
+        console.warn("MainPageLogic: Desktop snapshot table body not found."); 
+        // Decide if this is critical enough to return, or just affects desktop view
+    } else {
+        snapshotTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Loading snapshot...</td></tr>`;
+    }
+
+    // <<< NEW: Get mobile table body and set its loading message >>>
+    const mobileSnapshotTableBody = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
+    if (mobileSnapshotTableBody) {
+         mobileSnapshotTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Loading snapshot...</td></tr>`;
+    }
 
     try {
         const data = await fetchJsonFile(SNAPSHOT_FILE_PATH); // Uses service from wallet.js
@@ -242,6 +259,8 @@ async function loadAndDisplaySnapshotTable() {
         localSnapshotTokens = [];
     }
 }
+
+
 
 // Make sure formatDisplayPrice is defined in this file or imported from wallet.js
 
@@ -451,63 +470,92 @@ async function updateGlobalStatsDisplay() {
 
 
 // --- Transaction Log Display (Simplified) ---
+
+// In main_page_logic.js
+
 async function fetchAndDisplaySimplifiedTransactions() {
     const txListUl = document.getElementById(DOM_IDS.transactionList);
+    const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction); // Get mobile element
     const roContract = getReadOnlyJansGameContract();
     const roProvider = getReadOnlyProvider();
-    console.log("TX_LOG: Attempting to fetch transactions."); // <--- ADD THIS
 
-     if (!roContract || !roProvider || !localCurrentRoundId || localCurrentRoundId === 0n || !txListUl) {
-        console.warn("TX_LOG: Bailing early. Conditions:", { // <--- ADD THIS
-            roContract: !!roContract,
-            roProvider: !!roProvider,
-            localCurrentRoundId: localCurrentRoundId ? localCurrentRoundId.toString() : null,
-            txListUl: !!txListUl
-        });
-        if (txListUl && (!localCurrentRoundId || localCurrentRoundId === 0n)) {
-            txListUl.innerHTML = '<li>Round not active. No transactions to display.</li>';
-        } else if (txListUl) {
-            // txListUl.innerHTML = '<li>Loading transactions... (dependencies not ready)</li>';
+    // Guard clause: Check if essential components are ready or if a round is active
+    if (!roContract || !roProvider) {
+        console.warn("TX_LOG: Read-only contract or provider not available. Skipping transaction fetch.");
+        if (txListUl) txListUl.innerHTML = '<li>Log: Dependencies not ready.</li>';
+        if (mobileLastTxDiv) mobileLastTxDiv.innerHTML = 'Log: Dependencies not ready.';
+        return;
+    }
+    if (!localCurrentRoundId || localCurrentRoundId === 0n) {
+        console.warn("TX_LOG: No active round (localCurrentRoundId is 0 or null). Skipping transaction fetch.");
+        if (txListUl) txListUl.innerHTML = '<li>Round not active. No transactions to display.</li>';
+        if (mobileLastTxDiv) mobileLastTxDiv.innerHTML = 'Round not active. No transaction to display.';
+        // Clear existing local transactions if round is not active
+        if (localTicketTransactions.length > 0) {
+            localTicketTransactions = [];
+            localLastFetchedTxBlock = null; // Reset block tracking too
         }
         return;
     }
+    // If neither UI element for transactions is present, no point in fetching/rendering.
+    if (!txListUl && !mobileLastTxDiv) {
+        console.warn("TX_LOG: Neither desktop transaction list nor mobile transaction display element found. Skipping fetch.");
+        return;
+    }
+
+    // Initial loading message if lists are empty
+    if (txListUl && localTicketTransactions.length === 0 && txListUl.innerHTML.includes('No ticket purchases')) {
+        // txListUl.innerHTML = '<li>Loading transactions...</li>'; // Or keep "No ticket purchases yet..."
+    }
+    if (mobileLastTxDiv && localTicketTransactions.length === 0 && mobileLastTxDiv.innerHTML.includes('No ticket purchases')) {
+        // mobileLastTxDiv.innerHTML = 'Loading last transaction...';
+    }
+
 
     try {
         let fromBlockForQuery;
         const currentBlockNumber = await roProvider.getBlockNumber();
-        console.log("TX_LOG: Current block number:", currentBlockNumber); // <--- ADD THIS
-        console.log("TX_LOG: localLastFetchedTxBlock:", localLastFetchedTxBlock); // <--- ADD THIS
-
+        // console.log("TX_LOG: Current block number:", currentBlockNumber);
+        // console.log("TX_LOG: localLastFetchedTxBlock:", localLastFetchedTxBlock);
 
         if (localLastFetchedTxBlock !== null && localLastFetchedTxBlock < currentBlockNumber) {
             fromBlockForQuery = localLastFetchedTxBlock + 1;
         } else if (localLastFetchedTxBlock === null) { // First fetch for this session or round
             const roundData = await roContract.roundsData(localCurrentRoundId);
-            console.log("TX_LOG: First fetch for round. Round data startTime:", roundData.startTime.toString()); // <--- ADD THIS
+            // console.log("TX_LOG: First fetch for round. Round data startTime:", roundData.startTime.toString());
             if (roundData.startTime > 0n) {
-                fromBlockForQuery = Math.max(0, currentBlockNumber - 20000); // Approx last ~2.7 days if 12s blocks
+                // Fetch a reasonable range. Adjust block count based on your chain's block time and typical round duration.
+                // Example: 20000 blocks might be a few days. If rounds are shorter, reduce this.
+                fromBlockForQuery = Math.max(0, currentBlockNumber - 20000); 
             } else {
-                 fromBlockForQuery = Math.max(0, currentBlockNumber - 2000); // Fallback for very new round
+                // Round start time not set (shouldn't happen if roundId > 0 and snapshot submitted, but as a fallback)
+                fromBlockForQuery = Math.max(0, currentBlockNumber - 2000); 
             }
-        } else { // No new blocks
-            console.log("TX_LOG: No new blocks since last fetch."); // <--- ADD THIS
-            if (localTicketTransactions.length === 0 && txListUl) txListUl.innerHTML = '<li>No new ticket purchases logged in this period.</li>'; // Modified message slightly
-            return; 
+        } else { // No new blocks since last fetch
+            // console.log("TX_LOG: No new blocks since last fetch.");
+            // If there are already transactions, ensure mobile view is up-to-date (desktop is persistent)
+            if (localTicketTransactions.length > 0) {
+                renderMobileLastTransaction(); // Ensure mobile view reflects current state
+            } else { // No local transactions and no new blocks
+                 if (txListUl) txListUl.innerHTML = '<li>No new ticket purchases in this period.</li>';
+                 if (mobileLastTxDiv) mobileLastTxDiv.innerHTML = 'No new ticket purchases in this period.';
+            }
+            return;
         }
-        fromBlockForQuery = Math.max(0, fromBlockForQuery);
+        fromBlockForQuery = Math.max(0, fromBlockForQuery); // Ensure fromBlock is not negative
 
-        console.log(`TX_LOG: Fetching TicketPurchased events for round ${localCurrentRoundId.toString()} from block ${fromBlockForQuery} to ${currentBlockNumber}`); // <--- MODIFIED THIS
+        // console.log(`TX_LOG: Fetching TicketPurchased events for round ${localCurrentRoundId.toString()} from block ${fromBlockForQuery} to ${currentBlockNumber}`);
         const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
         const events = await roContract.queryFilter(eventFilter, fromBlockForQuery, currentBlockNumber);
-        console.log("TX_LOG: Fetched events:", events); // <--- ADD THIS
+        // console.log("TX_LOG: Fetched events count:", events.length);
         
         let newTxFound = false;
         for (const event of events) {
-            console.log("TX_LOG: Processing event:", event); // <--- ADD THIS
+            // console.log("TX_LOG: Processing event:", event.transactionHash);
             if (!localTicketTransactions.find(tx => tx.txHash === event.transactionHash && tx.ticketId.toString() === event.args.ticketId.toString())) {
-                try { // <--- ADD TRY-CATCH for event.getBlock()
+                try {
                     const block = await event.getBlock(); 
-                    console.log("TX_LOG: Fetched block for event, timestamp:", block.timestamp); // <--- ADD THIS
+                    // console.log("TX_LOG: Fetched block for event, timestamp:", block.timestamp);
                     localTicketTransactions.push({ 
                         player: event.args.player,
                         timestamp: Number(block.timestamp), 
@@ -516,40 +564,50 @@ async function fetchAndDisplaySimplifiedTransactions() {
                     });
                     newTxFound = true;
                 } catch (blockError) {
-                    console.error("TX_LOG: Error fetching block for event:", blockError, event); // <--- ADD THIS
+                    console.error("TX_LOG: Error fetching block for event:", blockError, "Event TX Hash:", event.transactionHash);
+                    // Optionally, push with a placeholder timestamp or skip
                 }
             } else {
-                console.log("TX_LOG: Duplicate event found, skipping:", event.transactionHash); // <--- ADD THIS
+                // console.log("TX_LOG: Duplicate event found, skipping:", event.transactionHash);
             }
         }
         
         if (newTxFound) {
-            console.log("TX_LOG: New transactions found, sorting and rendering."); // <--- ADD THIS
+            console.log("TX_LOG: New transactions processed, sorting and rendering.");
             localTicketTransactions.sort((a, b) => b.timestamp - a.timestamp); 
-            renderSimplifiedTransactionList();
+            if (txListUl) renderSimplifiedTransactionList();    // For desktop list
+            renderMobileLastTransaction();                      // For mobile single last tx
         } else if (localTicketTransactions.length === 0 && events.length === 0) {
-            console.log("TX_LOG: No new transactions and no existing local transactions for this round."); // <--- ADD THIS
-            txListUl.innerHTML = '<li>No ticket purchases yet for this round.</li>';
+            // This means no historical transactions loaded and no new events fetched in the range
+            console.log("TX_LOG: No transactions found for this round in the queried period.");
+            if(txListUl) txListUl.innerHTML = '<li>No ticket purchases yet for this round.</li>';
+            if (mobileLastTxDiv) mobileLastTxDiv.innerHTML = 'No ticket purchases yet for this round.';
         } else {
-            console.log("TX_LOG: No new transactions found, but local transactions might exist or fetched events were duplicates."); // <--- ADD THIS
-            // If localTicketTransactions is not empty, it means renderSimplifiedTransactionList was called before or will be called if newTxFound was true.
-            // If it is empty, and newTxFound is false, but events.length > 0 (meaning all were duplicates), it could also mean "No new ticket purchases".
-            if (txListUl.innerHTML.includes('Loading') || localTicketTransactions.length === 0) { // Avoid overwriting existing list if nothing new
-                 if(events.length > 0 && !newTxFound) { // All fetched events were duplicates
-                     txListUl.innerHTML = '<li>No *new* ticket purchases logged.</li>';
-                 } else if (localTicketTransactions.length > 0 && !newTxFound) {
-                    // List already showing older tx, do nothing or just log
-                 }
-                 else { // Default for empty and no new events
-                     txListUl.innerHTML = '<li>No ticket purchases logged for this round in this period.</li>';
-                 }
+            // No *new* transactions found, but localTicketTransactions might exist from previous fetches,
+            // or all fetched events were duplicates.
+            // console.log("TX_LOG: No new transactions found. Existing list (if any) remains.");
+            // Ensure mobile view is up-to-date if there are existing transactions.
+            if (localTicketTransactions.length > 0) {
+                renderMobileLastTransaction();
+            } else { // No local transactions, and no new ones found (implies events.length might be > 0 but all duplicates)
+                if (txListUl && (txListUl.innerHTML.includes('Loading') || txListUl.innerHTML === '')) {
+                     txListUl.innerHTML = '<li>No ticket purchases recorded for this period.</li>';
+                }
+                if (mobileLastTxDiv && (mobileLastTxDiv.innerHTML.includes('Loading') || mobileLastTxDiv.innerHTML === '')) {
+                     mobileLastTxDiv.innerHTML = 'No ticket purchases recorded for this period.';
+                }
             }
         }
         localLastFetchedTxBlock = currentBlockNumber;
-        console.log("TX_LOG: Updated localLastFetchedTxBlock to:", localLastFetchedTxBlock); // <--- ADD THIS
+        // console.log("TX_LOG: Updated localLastFetchedTxBlock to:", localLastFetchedTxBlock);
     } catch (error) { 
-        console.error("TX_LOG: Failed to fetch ticket transactions:", error); // <--- MODIFIED THIS
-        if(txListUl && localTicketTransactions.length === 0) txListUl.innerHTML = '<li>Error loading transactions.</li>'; 
+        console.error("TX_LOG: Failed to fetch or process ticket transactions:", error);
+        if(txListUl && localTicketTransactions.length === 0) { // Only update if list is empty to avoid overwriting existing tx
+            txListUl.innerHTML = '<li>Error loading transactions.</li>'; 
+        }
+        if (mobileLastTxDiv && localTicketTransactions.length === 0) { // Same for mobile
+            mobileLastTxDiv.innerHTML = 'Error loading transaction.';
+        }
     }
 }
 

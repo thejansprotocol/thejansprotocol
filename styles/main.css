@@ -423,6 +423,58 @@ footer {
 }
 .footer-note { text-align: center; font-size: 14px; width: 100%; margin-top: 20px; }
 
+/* Default: Hide mobile-specific content on larger screens */
+.mobile-daily-content {
+    display: none;
+    width: 100%;
+    max-width: 680px; /* To match your existing stacked column max-width */
+    margin: 10px auto;
+    padding: 0 15px;
+}
+
+/* Your existing media query where the 3-column layout stacks */
+@media (max-width: 992px) {
+    /* Hide the original desktop 3-column content parts */
+    #daily-logs-sidebar,
+    #daily-main-content, /* This contains the original full table */
+    #ticket-transactions-sidebar {
+        display: none !important; /* Use !important if necessary to override other display rules */
+    }
+
+    /* Show the new mobile-specific content block */
+    .mobile-daily-content {
+        display: block;
+    }
+
+    /*
+       The .daily-page-wrapper itself might still be useful as a container
+       if .mobile-daily-content is placed inside it.
+       If .mobile-daily-content is *outside* .daily-page-wrapper, you might hide .daily-page-wrapper too:
+    */
+    /* .daily-page-wrapper {
+        display: none;
+    } */
+
+    /* You might need to adjust styles for the mobile table if they differ from the desktop one */
+    #mobile-token-table th,
+    #mobile-token-table td {
+        font-size: 11px; /* Example: Adjust font size for mobile table */
+        padding: 5px;
+    }
+}
+
+/* For even smaller screens, you might further refine */
+@media (max-width: 480px) {
+    #mobile-token-table th,
+    #mobile-token-table td {
+        font-size: 10px;
+        padding: 4px;
+    }
+    #mobile-last-transaction {
+        font-size: 0.8em;
+    }
+}
+
 
 /* --- Message Container Styles --- */
 .message-container {
