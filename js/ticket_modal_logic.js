@@ -15,7 +15,7 @@ import {
     TARA_WETH_ADDRESS,
     JANS_TOKEN_ADDRESS,
     fetchJsonFile,
-    formatPriceWithZeroCount, 
+    formatPriceWithZeroCount,
     // DEFAULT_SLIPPAGE_BPS, // Let's define slippage locally or pass it
 
     // Helper Utilities from wallet.js
@@ -86,15 +86,22 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
         font-family: Arial, sans-serif;
     `;
 
-    
-modalOverlay.innerHTML = `
-    <div id="${MODAL_CONTENT_ID}" style="background-color: #ffed91; color: #000000; padding: 15px 20px; border-radius: 8px; border: 1px solid #000000; width: 95%; max-width: 600px; /* Increased max-width for horizontal space */ max-height: 95vh; /* Allow slightly more height */ overflow-y: auto; box-shadow: 0 3px 10px rgba(0,0,0,0.3);">
+    modalOverlay.innerHTML = `
+    <div id="${MODAL_CONTENT_ID}" style="background-color: #ffed91; color: #000000; padding: 15px 20px; border-radius: 8px; border: 1px solid #000000; width: 95%; max-width: 600px; max-height: 95vh; overflow-y: auto; box-shadow: 0 3px 10px rgba(0,0,0,0.3);">
         <h3 style="text-align: center; margin-top: 0; margin-bottom: 10px; color: #181818;">Make Your Predictions!</h3>
         <p style="text-align: center; margin-bottom: 15px; font-size: 0.85rem; color: #333;">
             Current Ticket Price: <strong>${ethersInstance.formatUnits(currentTicketPriceAtModalOpenNativeWei, NATIVE_TARA_DECIMALS)} TARA</strong>
         </p>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-            {/* ... table headers and body ... */}
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.8rem;">
+            <thead>
+                <tr>
+                    <th style="padding: 6px 4px; text-align: left; border-bottom: 1px solid #ccc;"></th> <th style="padding: 6px 4px; text-align: left; border-bottom: 1px solid #ccc;">Token</th>
+                    <th style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #ccc;">Price (USD)</th>
+                    <th style="padding: 6px 4px; text-align: center; border-bottom: 1px solid #ccc;">Prediction</th>
+                </tr>
+            </thead>
+            <tbody id="${PREDICTION_TABLE_BODY_ID}">
+                </tbody>
         </table>
 
         {/* --- BUTTONS AND ACTIONS AREA --- */}
@@ -127,15 +134,15 @@ modalOverlay.innerHTML = `
 }
 
 // Make sure formatPriceWithZeroCount is defined in this file or imported, e.g.:
-// import { formatPriceWithZeroCount } from './wallet.js'; 
+// import { formatPriceWithZeroCount } from './wallet.js';
 // Or, if defined locally:
 /*
 function formatPriceWithZeroCount(priceStr, opts = {}) {
     const {
-        zeroCountThreshold = 4, 
-        significantDigits = 4, 
-        defaultDisplayDecimals = 6, 
-        minNormalDecimals = 2 
+        zeroCountThreshold = 4,
+        significantDigits = 4,
+        defaultDisplayDecimals = 6,
+        minNormalDecimals = 2
     } = opts;
 
     if (priceStr === undefined || priceStr === null || String(priceStr).trim() === '') {
@@ -215,12 +222,12 @@ function fillPredictionTableInModal() {
             // If token.name exists but isn't a string, try to convert it.
             console.warn(`Modal Table (Token ${index}) - token.name is not a string:`, token.name, "Converting to string.");
             baseTokenNameModal = String(token.name);
-             // Optionally, try to split again if it might be like "TOKENA / TOKENB" after conversion
+            // Optionally, try to split again if it might be like "TOKENA / TOKENB" after conversion
             if (baseTokenNameModal.includes('/')) {
                 baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
             }
         }
-        
+
         console.log(`Modal Table (Token ${index}) - Parsed baseTokenNameModal:`, baseTokenNameModal); // See the result of parsing
         // --- END MODIFICATION FOR BASE TOKEN NAME ---
 
@@ -293,7 +300,7 @@ function setupModalEventListeners() {
     document.getElementById(CANCEL_BTN_ID)?.addEventListener("click", closeModal);
 
     const bulkAmountInput = document.getElementById(BULK_AMOUNT_INPUT_ID);
-    if (bulkAmountInput) { 
+    if (bulkAmountInput) {
         bulkAmountInput.addEventListener('input', () => {
             let amount = parseInt(bulkAmountInput.value, 10);
             if (isNaN(amount)) amount = 1; // Default to 1 if input is not a number
@@ -340,13 +347,13 @@ async function calculateDynamicMinSwapOutput(taraAmountForSwap, provider) {
         // Expected JANS = (taraAmountForSwap / 10^TARA_DECIMALS) * jansPerTaraRateNum
         const taraAmountFormatted = ethersInstance.formatUnits(taraAmountForSwap, NATIVE_TARA_DECIMALS);
         const expectedJansNum = parseFloat(taraAmountFormatted) * jansPerTaraRateNum;
-        
+
         // Convert expected JANS (numeric) back to BigInt in JANS Wei
         const expectedJansWei = ethersInstance.parseUnits(expectedJansNum.toFixed(JANS_DECIMALS), JANS_DECIMALS);
 
         // Apply slippage
         const minJansOutput = (expectedJansWei * (10000n - DEFAULT_SLIPPAGE_BPS_TICKET_PURCHASE)) / 10000n;
-        
+
         return minJansOutput > 0n ? minJansOutput : MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX;
     } catch (error) {
         console.error("Modal: Error calculating min swap output:", error);
@@ -380,13 +387,13 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
         gameContractWithSigner = walletInstances.gameContractWithSigner;
 
         const totalNativeTaraToSend = ticketPriceAtOpenNativeWei * BigInt(numberOfTickets);
-        
+
         // Calculate the portion of TARA that will be swapped (79.4% as per contract logic)
         // FEE_MAINTENANCE_NATIVE_TARA_BPS = 10; TARA_FOR_LP_SIDE_ACCUMULATION_BPS = 1950; TARA_FOR_LP_FORMER_REWARD_ACCUMULATION_BPS = 100;
         // Total TARA BPS not swapped = 10 + 1950 + 100 = 2060 BPS
         // TARA BPS for swap = 10000 - 2060 = 7940 BPS
         const taraEffectivelyForSwap = (totalNativeTaraToSend * 7940n) / 10000n;
-        
+
         let minSwapOutput = 0n;
         if (taraEffectivelyForSwap > 0n) {
             updateModalStatus("Calculating swap parameters...", "info");
@@ -402,11 +409,11 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
 
 
         const deadline = Math.floor(Date.now() / 1000) + (DEADLINE_MINUTES_MODAL * 60);
-        
+
         updateModalStatus("Awaiting transaction confirmation in wallet...", "info");
         let tx;
         // Simplified gas estimation for frontend, rely on wallet or a fixed high limit for now
-        const txOverrides = { 
+        const txOverrides = {
             value: totalNativeTaraToSend,
             gasLimit: isRandomBulk && numberOfTickets > 1 ? 1500000n + BigInt(numberOfTickets * 300000) : 1500000n // Generous gas
         };
@@ -424,7 +431,7 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
         if (receipt && receipt.status === 1) {
             updateModalStatus(`Success! ${numberOfTickets} Ticket(s) purchased.`, "success");
             showGlobalMessage(`Ticket purchase successful! Tx: ${shortenAddress(tx.hash)}`, "success", 7000, "global-message-main"); // Use main page global message
-            
+
             // Trigger a refresh of data on the main page (if a callback or event system is set up)
             // For now, user will see updates on next periodic refresh of main_page_logic.js
             if (window.triggerMainPageRefresh) window.triggerMainPageRefresh();
@@ -441,7 +448,7 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
         if (error.reason) errorMsg = error.reason;
         else if (error.data && error.data.message) errorMsg = error.data.message; // Some RPC errors
         else if (error.code === 4001) errorMsg = 'Transaction rejected by user.';
-        
+
         updateModalStatus(`Failed: ${errorMsg.substring(0, 150)}`, "error");
         // Do not close modal on error, let user see the message
     }
@@ -454,5 +461,5 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
 // import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 // ...
 // buyButton.addEventListener('click', () => {
-//    openTicketPurchaseModal(localSnapshotTokens, localTicketPriceNativeWei);
+//     openTicketPurchaseModal(localSnapshotTokens, localTicketPriceNativeWei);
 // });
