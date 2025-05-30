@@ -104,15 +104,14 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
                 </tbody>
         </table>
 
-        {/* --- BUTTONS AND ACTIONS AREA --- */}
+        
         <div style="display: flex; flex-direction: column; gap: 15px;"> {/* Main container for action sections */}
 
-            {/* Single Submit Section */}
             <div style="text-align:center;">
                 <button id="${SINGLE_SUBMIT_BTN_ID}" class="buy-button" style="padding: 10px 20px; font-size: 1rem; min-width: 200px;">Submit Predictions</button>
             </div>
 
-            {/* Bulk Submit Section - More Horizontal */}
+            
             <div style="border-top: 1px dashed #888; padding-top: 15px;">
                 <p style="text-align:center; margin-top:0; margin-bottom: 10px; font-size: 0.85rem; color: #333;">Or, buy with random predictions:</p>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
