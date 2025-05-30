@@ -1,29 +1,76 @@
-/* Burning page */
+/* === Burning Page Styles (Base/Desktop) === */
 .burning-page {
     background-color: #000;
     color: #fff;
-  }
-  
-  .burning-content {
+    /* Añadimos un poco de padding para que el contenido no toque los bordes, especialmente en móvil */
+    padding: 20px; 
+    /* Si .burning-page es un contenedor que debe ocupar al menos la altura de la ventana,
+       puedes añadir min-height: 100vh; pero si está dentro de tu estructura con header/footer,
+       quizás el padding sea suficiente o se ajuste con el flex de body. */
+}
+
+.burning-content {
     text-align: center;
-    margin-top: 40px;
-  }
-  
-  .burning-title {
-    font-size: 2.5rem;
+    margin-top: 40px; /* Este se reducirá en móvil */
+}
+
+.burning-title {
+    font-size: 2.5rem; /* Se reducirá en móvil */
     font-weight: bold;
     margin-bottom: 20px;
-  }
-  
-  .burning-rate {
-    font-size: 2rem;
+}
+
+.burning-rate {
+    font-size: 2rem; /* Se reducirá en móvil */
     margin-bottom: 30px;
     font-weight: bold;
-  }
-  
-  .burning-img {
-    width: 400px;
-    height: auto;
+}
+
+.burning-img {
+    width: 400px; /* Ancho máximo para escritorio */
+    max-width: 100%; /* Asegura que no se desborde en pantallas más pequeñas que 400px incluso en desktop */
+    height: auto;   /* Mantiene la proporción */
     margin-top: 20px;
-  }
-  
+    display: block; /* Para poder centrar con margin auto si es necesario */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* === Ajustes para Móviles (ej. 600px de ancho o menos) === */
+@media (max-width: 600px) {
+    .burning-page {
+        padding: 15px; /* Un poco menos de padding en los lados */
+    }
+
+    .burning-content {
+        margin-top: 20px; /* Reducir el margen superior */
+    }
+
+    .burning-title {
+        font-size: 2rem;   /* Reducir tamaño de fuente del título */
+        margin-bottom: 15px;
+    }
+
+    .burning-rate {
+        font-size: 1.5rem; /* Reducir tamaño de fuente del rate */
+        margin-bottom: 25px;
+    }
+
+    .burning-img {
+        width: 90%;     /* Hacer que la imagen ocupe un porcentaje del ancho disponible */
+        max-width: 300px; /* Poner un límite máximo por si 90% es aún muy grande en algunos móviles anchos */
+        margin-top: 15px;
+    }
+}
+
+/* Opcional: Ajustes para pantallas muy pequeñas (ej. 400px o menos) */
+@media (max-width: 400px) {
+    .burning-title {
+        font-size: 1.75rem; 
+    }
+
+    .burning-rate {
+        font-size: 1.3rem;
+    }
+    /* .burning-img podría no necesitar más cambios si width: 90% ya lo hace suficientemente pequeño */
+}
