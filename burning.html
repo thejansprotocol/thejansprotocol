@@ -1,141 +1,205 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JANS Burn Status</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Shrikhand&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
-    <script type="module" src="./js/burn_logic.js"></script>
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 90vh;
-        }
+<style>
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* justify-content: center; */ /* Adjusted for potentially taller content on mobile */
+        min-height: 90vh;
+        box-sizing: border-box; /* Added for better padding behavior */
+    }
 
-        .image-text-container {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 30px;
-            max-width: 90%;
+    .image-text-container {
+        position: relative;
+        display: inline-block; /* Or block for better centering control */
+        margin-bottom: 30px;
+        max-width: 100%; /* Allow it to use full available width */
+        width: auto;     /* Let content dictate width up to max-width */
+    }
+
+    .burning-img {
+        display: block;
+        max-width: 300px; /* Keep this max for desktop */
+        width: 80%;       /* Make it responsive for smaller views */
+        /* max-width: 250px; /* Consider reducing further for very small mobiles */
+        height: auto;
+        margin: 0 auto 20px auto; /* Add some bottom margin if text flows below */
+    }
+
+    .burn-text-overlay {
+        position: relative; /* Changed from absolute for mobile flow */
+        top: auto;          /* Reset */
+        left: auto;         /* Reset */
+        right: auto;        /* Reset */
+        width: 100%;        /* Take full width of its container */
+        max-width: 500px;   /* Optional: constrain line length for readability */
+        margin: 0 auto;     /* Center if max-width is used */
+        color: #f0f0f0;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 5px;
+        font-size: 1em;    /* Adjusted for mobile */
+        line-height: 1.4;
+        text-align: center;
+        /* background-color: rgba(20, 20, 20, 0.5); /* Optional: slight bg for readability if it overlaps differently */
+    }
+
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap; /* Changed to wrap for mobile */
+        justify-content: center; /* Center wrapped items */
+        gap: 15px; /* Increased gap for wrapped items */
+        max-width: 1200px; /* Stays for desktop */
+        width: 100%;
+        margin: 20px auto; /* Reset negative margin for mobile */
+        padding: 15px 0;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+        /* overflow-x: auto; /* Less needed if wrapping, but can keep as fallback if min-widths are large */
+        z-index: 2;
+        position: relative;
+    }
+
+    .stat-block {
+        flex: 1 1 150px; /* Allow shrinking, grow, with a basis of ~150px */
+        min-width: 140px; /* Ensure readable width even when wrapped */
+        max-width: 200px; /* Prevent blocks from becoming too wide if only 1-2 per row */
+        padding: 10px 5px;
+        text-align: center;
+    }
+
+    .stat-block h4 {
+        font-size: 0.75em; /* Adjusted */
+        color: #bbb;
+        margin-top: 0;
+        margin-bottom: 8px; /* Increased spacing */
+        text-transform: uppercase;
+        font-weight: normal;
+        line-height: 1.2;
+        min-height: 2em; /* Adjusted if needed */
+    }
+
+    .stat-block p {
+        font-size: 1.1em; /* Adjusted */
+        font-weight: bold;
+        margin-top: 0;
+        color: #f0f0f0;
+        word-wrap: break-word;
+    }
+
+    .stat-block p.alfa-slab {
+        font-family: Verdana, Geneva, Tahoma, sans-serif, cursive; /* Original font-family */
+        font-size: 1.4em; /* Adjusted */
+        color: #ffffff;
+        letter-spacing: 1px;
+    }
+
+    /* === Media Queries for Finer Mobile Adjustments === */
+
+    /* For smaller mobile screens (e.g., less than 480px) */
+    @media (max-width: 480px) {
+        body {
+            padding: 15px; /* Reduce body padding */
         }
 
         .burning-img {
-            display: block;
-            max-width: 300px;
-            width: 100%;
-            height: auto;
-            margin: 0 auto;
+            max-width: 200px; /* Smaller image on very small screens */
         }
 
+        .burn-text-overlay {
+            font-size: 0.9em;
+            padding: 8px;
+        }
+
+        .stats-row {
+            gap: 10px;
+            margin-top: 20px; /* Ensure it doesn't overlap too much if body padding is less */
+        }
+
+        .stat-block {
+            flex-basis: 100%; /* Make each stat block take full width, stacking them */
+            min-width: unset;  /* Remove min-width when full width */
+            max-width: 100%; /* Allow full width */
+            padding: 8px 0;
+        }
+        .stat-block:not(:last-child) { /* Add a small bottom border as separator if stacked */
+            border-bottom: 1px dotted #444;
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+
+        .stat-block h4 {
+            font-size: 0.7em;
+            min-height: auto; /* Remove min-height if stacked */
+        }
+
+        .stat-block p {
+            font-size: 1em;
+        }
+
+        .stat-block p.alfa-slab {
+            font-size: 1.2em;
+        }
+    }
+
+    /* For the original absolute positioning on larger screens if you want to keep it */
+    @media (min-width: 769px) { /* Adjust breakpoint as needed */
+        .image-text-container {
+            margin-bottom: 30px; /* Restore original margin if changed */
+        }
+        .burning-img {
+            max-width: 300px; /* Restore original max-width */
+            width: 100%;      /* Can let it be 100% of its 300px max here */
+            margin: 0 auto;   /* Restore original margin */
+        }
         .burn-text-overlay {
             position: absolute;
             top: -5%;
             left: -155%;
             right: 5%;
-            width: 400%;
-            color: #f0f0f0;
-            padding: 15px;
-            box-sizing: border-box;
-            border-radius: 5px;
+            width: 400%; /* Your original extreme width */
             font-size: 1.2em;
             line-height: 1.5;
-            text-align: center;
+            padding: 15px;
+            /* background-color: transparent; /* Reset if a mobile bg was added */
         }
 
         .stats-row {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: space-around;
-            gap: 10px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 30px auto;
-            padding: 15px 0;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-            overflow-x: auto;
-            margin-top: -70px; /* Lo sube */
-            z-index: 2;         /* Asegura que quede por encima si hace falta */
-            position: relative; /* Necesario para que z-index tenga efecto */
-
+            flex-wrap: nowrap; /* Revert to no-wrap for desktop */
+            justify-content: space-around; /* Original justification */
+            margin-top: -70px; /* Restore negative margin */
+            overflow-x: auto; /* Ensure horizontal scroll for desktop if content exceeds */
+            gap: 10px; /* Original gap */
         }
 
         .stat-block {
-            flex: 1 1 0;
-            min-width: 120px;
-            padding: 10px 5px;
-            text-align: center;
+            flex: 1 1 0;      /* Restore original flex property */
+            min-width: 120px; /* Restore original min-width */
+            max-width: none;  /* Remove max-width constraint if any was added for mobile wrap */
+        }
+         .stat-block:not(:last-child) { /* Remove mobile stacking separator */
+            border-bottom: none;
+            padding-bottom: 10px; /* Original padding */
+            margin-bottom: 0;    /* Original margin */
         }
 
+        /* Restore original font sizes if they were changed specifically for mobile */
         .stat-block h4 {
             font-size: 0.8em;
-            color: #bbb;
-            margin-top: 0;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-weight: normal;
-            line-height: 1.2;
             min-height: 2.4em;
         }
-
         .stat-block p {
             font-size: 1.3em;
-            font-weight: bold;
-            margin-top: 0;
-            color: #f0f0f0;
-            word-wrap: break-word;
         }
-
         .stat-block p.alfa-slab {
-            font-family: Verdana, Geneva, Tahoma, sans-serif, cursive;
             font-size: 1.6em;
-            color: #ffffff;
-            letter-spacing: 1px;
         }
-    </style>
-</head>
-<body>
-    <div class="image-text-container">
-        <img src="./assets/jans_fire.png" alt="Jans in a pyre" class="burning-img" />
-        <p class="burn-text-overlay"> 
-            That's Jans, burning money and smoking some shit.... That's what he does...
-            Every time that 5% of the total Jans supply is burned the Jans Pool distribution is activated and players can claim their LP rewards.
-        </p>
-    </div>
+    }
 
-    <div class="stats-row">
-        <div class="stat-block">
-            <h4>Total JANS Supply</h4>
-            <p id="total-supply" class="alfa-slab">Loading...</p>
-        </div>
-        <div class="stat-block">
-            <h4>Total JANS Burned (In-Game)</h4>
-            <p id="total-burned" class="alfa-slab">Loading...</p>
-        </div>
-        <div class="stat-block">
-            <h4>% of Original Burned</h4>
-            <p id="percent-burned" class="alfa-slab">Loading...</p>
-        </div>
-        <div class="stat-block">
-            <h4>Current Burning Cycle</h4>
-            <p id="burning-cycle" class="alfa-slab">Loading...</p>
-        </div>
-        <div class="stat-block">
-            <h4>24h Burning ratio (Aprox)</h4> 
-            <p id="burn-ratio-24hs" class="alfa-slab">N/A</p>
-        </div>
-    </div>
-</body>
-</html>
+</style>
