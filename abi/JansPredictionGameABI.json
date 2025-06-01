@@ -77,6 +77,16 @@
   },
   {
     "inputs": [],
+    "name": "JansGame__CannotAbortEvaluatedRound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__CannotAbortNonExistentOrNotStartedRound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "JansGame__ChecksumMismatch",
     "type": "error"
   },
@@ -223,6 +233,11 @@
   {
     "inputs": [],
     "name": "JansGame__ResultsAlreadyEvaluated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__RoundAlreadyAborted",
     "type": "error"
   },
   {
@@ -640,6 +655,31 @@
         "type": "uint256"
       },
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "abortedBy",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "RoundAborted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "roundId",
+        "type": "uint256"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "startTime",
@@ -935,6 +975,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_roundId",
+        "type": "uint256"
+      }
+    ],
+    "name": "abortRound",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1556,6 +1609,11 @@
             "internalType": "address[]",
             "name": "winningPlayers",
             "type": "address[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "aborted",
+            "type": "bool"
           }
         ],
         "internalType": "struct JansGame_V8_UsdPricing_Refactored.RoundData",
@@ -1836,6 +1894,11 @@
         "internalType": "uint8",
         "name": "highestScoreAchieved",
         "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "aborted",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

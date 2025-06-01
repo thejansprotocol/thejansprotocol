@@ -3,36 +3,34 @@
 
 import {
     // Ethers Core & Setup from wallet.js
-    ethersInstance, // Assuming initializeEthersCore in wallet.js sets this from window.ethers
+    ethersInstance, 
     connectWalletAndGetSignerInstances,
-    getReadOnlyProvider, // For calculating minSwapOutput if needed by DEX interaction
+    getReadOnlyProvider, 
 
     // Constants from wallet.js
     NATIVE_TARA_DECIMALS,
     JANS_DECIMALS,
-    JANS_GAME_CONTRACT_ADDRESS, // Not directly used for contract instance creation here, but good to have for context
+    JANS_GAME_CONTRACT_ADDRESS, 
     DEX_ROUTER_ADDRESS,
     TARA_WETH_ADDRESS,
     JANS_TOKEN_ADDRESS,
     fetchJsonFile,
     formatPriceWithZeroCount,
-    // DEFAULT_SLIPPAGE_BPS, // Let's define slippage locally or pass it
 
     // Helper Utilities from wallet.js
     shortenAddress,
-    showGlobalMessage, // For global messages outside the modal if needed
-    // Consider a local status update function for the modal itself
+    showGlobalMessage, 
 
-    // Data Fetching (if needed directly, though better to pass data in)
+    // Data Fetching
     getJansPerTaraFromDEX
 } from './wallet.js'; // Adjust path if necessary
 
 // --- Constants for this module ---
 const MAX_BULK_TICKETS_MODAL = 3;
-const POOLS_TO_SELECT_MODAL = 10; // Should match contract expectation
+const POOLS_TO_SELECT_MODAL = 10; 
 const DEADLINE_MINUTES_MODAL = 20;
-const MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX = 1n; // Minimum JANS expected if any swap happens for one ticket
-const DEFAULT_SLIPPAGE_BPS_TICKET_PURCHASE = 50n; // 0.5% slippage for calculating minAmountOut for JANS swap
+const MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX = 1n; 
+const DEFAULT_SLIPPAGE_BPS_TICKET_PURCHASE = 50n; 
 
 const MODAL_ID = "jans-ticket-purchase-modal";
 const MODAL_CONTENT_ID = "jans-ticket-modal-content";
@@ -42,17 +40,13 @@ const SINGLE_SUBMIT_BTN_ID = "modal-submit-single-ticket-btn";
 const BULK_SUBMIT_BTN_ID = "modal-submit-bulk-ticket-btn";
 const BULK_AMOUNT_INPUT_ID = "modal-bulk-amount-input";
 const CANCEL_BTN_ID = "modal-cancel-ticket-btn";
+const MODAL_STYLES_ID = "jans-ticket-modal-dynamic-styles";
 
 // --- Module State ---
-let currentSnapshotTokensInModal = []; // Stores { ...tokenData, prediction: boolean | undefined }
+let currentSnapshotTokensInModal = []; 
 let currentTicketPriceAtModalOpenNativeWei = 0n;
 let isModalOpen = false;
 
-/**
- * Creates and displays the ticket purchase modal.
- * @param {Array<object>} snapshotTokens - Array of token data from latest_snapshot.json.
- * @param {bigint} ticketPriceNativeWei - Current ticket price in native TARA Wei.
- */
 export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPriceAtOpen) {
     if (isModalOpen) {
         console.warn("Ticket modal is already open.");
@@ -76,6 +70,8 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
 
     const existingModal = document.getElementById(MODAL_ID);
     if (existingModal) existingModal.remove();
+    const existingModalStyles = document.getElementById(MODAL_STYLES_ID);
+    if (existingModalStyles) existingModalStyles.remove();
 
     const modalOverlay = document.createElement('div');
     modalOverlay.id = MODAL_ID;
@@ -95,23 +91,19 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 0.8rem;">
             <thead>
                 <tr>
-                    <th style="padding: 6px 4px; text-align: left; border-bottom: 1px solid #ccc;"></th> <th style="padding: 6px 4px; text-align: left; border-bottom: 1px solid #ccc;">Token</th>
-                    <th style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #ccc;">Price (USD)</th>
-                    <th style="padding: 6px 4px; text-align: center; border-bottom: 1px solid #ccc;">Prediction</th>
+                    <th class="col-token" style="padding: 6px 8px 6px 8px; text-align: left; border-bottom: 1px solid #ccc;">Token</th>
+                    <th class="col-price" style="padding: 6px 4px; text-align: right; border-bottom: 1px solid #ccc;">Price (USD)</th>
+                    <th class="col-prediction" style="padding: 6px 8px 6px 4px; text-align: right; border-bottom: 1px solid #ccc;">Prediction</th>
                 </tr>
             </thead>
             <tbody id="${PREDICTION_TABLE_BODY_ID}">
-                </tbody>
+            </tbody>
         </table>
-
         
-        <div style="display: flex; flex-direction: column; gap: 15px;"> {/* Main container for action sections */}
-
+        <div style="display: flex; flex-direction: column; gap: 15px;">
             <div style="text-align:center;">
                 <button id="${SINGLE_SUBMIT_BTN_ID}" class="buy-button" style="padding: 10px 20px; font-size: 1rem; min-width: 200px;">Submit Predictions</button>
             </div>
-
-            
             <div style="border-top: 1px dashed #888; padding-top: 15px;">
                 <p style="text-align:center; margin-top:0; margin-bottom: 10px; font-size: 0.85rem; color: #333;">Or, buy with random predictions:</p>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
@@ -127,136 +119,132 @@ export function openTicketPurchaseModal(snapshotTokensFromMain, currentTicketPri
     </div>
     `;
     document.body.appendChild(modalOverlay);
+
+    const styles = `
+        /* Base styles for prediction row cells */
+        #${MODAL_ID} .prediction-row td {
+            vertical-align: middle;
+            border-bottom: 1px solid #ddd; /* Row separator */
+        }
+        #${MODAL_ID} .prediction-row:last-child td {
+            border-bottom: none; /* No border for the last row */
+        }
+
+        /* DESKTOP: Column widths for horizontal layout & button spacing */
+        #${MODAL_ID} .token-name-cell {
+            width: 45%; /* Adjust as needed, allows space for others */
+            text-align: left; font-size: 0.8rem;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 6px 4px 6px 8px; /* More left padding */
+        }
+        #${MODAL_ID} .token-price-cell {
+            width: 25%; /* Adjust as needed */
+            text-align: right; font-size: 0.8rem; padding: 6px 4px;
+            white-space: nowrap; /* Prevent price from wrapping */
+        }
+        #${MODAL_ID} .token-prediction-cell {
+            width: 30%; /* Ample space for buttons, aligned right */
+            text-align: right; /* Aligns the button container to the right */
+            padding: 6px 8px 6px 4px; /* More right padding for visual space */
+        }
+        #${MODAL_ID} .prediction-btn-container {
+            display: inline-flex; /* Allows alignment within the parent td */
+            gap: 5px;
+        }
+
+        /* MOBILE: Adjustments for smaller screens (e.g., <= 500px) */
+        @media (max-width: 500px) {
+            #${MODAL_ID} table thead {
+                display: none; /* Hide table headers to save space */
+            }
+            /* Reset widths to allow natural table flow, adjust padding & font */
+            #${MODAL_ID} .token-name-cell,
+            #${MODAL_ID} .token-price-cell,
+            #${MODAL_ID} .token-prediction-cell {
+                width: auto; /* Let table auto-size columns */
+                padding: 4px 3px; 
+                font-size: 0.75rem;
+            }
+            #${MODAL_ID} .token-name-cell {
+                /* max-width can still be useful if names are very long */
+                max-width: 100px; /* Or adjust based on testing */
+                text-align: left; /* Ensure alignment */
+            }
+            #${MODAL_ID} .token-price-cell {
+                text-align: right; /* Ensure alignment */
+            }
+            #${MODAL_ID} .token-prediction-cell {
+                text-align: center; /* Center buttons if the cell has space */
+            }
+            #${MODAL_ID} .prediction-btn-container {
+                display: flex; /* Use flex for better centering if cell is wide enough */
+                justify-content: center; 
+                gap: 3px;
+            }
+            #${MODAL_ID} .prediction-btn {
+                padding: 3px 6px !important;
+                font-size: 0.75rem !important;
+            }
+        }
+    `;
+    const styleSheet = document.createElement("style");
+    styleSheet.id = MODAL_STYLES_ID;
+    styleSheet.type = "text/css";
+    styleSheet.innerText = styles;
+    modalOverlay.querySelector(`#${MODAL_CONTENT_ID}`).appendChild(styleSheet);
+
     isModalOpen = true;
     fillPredictionTableInModal();
     setupModalEventListeners();
 }
 
-// Make sure formatPriceWithZeroCount is defined in this file or imported, e.g.:
-// import { formatPriceWithZeroCount } from './wallet.js';
-// Or, if defined locally:
-/*
-function formatPriceWithZeroCount(priceStr, opts = {}) {
-    const {
-        zeroCountThreshold = 4,
-        significantDigits = 4,
-        defaultDisplayDecimals = 6,
-        minNormalDecimals = 2
-    } = opts;
-
-    if (priceStr === undefined || priceStr === null || String(priceStr).trim() === '') {
-        return 'N/A';
-    }
-    const num = parseFloat(String(priceStr).replace(/,/g, ''));
-    if (isNaN(num)) { return 'Invalid'; }
-    if (num === 0) { return num.toFixed(minNormalDecimals); }
-
-    const sign = num < 0 ? "-" : "";
-    const absNum = Math.abs(num);
-
-    if (absNum > 0 && absNum < 1) {
-        const fullPrecisionStr = absNum.toFixed(20);
-        const fractionalPart = fullPrecisionStr.split('.')[1] || '';
-        let leadingZeros = 0;
-        for (let i = 0; i < fractionalPart.length; i++) {
-            if (fractionalPart[i] === '0') { leadingZeros++; } else { break; }
-        }
-        if (leadingZeros > zeroCountThreshold) {
-            const significantPart = fractionalPart.substring(leadingZeros);
-            const displaySignificant = significantPart.substring(0, significantDigits);
-            return `${sign}0.<span class="zero-count-superscript">(${leadingZeros})</span>${displaySignificant}`;
-        }
-    }
-    let fixedStr = absNum.toFixed(Math.max(minNormalDecimals, defaultDisplayDecimals));
-    if (fixedStr.includes('.')) {
-        let [integerPart, decimalP] = fixedStr.split('.');
-        if (absNum % 1 === 0) { return `${sign}${integerPart}.${'0'.repeat(minNormalDecimals)}`; }
-        decimalP = decimalP.replace(/0+$/, '');
-        if (decimalP.length < minNormalDecimals) {
-            decimalP = (decimalP + "0".repeat(minNormalDecimals)).substring(0, minNormalDecimals);
-        }
-        decimalP = decimalP.substring(0, defaultDisplayDecimals);
-        if (decimalP === "") return `${sign}${integerPart}.${"0".repeat(minNormalDecimals)}`;
-        return `${sign}${integerPart}.${decimalP}`;
-    }
-    return `${sign}${fixedStr}.${"0".repeat(minNormalDecimals)}`;
-}
-*/
-
-// In ticket_modal_logic.js
-
 function fillPredictionTableInModal() {
     const tbody = document.getElementById(PREDICTION_TABLE_BODY_ID);
     if (!tbody) {
-        console.error("Modal prediction table body (PREDICTION_TABLE_BODY_ID) not found.");
+        console.error("Modal prediction table body not found.");
         return;
     }
-    tbody.innerHTML = ""; // Clear previous rows
+    tbody.innerHTML = ""; 
 
     if (!currentSnapshotTokensInModal || currentSnapshotTokensInModal.length === 0) {
-        console.warn("Modal: No snapshot tokens available to display.");
-        // Optionally, display a message in the table:
-        // tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No token data available.</td></tr>';
+        console.warn("Modal: No snapshot tokens to display.");
         return;
     }
 
     currentSnapshotTokensInModal.forEach((token, index) => {
         const row = document.createElement("tr");
-        row.style.borderBottom = (index === currentSnapshotTokensInModal.length - 1) ? "none" : "1px solid #ddd";
+        row.className = "prediction-row";
 
-        // --- DEBUGGING START ---
-        // console.log("Modal Table - Full token object:", JSON.parse(JSON.stringify(token))); // For deep copy inspection
-        console.log(`Modal Table (Token ${index}) - token.name type:`, typeof token.name);
-        console.log(`Modal Table (Token ${index}) - token.name value:`, token.name);
-        // --- DEBUGGING END ---
-
-        // MODIFICATION FOR BASE TOKEN NAME
-        let baseTokenNameModal = 'N/A'; // Default value
+        let baseTokenNameModal = 'N/A'; 
         if (token && typeof token.name === 'string') {
-            baseTokenNameModal = token.name; // Start with the full name
+            baseTokenNameModal = token.name; 
             if (baseTokenNameModal.includes('/')) {
                 baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
             }
         } else if (token && token.name !== undefined && token.name !== null) {
-            // If token.name exists but isn't a string, try to convert it.
-            console.warn(`Modal Table (Token ${index}) - token.name is not a string:`, token.name, "Converting to string.");
             baseTokenNameModal = String(token.name);
-            // Optionally, try to split again if it might be like "TOKENA / TOKENB" after conversion
             if (baseTokenNameModal.includes('/')) {
                 baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
             }
         }
 
-        console.log(`Modal Table (Token ${index}) - Parsed baseTokenNameModal:`, baseTokenNameModal); // See the result of parsing
-        // --- END MODIFICATION FOR BASE TOKEN NAME ---
+        const displayModalPrice = formatPriceWithZeroCount(token.base_token_price_usd, {
+            zeroCountThreshold: 4, significantDigits: 4, defaultDisplayDecimals: 6, minNormalDecimals: 2
+        });
 
-
-        const priceDisplayOptions = {
-            zeroCountThreshold: 4,
-            significantDigits: 4,
-            defaultDisplayDecimals: 6,
-            minNormalDecimals: 2
-        };
-        const displayModalPrice = formatPriceWithZeroCount(token.base_token_price_usd, priceDisplayOptions);
-
-        // Prepare logo cell content (assuming 'token.base_token_logo_url' might come from your snapshot later)
-        const logoUrl = token.base_token_logo_url;
-        const logoCellHtml = logoUrl
-            ? `<img src="${logoUrl}" alt="${baseTokenNameModal} logo" style="width: 24px; height: 24px; vertical-align: middle;">`
-            : `<span style="display:inline-block; width:24px; height:24px; text-align:center; line-height:24px; font-size:0.7em; border:1px solid #ccc; border-radius:50%; background-color: #eee;">?</span>`; // Placeholder
-
+        // Logo cell removed. Cells now use classes for styling.
         row.innerHTML = `
-            <td style="padding: 6px 4px; text-align: left; vertical-align: middle;">${logoCellHtml}</td>
-            <td style="padding: 6px 4px; text-align: left; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; vertical-align: middle;" title="${token.name || 'N/A'}">${baseTokenNameModal}</td>
-            <td style="padding: 6px 4px; text-align: right; font-size: 0.8rem; vertical-align: middle;">${displayModalPrice}</td>
-            <td style="padding: 6px 4px; text-align: center; vertical-align: middle;">
-                <button type="button" class="prediction-btn up" data-index="${index}" data-value="true" style="background-color: #2ecc71; border: 1px solid #27ae60; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▲ Up</button>
-                <button type="button" class="prediction-btn down" data-index="${index}" data-value="false" style="background-color: #e74c3c; border: 1px solid #c0392b; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▼ Down</button>
+            <td class="token-name-cell" title="${token.name || 'N/A'}">${baseTokenNameModal}</td>
+            <td class="token-price-cell">${displayModalPrice}</td>
+            <td class="token-prediction-cell">
+                <div class="prediction-btn-container">
+                    <button type="button" class="prediction-btn up" data-index="${index}" data-value="true" style="background-color: #2ecc71; border: 1px solid #27ae60; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▲ Up</button>
+                    <button type="button" class="prediction-btn down" data-index="${index}" data-value="false" style="background-color: #e74c3c; border: 1px solid #c0392b; color: white; padding: 3px 7px; margin: 2px; border-radius: 3px; cursor:pointer; font-size: 0.8rem; opacity: 0.7;">▼ Down</button>
+                </div>
             </td>`;
         tbody.appendChild(row);
     });
 
-    // Re-attach event listeners for prediction buttons
     tbody.querySelectorAll(".prediction-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const clickedButton = e.currentTarget;
@@ -269,16 +257,17 @@ function fillPredictionTableInModal() {
             }
             currentSnapshotTokensInModal[index].prediction = predictionValue;
 
-            // Visually update buttons in the same row
-            const rowButtons = clickedButton.parentElement.querySelectorAll('.prediction-btn');
-            rowButtons.forEach(b => {
-                b.style.fontWeight = 'normal';
-                b.style.opacity = '0.7';
-                b.style.boxShadow = 'none';
-            });
+            const buttonContainer = clickedButton.closest('.prediction-btn-container');
+            if (buttonContainer) {
+                buttonContainer.querySelectorAll('.prediction-btn').forEach(b => {
+                    b.style.fontWeight = 'normal';
+                    b.style.opacity = '0.7';
+                    b.style.boxShadow = 'none';
+                });
+            }
             clickedButton.style.fontWeight = 'bold';
             clickedButton.style.opacity = '1';
-            clickedButton.style.boxShadow = '0 0 5px yellow'; // Or some other highlight
+            clickedButton.style.boxShadow = '0 0 5px yellow'; 
         });
     });
 }
@@ -302,17 +291,17 @@ function setupModalEventListeners() {
     if (bulkAmountInput) {
         bulkAmountInput.addEventListener('input', () => {
             let amount = parseInt(bulkAmountInput.value, 10);
-            if (isNaN(amount)) amount = 1; // Default to 1 if input is not a number
+            if (isNaN(amount)) amount = 1; 
             if (amount < 1) amount = 1;
             if (amount > MAX_BULK_TICKETS_MODAL) amount = MAX_BULK_TICKETS_MODAL;
-            bulkAmountInput.value = amount; // Correct the input field value
+            bulkAmountInput.value = amount; 
         });
     }
 }
 
 function closeModal() {
     const modal = document.getElementById(MODAL_ID);
-    if (modal) modal.remove();
+    if (modal) modal.remove(); 
     isModalOpen = false;
     currentSnapshotTokensInModal = [];
     currentTicketPriceAtModalOpenNativeWei = 0n;
@@ -322,44 +311,29 @@ function updateModalStatus(message, type = "info") {
     const statusDiv = document.getElementById(MODAL_STATUS_ID);
     if (statusDiv) {
         statusDiv.textContent = message;
-        statusDiv.className = `message-${type}`; // Assumes you have CSS for .message-info, .message-error, .message-success
+        statusDiv.className = `message-${type}`; 
         statusDiv.style.color = type === "error" ? "red" : (type === "success" ? "green" : (type === "warning" ? "orange" : "black"));
     }
 }
 
-/**
- * Calculates minimum JANS output for swap applying slippage.
- * @param {bigint} taraAmountForSwap - Amount of TARA (in Wei) to be swapped for JANS.
- * @param {ethers.Provider} provider - Ethers provider for DEX query.
- * @returns {Promise<bigint>} Minimum JANS amount (in Wei).
- */
 async function calculateDynamicMinSwapOutput(taraAmountForSwap, provider) {
     if (taraAmountForSwap <= 0n) return 0n;
     try {
-        const jansPerTaraRateNum = await getJansPerTaraFromDEX(provider); // This returns a number
+        const jansPerTaraRateNum = await getJansPerTaraFromDEX(provider); 
         if (jansPerTaraRateNum === null || jansPerTaraRateNum <= 0) {
-            console.warn("Modal: JANS/TARA rate is 0 or unavailable for min output calculation. Using fixed minimum.");
-            return MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX; // Fallback to a very small non-zero value
+            console.warn("Modal: JANS/TARA rate is 0 or unavailable. Using fixed minimum.");
+            return MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX; 
         }
-
-        // Convert numeric rate to a high-precision string for BigInt math
-        // Expected JANS = (taraAmountForSwap / 10^TARA_DECIMALS) * jansPerTaraRateNum
         const taraAmountFormatted = ethersInstance.formatUnits(taraAmountForSwap, NATIVE_TARA_DECIMALS);
         const expectedJansNum = parseFloat(taraAmountFormatted) * jansPerTaraRateNum;
-
-        // Convert expected JANS (numeric) back to BigInt in JANS Wei
         const expectedJansWei = ethersInstance.parseUnits(expectedJansNum.toFixed(JANS_DECIMALS), JANS_DECIMALS);
-
-        // Apply slippage
         const minJansOutput = (expectedJansWei * (10000n - DEFAULT_SLIPPAGE_BPS_TICKET_PURCHASE)) / 10000n;
-
         return minJansOutput > 0n ? minJansOutput : MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX;
     } catch (error) {
         console.error("Modal: Error calculating min swap output:", error);
-        return MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX; // Fallback on error
+        return MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX; 
     }
 }
-
 
 async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAtOpenNativeWei) {
     updateModalStatus("Preparing transaction...", "info");
@@ -369,73 +343,58 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
         predictionsForContract = Array.from({ length: numberOfTickets }, () =>
             Array.from({ length: POOLS_TO_SELECT_MODAL }, () => Math.random() < 0.5)
         );
-    } else { // Single ticket
+    } else { 
         const singlePredictionsArray = currentSnapshotTokensInModal.map(t => t.prediction);
         if (singlePredictionsArray.some(p => p === undefined) || singlePredictionsArray.length !== POOLS_TO_SELECT_MODAL) {
             updateModalStatus("Please make a prediction (Up/Down) for all tokens.", "error");
             return;
         }
-        predictionsForContract = singlePredictionsArray.map(p => !!p); // Ensure boolean
+        predictionsForContract = singlePredictionsArray.map(p => !!p); 
     }
 
     let signer, gameContractWithSigner;
     try {
         updateModalStatus("Connecting wallet...", "info");
-        const walletInstances = await connectWalletAndGetSignerInstances(); // From wallet.js
+        const walletInstances = await connectWalletAndGetSignerInstances(); 
         signer = walletInstances.signer;
         gameContractWithSigner = walletInstances.gameContractWithSigner;
 
         const totalNativeTaraToSend = ticketPriceAtOpenNativeWei * BigInt(numberOfTickets);
-
-        // Calculate the portion of TARA that will be swapped (79.4% as per contract logic)
-        // FEE_MAINTENANCE_NATIVE_TARA_BPS = 10; TARA_FOR_LP_SIDE_ACCUMULATION_BPS = 1950; TARA_FOR_LP_FORMER_REWARD_ACCUMULATION_BPS = 100;
-        // Total TARA BPS not swapped = 10 + 1950 + 100 = 2060 BPS
-        // TARA BPS for swap = 10000 - 2060 = 7940 BPS
         const taraEffectivelyForSwap = (totalNativeTaraToSend * 7940n) / 10000n;
 
         let minSwapOutput = 0n;
         if (taraEffectivelyForSwap > 0n) {
             updateModalStatus("Calculating swap parameters...", "info");
-            const roProvider = getReadOnlyProvider(); // Get read-only provider for DEX query
+            const roProvider = getReadOnlyProvider(); 
             minSwapOutput = await calculateDynamicMinSwapOutput(taraEffectivelyForSwap, roProvider);
         } else {
-            minSwapOutput = 0n; // No TARA being swapped
+            minSwapOutput = 0n; 
         }
-        // Ensure minSwapOutput is at least MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX if any swap is to occur
         if (taraEffectivelyForSwap > 0n && minSwapOutput < MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX) {
             minSwapOutput = MIN_SWAP_OUTPUT_FOR_SINGLE_TICKET_TX;
         }
 
-
         const deadline = Math.floor(Date.now() / 1000) + (DEADLINE_MINUTES_MODAL * 60);
-
         updateModalStatus("Awaiting transaction confirmation in wallet...", "info");
         let tx;
-        // Simplified gas estimation for frontend, rely on wallet or a fixed high limit for now
         const txOverrides = {
             value: totalNativeTaraToSend,
-            gasLimit: isRandomBulk && numberOfTickets > 1 ? 1500000n + BigInt(numberOfTickets * 300000) : 1500000n // Generous gas
+            gasLimit: isRandomBulk && numberOfTickets > 1 ? 1500000n + BigInt(numberOfTickets * 300000) : 1500000n // Note: 1.5M base, bulk might need tuning
         };
 
-
-        if (isRandomBulk && numberOfTickets > 0) { // For buyMultipleTickets
+        if (isRandomBulk && numberOfTickets > 0) { 
             tx = await gameContractWithSigner.buyMultipleTickets(predictionsForContract, minSwapOutput, deadline, txOverrides);
-        } else { // For buyTicket (single)
+        } else { 
             tx = await gameContractWithSigner.buyTicket(predictionsForContract, minSwapOutput, deadline, txOverrides);
         }
 
         updateModalStatus(`Transaction sent (${shortenAddress(tx.hash, 6)}). Waiting for confirmation...`, "info");
-        const receipt = await tx.wait(1); // Wait for 1 confirmation
+        const receipt = await tx.wait(1); 
 
         if (receipt && receipt.status === 1) {
             updateModalStatus(`Success! ${numberOfTickets} Ticket(s) purchased.`, "success");
-            showGlobalMessage(`Ticket purchase successful! Tx: ${shortenAddress(tx.hash)}`, "success", 7000, "global-message-main"); // Use main page global message
-
-            // Trigger a refresh of data on the main page (if a callback or event system is set up)
-            // For now, user will see updates on next periodic refresh of main_page_logic.js
+            showGlobalMessage(`Ticket purchase successful! Tx: ${shortenAddress(tx.hash)}`, "success", 7000, "global-message-main"); 
             if (window.triggerMainPageRefresh) window.triggerMainPageRefresh();
-
-
             setTimeout(closeModal, 2500);
         } else {
             throw new Error(`Transaction failed on-chain. Status: ${receipt ? receipt.status : 'unknown'}. Hash: ${tx.hash}`);
@@ -445,20 +404,8 @@ async function handleSubmitPurchase(numberOfTickets, isRandomBulk, ticketPriceAt
         console.error(`Ticket Purchase Error (${isRandomBulk ? 'Bulk' : 'Single'}):`, error);
         let errorMsg = error.message || 'Unknown error during ticket purchase.';
         if (error.reason) errorMsg = error.reason;
-        else if (error.data && error.data.message) errorMsg = error.data.message; // Some RPC errors
+        else if (error.data && error.data.message) errorMsg = error.data.message; 
         else if (error.code === 4001) errorMsg = 'Transaction rejected by user.';
-
         updateModalStatus(`Failed: ${errorMsg.substring(0, 150)}`, "error");
-        // Do not close modal on error, let user see the message
     }
 }
-
-// This script exports openTicketPurchaseModal.
-// The main_page_logic.js will import and call it.
-// Example:
-// In main_page_logic.js:
-// import { openTicketPurchaseModal } from './ticket_modal_logic.js';
-// ...
-// buyButton.addEventListener('click', () => {
-//     openTicketPurchaseModal(localSnapshotTokens, localTicketPriceNativeWei);
-// });
