@@ -137,6 +137,11 @@
   },
   {
     "inputs": [],
+    "name": "JansGame__InvalidRoundResultDurationValue",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "JansGame__InvalidTicketId",
     "type": "error"
   },
@@ -207,16 +212,6 @@
   },
   {
     "inputs": [],
-    "name": "JansGame__OptimalAmountIsZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "JansGame__PairQueryFailed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "JansGame__PreviousRoundNotEvaluated",
     "type": "error"
   },
@@ -232,22 +227,7 @@
   },
   {
     "inputs": [],
-    "name": "JansGame__RoundAbortedCannotEvaluate",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "JansGame__RoundAlreadyAborted",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "JansGame__RoundDurationNotElapsed",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "JansGame__RoundNotActiveOrNotStarted",
     "type": "error"
   },
   {
@@ -396,6 +376,44 @@
       }
     ],
     "name": "EndSnapshotSubmittedByOwner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExternalJansContributionToLPSide",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExternalTaraContributionToLPSide",
     "type": "event"
   },
   {
@@ -620,19 +638,6 @@
         "internalType": "uint256",
         "name": "roundId",
         "type": "uint256"
-      }
-    ],
-    "name": "RoundAborted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "roundId",
-        "type": "uint256"
       },
       {
         "indexed": false,
@@ -654,6 +659,31 @@
       }
     ],
     "name": "RoundOfficiallyStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "oldDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "changedBy",
+        "type": "address"
+      }
+    ],
+    "name": "RoundResultDurationUpdated",
     "type": "event"
   },
   {
@@ -857,7 +887,20 @@
   },
   {
     "inputs": [],
-    "name": "ROUND_RESULT_DURATION_SECONDS",
+    "name": "MAX_ROUND_RESULT_DURATION_SECONDS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "MIN_ROUND_RESULT_DURATION_SECONDS",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1030,6 +1073,37 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_contributorLabel",
+        "type": "address"
+      }
+    ],
+    "name": "contributeJansToLPSide",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contributorLabel",
+        "type": "address"
+      }
+    ],
+    "name": "contributeTaraToLPSide",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "currentLpDistributionId",
     "outputs": [
@@ -1045,6 +1119,19 @@
   {
     "inputs": [],
     "name": "currentRoundId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentRoundResultDurationSeconds",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1113,13 +1200,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "emergencyAbortCurrentRound",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1476,11 +1556,6 @@
             "internalType": "address[]",
             "name": "winningPlayers",
             "type": "address[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "isAborted",
-            "type": "bool"
           }
         ],
         "internalType": "struct JansGame_V8_UsdPricing_Refactored.RoundData",
@@ -1761,11 +1836,6 @@
         "internalType": "uint8",
         "name": "highestScoreAchieved",
         "type": "uint8"
-      },
-      {
-        "internalType": "bool",
-        "name": "isAborted",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1793,6 +1863,19 @@
       }
     ],
     "name": "setLpDistributionTriggerTimestamp",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_newDurationSeconds",
+        "type": "uint256"
+      }
+    ],
+    "name": "setRoundResultDuration",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

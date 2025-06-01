@@ -7,10 +7,10 @@ package-lock.json # Optional, some prefer to commit it, others don't. If you use
 # yarn.lock # Uncomment if using Yarn and you prefer not to commit it (though usually committed)
 
 # Environment variables
-.env
-*.env
-.env.*
-!.env.example # It's good practice to have an example env file
+#.env
+#*.env
+#.env.*
+#!.env.example # It's good practice to have an example env file
 
 # Operating System Files
 .DS_Store
