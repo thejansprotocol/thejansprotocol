@@ -108,11 +108,22 @@ async function initializeMainPage() {
         console.log("MainPageLogic: Ethers core initialized.");
 
         const roContract = getReadOnlyJansGameContract();
-        if (roContract && !localRoundDurationSeconds) {
+        if (roContract && localRoundDurationSeconds === null) { // Check if null to allow re-fetch if needed, or use !localRoundDurationSeconds
             try {
-                localRoundDurationSeconds = Number(await roContract.ROUND_RESULT_DURATION_SECONDS());
-            } catch (e) { console.error("MainPageLogic: Error fetching ROUND_RESULT_DURATION_SECONDS", e); }
+                const durationFromContract = await roContract.currentRoundResultDurationSeconds(); // MODIFIED HERE
+                localRoundDurationSeconds = Number(durationFromContract.toString()); // Ensure it's a number
+                console.log(`MainPageLogic: Fetched currentRoundResultDurationSeconds: ${localRoundDurationSeconds}`);
+            } catch (e) { 
+                console.error("MainPageLogic: Error fetching currentRoundResultDurationSeconds", e); 
+                localRoundDurationSeconds = 86400; // Fallback to 24 hours (86400 seconds)
+                showGlobalMessage("Could not fetch round duration, using default (24h).", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+            }
+        } else if (!roContract) {
+             console.error("MainPageLogic: Read-only contract instance is not available for fetching round duration.");
+             localRoundDurationSeconds = 86400; // Fallback
+             showGlobalMessage("Contract not available, using default round duration (24h).", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
         }
+
 
         await loadAndDisplaySnapshotTable();
         await displayDailyLogLinks();
@@ -136,130 +147,6 @@ async function initializeMainPage() {
         showGlobalMessage(`Page Init Failed: ${error.message}. Check console.`, "error", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
         updateAllDisplaysOnError("Init Failed");
     }
-}
-
-function handleBuyTicketClick() {
-    const nowUTC = new Date();
-    const dayUTC = nowUTC.getUTCDay();
-    const hourUTC = nowUTC.getUTCHours();
-    const minuteUTC = nowUTC.getMinutes();
-
-    let inBreakPeriod = false;
-    // Período de pausa: Desde Sábado 21:00 UTC hasta Domingo 20:45 UTC (sin incluir 20:45)
-    if ( (dayUTC === 6 && hourUTC >= 21) || 
-         (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45))) ) {
-        inBreakPeriod = true;
-    }
-
-    if (inBreakPeriod) {
-        showGlobalMessage("Game Paused. Next round starts Sunday 20:45 UTC.", "warning", 7000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
-        return;
-    }
-
-    if (!localIsSalesOpen || !localSnapshotTokens || localSnapshotTokens.length !== POOLS_TO_SELECT || localTicketPriceNativeWei === null) {
-        let message = "Cannot buy ticket: ";
-        if (!localIsSalesOpen) message += "Sales are currently closed for this round. ";
-        if (!localSnapshotTokens || localSnapshotTokens.length !== POOLS_TO_SELECT) message += "Snapshot data not ready. ";
-        if (localTicketPriceNativeWei === null) message += "Ticket price not available. ";
-        showGlobalMessage(message.trim(), "warning", 7000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
-        return;
-    }
-    openTicketPurchaseModal(localSnapshotTokens, localTicketPriceNativeWei);
-}
-
-// --- Data Fetching Orchestration ---
-async function refreshAllPageData() { /* ... (Sin cambios respecto a la última versión) ... */
-    const roContract = getReadOnlyJansGameContract();
-    if (!roContract) { console.warn("MainPageLogic: Read-only contract not available."); return; }
-    try {
-        localTaraUsdPrice = await fetchTaraUsdPriceFromCoinGecko();
-        const roProvider = getReadOnlyProvider();
-        if (roProvider) localJansPerTaraRate = await getJansPerTaraFromDEX(roProvider);
-        else console.warn("MainPageLogic: ReadOnlyProvider not available for JANS/TARA rate fetch.");
-
-        await updateCurrentRoundDisplay(); 
-        await Promise.all([updateGlobalStatsDisplay(), fetchAndDisplaySimplifiedTransactions()]);
-    } catch (error) {
-        console.error("MainPageLogic: Error during data refresh:", error);
-        showGlobalMessage("Error refreshing some page data.", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
-    }
- }
-
-// --- Snapshot Display ---
-async function loadAndDisplaySnapshotTable() { /* ... (Sin cambios respecto a la última versión) ... */
-    const desktopTableBody = document.getElementById(DOM_IDS.snapshotTableBody);
-    const mobileTableBody = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
-    const loadingMsg = (cols) => `<tr><td colspan="${cols}" style="text-align:center;">Loading snapshot...</td></tr>`;
-    if (desktopTableBody) desktopTableBody.innerHTML = loadingMsg(6);
-    if (mobileTableBody) mobileTableBody.innerHTML = loadingMsg(3);
-
-    try {
-        const data = await fetchJsonFile(SNAPSHOT_FILE_PATH);
-        if (data && Array.isArray(data)) {
-            localSnapshotTokens = data.map(token => ({ ...token, prediction: undefined }));
-            if (desktopTableBody) renderDesktopSnapshotTable();
-            if (mobileTableBody) renderMobileSnapshotTable();
-        } else throw new Error("Snapshot data is not a valid array or is null.");
-    } catch (error) {
-        console.error("MainPageLogic: Failed to load or parse snapshot:", error);
-        const errorMsg = (cols) => `<tr><td colspan="${cols}" style="color:red;">Error loading snapshot data.</td></tr>`;
-        if (desktopTableBody) desktopTableBody.innerHTML = errorMsg(6);
-        if (mobileTableBody) mobileTableBody.innerHTML = errorMsg(3);
-        localSnapshotTokens = [];
-    }
-}
-function renderDesktopSnapshotTable() { /* ... (Sin cambios respecto a la última versión) ... */ 
-    const tableBody = document.getElementById(DOM_IDS.snapshotTableBody);
-    if (!tableBody) return;
-    if (!localSnapshotTokens || localSnapshotTokens.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No token data.</td></tr>`; return;
-    }
-    tableBody.innerHTML = '';
-    localSnapshotTokens.forEach(token => {
-        const tr = document.createElement('tr');
-        const addCell = (content, isHtml = false, textAlign = 'center') => {
-            const td = document.createElement('td');
-            if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
-            td.style.textAlign = textAlign; return td;
-        };
-        let baseTokenName = token.name || 'N/A';
-        if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
-        tr.appendChild(addCell(baseTokenName, false, 'left'));
-        const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);
-        tr.appendChild(addCell(formattedPrice, true, 'right'));
-        tr.appendChild(addCell(token.price_change_percentage_1h ? `${parseFloat(token.price_change_percentage_1h).toFixed(2)}%` : 'N/A', false, 'right'));
-        tr.appendChild(addCell(token.price_change_percentage_6h ? `${parseFloat(token.price_change_percentage_6h).toFixed(2)}%` : 'N/A', false, 'right'));
-        tr.appendChild(addCell(token.price_change_percentage_24h ? `${parseFloat(token.price_change_percentage_24h).toFixed(2)}%` : 'N/A', false, 'right'));
-        const fdvNum = parseFloat(String(token.fdv_usd || '0').replace(/[$,]/g, ''));
-        const fdv = !isNaN(fdvNum) ? fdvNum.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }) : 'N/A';
-        tr.appendChild(addCell(fdv, false, 'right'));
-        tableBody.appendChild(tr);
-    });
-}
-function renderMobileSnapshotTable() { /* ... (Sin cambios respecto a la última versión) ... */ 
-    const mobileTableBody = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
-    if (!mobileTableBody) return;
-    if (!localSnapshotTokens || localSnapshotTokens.length === 0) {
-        mobileTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No token data.</td></tr>`; return;
-    }
-    mobileTableBody.innerHTML = '';
-    localSnapshotTokens.forEach(token => {
-        const tr = document.createElement('tr');
-        const addCell = (content, isHtml = false, textAlign = 'center') => {
-            const td = document.createElement('td');
-            if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
-            td.style.textAlign = textAlign; return td;
-        };
-        let baseTokenName = token.name || 'N/A';
-        if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
-        tr.appendChild(addCell(baseTokenName, false, 'left'));
-        const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);
-        tr.appendChild(addCell(formattedPrice, true, 'right'));
-        const fdvNum = parseFloat(String(token.fdv_usd || '0').replace(/[$,]/g, ''));
-        const fdv = !isNaN(fdvNum) ? fdvNum.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }) : 'N/A';
-        tr.appendChild(addCell(fdv, false, 'right'));
-        mobileTableBody.appendChild(tr);
-    });
 }
 
 // --- Current Round & Ticket Price Display (AJUSTADO PARA NUEVO HORARIO UTC) ---
