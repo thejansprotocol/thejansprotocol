@@ -1,6 +1,6 @@
 {
   "date": "2025-06-02",
-  "processedAtUTC": "2025-06-02T00:46:28.975Z",
+  "processedAtUTC": "2025-06-02T20:56:10.713Z",
   "roundClosedInfo": {
     "roundId": "0",
     "status": "NoPriorRound"
@@ -8,59 +8,60 @@
   "roundStartedInfo": {
     "roundId": "1",
     "status": "SuccessfullyStartedThisRun",
-    "txHash": "0xdb9544a5d01a442319c4cee84d4eec054cd7697bbd9a2f8422fd17ff9cb6c92e",
-    "startedOnUTC": "2025-06-02T00:46:43.000Z",
+    "txHash": "0xaf843e328db6f0f27ded51cf87b48d2d61e7cdcbb77715685b988d80d4accda1",
+    "startedOnUTC": "2025-06-02T20:56:27.000Z",
     "startTokens": [
       {
-        "id": "taraxa_0xc01ad2bacac61cfdf7813f826de86a7ff28b572f",
-        "name": "SNAPPS / WTARA",
-        "priceUSD": "0.0000001456089021"
-      },
-      {
-        "id": "taraxa_0x46d5d286f970df89ce4b21fd5eef19a3c16d7da1",
-        "name": "BTCH / WTARA",
-        "priceUSD": "57.5066517899"
+        "id": "taraxa_0x9c3ceb6224c58bf39f40e50ad13da81aa8655898",
+        "name": "FOMOG / WTARA",
+        "priceUSD": "1.31198257171098"
       },
       {
         "id": "taraxa_0x4a0582a5e322a0020ae38448c77cbffc97593fa4",
         "name": "GRUMPY / WTARA",
-        "priceUSD": "0.000000068637209040788"
+        "priceUSD": "0.0000000571723867467357"
       },
       {
-        "id": "taraxa_0x5394ec36ef1402a9add019a616738a34270e86b5",
-        "name": "BTR / WTARA",
-        "priceUSD": "727.492133308805"
-      },
-      {
-        "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
-        "name": "TSWAP / WTARA 1%",
-        "priceUSD": "0.00705314468377019"
-      },
-      {
-        "id": "taraxa_0xbc9c62fb0bfe4f00a4bd6d54d0110200fb1ca681",
-        "name": "ARC / WTARA",
-        "priceUSD": "0.00000580564806885006"
-      },
-      {
-        "id": "taraxa_0x0769305c2b7e7b1de96f49f7a87be470adde3a80",
-        "name": "FOMOG / WTARA 1%",
-        "priceUSD": "1.62960325119128"
-      },
-      {
-        "id": "taraxa_0xcf32f2ce34ee173e45f44dbb8f9497fd6750e799",
-        "name": "LARA / WTARA 1%",
-        "priceUSD": "0.000832103749175144"
-      },
-      {
-        "id": "taraxa_0x3a7a17a4872ece0a117e438b59f83ad0adde42b5",
-        "name": "SMASH / WTARA",
-        "priceUSD": "0.012625465921708"
+        "id": "taraxa_0xfaed48da90faad88a388478fe28f38a075c5d410",
+        "name": "FARTAX / WTARA",
+        "priceUSD": "0.000000195445677232691"
       },
       {
         "id": "taraxa_0x2f35216c538b3d0a1ea12b3ff741a8053d430868",
         "name": "ZZZ / WTARA 1%",
         "priceUSD": "0.008162588046"
+      },
+      {
+        "id": "taraxa_0x3a7a17a4872ece0a117e438b59f83ad0adde42b5",
+        "name": "SMASH / WTARA",
+        "priceUSD": "0.0107437857686935"
+      },
+      {
+        "id": "taraxa_0x5394ec36ef1402a9add019a616738a34270e86b5",
+        "name": "BTR / WTARA",
+        "priceUSD": "621.48217622424"
+      },
+      {
+        "id": "taraxa_0xb38123713903f49f97b24aae5806ce8d6d6b7383",
+        "name": "TSWAP / WTARA 1%",
+        "priceUSD": "0.00653439645137324"
+      },
+      {
+        "id": "taraxa_0x6b14ceb4b7071d734e355c5f48f6fcb99a73736a",
+        "name": "ETH / WTARA 1%",
+        "priceUSD": "2677.5131149944"
+      },
+      {
+        "id": "taraxa_0x6f4918d754a090ef01346bb0d2e3f0c088801dc7",
+        "name": "aaaBTC / WTARA",
+        "priceUSD": "1313.4561971263"
+      },
+      {
+        "id": "taraxa_0x0541b28802cf1eec95a0004eaf804f8e97ad30ca",
+        "name": "CHDPU / WTARA 1%",
+        "priceUSD": "0.0000540413675877133"
       }
-    ]
+    ],
+    "isFirstRound": true
   }
 }
