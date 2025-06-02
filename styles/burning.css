@@ -1,76 +1,187 @@
-/* === Burning Page Styles (Base/Desktop) === */
-.burning-page {
+/* === Base Styles (Mobile-First, applies to Desktop unless overridden) === */
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
     background-color: #000;
     color: #fff;
-    /* Añadimos un poco de padding para que el contenido no toque los bordes, especialmente en móvil */
-    padding: 20px; 
-    /* Si .burning-page es un contenedor que debe ocupar al menos la altura de la ventana,
-       puedes añadir min-height: 100vh; pero si está dentro de tu estructura con header/footer,
-       quizás el padding sea suficiente o se ajuste con el flex de body. */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 10px; /* Minimal padding around the main container */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start; /* Align container to the top */
+    min-height: 100vh; 
+    overflow-x: hidden;
 }
 
-.burning-content {
-    text-align: center;
-    margin-top: 40px; /* Este se reducirá en móvil */
-}
-
-.burning-title {
-    font-size: 2.5rem; /* Se reducirá en móvil */
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.burning-rate {
-    font-size: 2rem; /* Se reducirá en móvil */
-    margin-bottom: 30px;
-    font-weight: bold;
+.image-text-container {
+    position: relative; /* Crucial for absolute positioning of children */
+    width: 95vw;      /* Responsive width */
+    max-width: 700px;  /* Max width, e.g., for desktop */
+    margin: -200px auto; /* Space from viewport top/bottom, centered horizontally */
+    display: flex;     /* Use flex to easily center the image if it's narrower than container */
+    justify-content: center;
+    align-items: center;
+    /* The height of this container will be primarily determined by the image's aspect ratio and width */
 }
 
 .burning-img {
-    width: 400px; /* Ancho máximo para escritorio */
-    max-width: 100%; /* Asegura que no se desborde en pantallas más pequeñas que 400px incluso en desktop */
-    height: auto;   /* Mantiene la proporción */
-    margin-top: 20px;
-    display: block; /* Para poder centrar con margin auto si es necesario */
-    margin-left: auto;
-    margin-right: auto;
+    display: block; 
+    width: 100%;      /* Image fills the width of .image-text-container */
+    height: auto;     /* Maintain aspect ratio */
+    max-height: 75vh; /* Prevent image from becoming excessively tall, adjust as needed */
+    object-fit: contain; /* Use 'contain' to ensure the whole image is visible, or 'cover' to fill */
+    border-radius: 8px;  /* Optional rounded corners for the image */
+    position: relative;  /* Can be static, overlays will use z-index */
+    z-index: 1;          /* Base layer for stacking context */
 }
 
-/* === Ajustes para Móviles (ej. 600px de ancho o menos) === */
-@media (max-width: 600px) {
-    .burning-page {
-        padding: 15px; /* Un poco menos de padding en los lados */
-    }
+.burn-text-overlay { 
+    position: absolute; /* Positioned relative to .image-text-container */
+    top: 0px;          /* Distance from the top of .image-text-container */
+    left: 50%;
+    transform: translateX(-50%); /* Horizontally center the text block */
+    width: 90%;         /* Width relative to .image-text-container */
+    max-width: 550px;   /* Max width for readability */  
+    text-align: center;    
+    z-index: 10;        /* Ensure it's on top of other overlays/image */
+    
+    color: #f0f0f0;
+    padding: 10px;
+    font-size: 0.9em; /* Base font size for mobile */       
+    line-height: 1.3;
+    border-radius: 5px;
+}
 
-    .burning-content {
-        margin-top: 20px; /* Reducir el margen superior */
-    }
+.stats-row {
+    position: absolute; /* Positioned relative to .image-text-container */
+    bottom: 15px;       /* Distance from the bottom of .image-text-container */
+    left: 50%;
+    transform: translateX(-50%); /* Horizontally center */
+    width: 95%;         /* Width relative to .image-text-container */
+    max-width: 100%;    /* Allow it to use the full width of its relative parent if needed */
+    z-index: 5;         /* Above image, but text overlay can be on top of this if they overlap */
 
-    .burning-title {
-        font-size: 2rem;   /* Reducir tamaño de fuente del título */
-        margin-bottom: 15px;
-    }
+    display: flex;
+    flex-wrap: wrap;       
+    justify-content: center; 
+    gap: 8px; /* Slightly reduced gap for mobile */            
+    padding: 8px 5px; /* Padding inside the stats row */
+    /* background-color: rgba(0, 0, 0, 0.4); /* Optional subtle background for stats area */
+}
 
-    .burning-rate {
-        font-size: 1.5rem; /* Reducir tamaño de fuente del rate */
-        margin-bottom: 25px;
+.stat-block {
+    flex: 1 1 100px;  /* Adjusted flex-basis for mobile, allowing more blocks or better wrapping */
+    min-width: 90px; 
+    /* max-width: 180px; /* Max-width might be too restrictive if many blocks */
+    padding: 8px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.stat-block h4 {
+    font-size: 0.65em; /* Smaller for mobile */
+    color: #ccc;
+    margin-top: 0;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: normal;
+    line-height: 1.2;
+}
+
+.stat-block p {
+    font-size: 1em; /* Smaller for mobile */
+    font-weight: bold;
+    margin-top: 0;
+    color: #f0f0f0;
+    word-wrap: break-word; 
+}
+
+.stat-block p.alfa-slab {
+    font-family: 'Alfa Slab One', cursive; 
+    font-size: 1.2em; /* Smaller for mobile */
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+/* === Tablet and Larger Screens (Desktop-like layout) === */
+@media (min-width: 769px) {
+    .image-text-container {
+        max-width: 700px; /* Max width of the main image/text/stats group */
+        margin-top: 30px; /* More space from top on desktop */
+        margin-bottom: 30px;
     }
 
     .burning-img {
-        width: 90%;     /* Hacer que la imagen ocupe un porcentaje del ancho disponible */
-        max-width: 300px; /* Poner un límite máximo por si 90% es aún muy grande en algunos móviles anchos */
-        margin-top: 15px;
+        max-width: 500px; /* Image can be larger within its container on desktop */
+        /* Or width: auto; max-height: 70vh; to control by height */
+    }
+
+    .burn-text-overlay {
+        top: 30px; /* More offset from top of container for larger screens */
+        font-size: 1.2em;  
+        line-height: 1.5;
+        padding: 15px;
+    }
+
+    .stats-row {
+        bottom: 30px; /* More offset from bottom of container */
+        width: 90%;   /* Can be a bit narrower than full parent width */
+        gap: 15px;    /* More gap between stat blocks on desktop */
+    }
+
+    .stat-block {
+        flex: 1 1 130px; /* Slightly larger basis on desktop */
+        padding: 10px;
+    }
+
+    .stat-block h4 {
+        font-size: 0.8em;
+    }
+
+    .stat-block p {
+        font-size: 1.3em;
+    }
+
+    .stat-block p.alfa-slab {
+        font-size: 1.6em;
     }
 }
 
-/* Opcional: Ajustes para pantallas muy pequeñas (ej. 400px o menos) */
+/* === Adjustments for Very Small Mobile Phones (optional) === */
 @media (max-width: 400px) {
-    .burning-title {
-        font-size: 1.75rem; 
+    .image-text-container {
+        width: 98vw; /* Almost full viewport width */
     }
-
-    .burning-rate {
-        font-size: 1.3rem;
+    .burn-text-overlay {
+        top: 10px;
+        font-size: 0.85em;
+        padding: 8px;
+        line-height: 1.25;
     }
-    /* .burning-img podría no necesitar más cambios si width: 90% ya lo hace suficientemente pequeño */
+    .stats-row {
+        bottom: 10px;
+        gap: 5px;
+        width: 98%;
+    }
+    .stat-block {
+        flex-basis: calc(50% - 5px); /* Try for two blocks per row */
+        min-width: 80px; /* Smaller min-width */
+        padding: 5px;
+    }
+    .stat-block h4 {
+        font-size: 0.6em;
+    }
+    .stat-block p {
+        font-size: 0.9em;
+    }
+    .stat-block p.alfa-slab {
+        font-size: 1.1em;
+    }
 }

@@ -10,7 +10,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
     <script type="module" src="./js/burn_logic.js"></script>
     <style>
-        /* === Base and Mobile-First Styles === */
         html {
             box-sizing: border-box;
         }
@@ -21,209 +20,164 @@
         body {
             background-color: #000;
             color: #fff;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, Helvetica, sans-serif; /* Fallback/main body font */
             margin: 0;
-            padding: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh; /* Use 100vh */
-        }
-
-        .image-text-container {
-            position: relative;
-            display: block; /* Changed for simpler centering and stacking */
-            margin: 0 auto 30px auto; /* Centering and bottom margin */
-            max-width: 100%;
-            width: fit-content; /* Shrink to content or image width */
+            padding: 0; 
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto;   /* Allow vertical scroll if content overflows */
+            position: relative; 
         }
 
         .burning-img {
-            display: block;
-            max-width: 300px; /* Default max for larger screens */
-            width: 80%;       /* Responsive for smaller views, up to max-width */
-            height: auto;
-            margin: 0 auto 15px auto; /* Space between image and text if text is below */
+            position: fixed; /* Changed to fixed for true background behavior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            z-index: -1;         /* Ensures it's behind all other content */
+            opacity: 0.6; 
         }
 
         .burn-text-overlay {
-            position: relative; /* Flows naturally below image by default (mobile-first) */
-            width: 100%;
-            max-width: 550px;   /* Constrain line length for readability */
-            margin: 0 auto;     /* Center the text block */
-            color: #f0f0f0;
-            padding: 10px;
-            box-sizing: border-box;
-            border-radius: 5px;
-            font-size: 1em;    /* Base size for mobile */
-            line-height: 1.4;
+            position: absolute; /* Default for desktop */
+            top: 5vh; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%; /* Adjusted for better text wrapping across screen sizes */
+            max-width: 700px; 
             text-align: center;
-            /* background-color: rgba(10, 10, 10, 0.6); /* Optional: subtle background for overlay text */
+            z-index: 2; 
+            color: #ffffff;
+            padding: 10px;
+            font-size: 1.2em; /* Base size, can be adjusted in media queries */
+            line-height: 1.5; /* Good for readability of multi-line text */
+            font-family:Arial, Helvetica, sans-serif; /* Using Shrikhand font */
         }
 
         .stats-row {
+            position: absolute; /* Default for desktop */
+            bottom: 3vh; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto; 
+            max-width: 95%; 
+            z-index: 2; 
+            
             display: flex;
-            flex-wrap: wrap;         /* Allow wrapping on mobile */
-            justify-content: center; /* Center wrapped items */
-            gap: 15px;               /* Space between blocks when wrapped */
-            max-width: 1200px;       /* Max width for desktop */
-            width: 100%;
-            margin: 20px auto;       /* Default margin for mobile */
-            padding: 15px 0;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-            position: relative;      /* Keep for z-index if overlap is desired on desktop */
-            z-index: 1;              /* Lowered z-index from 2 to be safe if overlap is not desired on mobile */
+            flex-wrap: nowrap; /* Desktop: single row */
+            justify-content: center; 
+            align-items: center;
+            gap: 15px; 
+            padding: 10px 0; 
         }
 
         .stat-block {
-            flex: 1 1 160px;  /* Grow, shrink, with a preferred basis of 160px */
-            min-width: 140px; /* Ensure readability */
-            max-width: 220px; /* Prevent overly wide blocks if few items per row */
-            padding: 10px;
+            flex: 0 0 auto; 
+            padding: 5px 10px;
             text-align: center;
-            background-color: rgba(25, 25, 25, 0.3); /* Subtle background for stat blocks */
-            border-radius: 4px;
         }
 
         .stat-block h4 {
             font-size: 0.75em;
-            color: #bbb;
+            color: #cccccc; 
             margin-top: 0;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            font-weight: normal;
+            font-weight: normal; 
             line-height: 1.2;
-            min-height: 2.2em; /* Allow for 2 lines of text */
+            font-family: 'Arial', sans-serif; 
         }
 
         .stat-block p {
-            font-size: 1.2em; /* Adjusted base size */
+            font-size: 1.1em; 
             font-weight: bold;
             margin-top: 0;
-            color: #f0f0f0;
-            word-wrap: break-word; /* Prevent long numbers from breaking layout */
+            color: #ffffff;
+            word-wrap: break-word;
         }
 
         .stat-block p.alfa-slab {
-            font-family: 'Alfa Slab One', cursive; /* Use linked font */
-            font-size: 1.5em; /* Adjusted base size */
+            font-family: 'Alfa Slab One', cursive; /* Using Alfa Slab One font */
+            font-size: 1.5em; 
             color: #ffffff;
             letter-spacing: 1px;
         }
 
-        /* === Tablet and Larger Screens (Desktop-like layout) === */
-        @media (min-width: 769px) {
-            .image-text-container {
-                margin-bottom: 30px; /* Original spacing */
-                 /* display: inline-block; /* If you prefer this for some desktop layout reason */
-            }
-
-            .burning-img {
-                 /* width: 100%; /* Can be 100% of its container if container width is managed */
-                 margin: 0 auto; /* Original centering */
-            }
-
+        /* === Mobile and Tablet Adjustments === */
+        @media (max-width: 768px) {
             .burn-text-overlay {
-                position: absolute; /* Restore absolute positioning for desktop */
-                top: -5%;
-                left: -155%; /* Your original extreme positioning */
-                right: 5%;   /* Your original extreme positioning */
-                width: 400%; /* Your original extreme width */
-                font-size: 1.2em; /* Restore original font size */
-                line-height: 1.5;
-                padding: 15px;
-                /* background-color: transparent; /* Remove mobile background if added */
+                position: relative; /* Becomes part of the document flow */
+                top: auto;          
+                left: auto;         
+                transform: none;    
+                margin: 5vh auto;   /* Vertical margin, horizontal centering */
+                width: 90%;
+                font-size: 1em;     /* Adjusted font size for mobile */
+                line-height: 1.4;
+                z-index: 1;         /* Still on top of background image */
             }
 
             .stats-row {
-                flex-wrap: nowrap; /* No wrapping on desktop */
-                justify-content: space-around; /* Original justification */
-                margin-top: -70px; /* Restore negative margin for overlap */
-                overflow-x: auto;  /* Allow horizontal scroll if items don't fit */
-                gap: 10px; /* Original gap */
-                z-index: 2; /* Ensure it's above overlay if they interact */
+                position: relative; /* Becomes part of the document flow */
+                bottom: auto;       
+                left: auto;         
+                transform: none;    
+                
+                flex-direction: column; /* Stack stat blocks vertically */
+                align-items: center;    /* Center blocks in the column */
+                width: 80%;             
+                max-width: 350px;       /* Max width for the stacked column */
+                margin: 0 auto 5vh auto; /* Centered with bottom margin */
+                gap: 12px;              /* Vertical gap between stacked blocks */
+                padding: 10px;          
+                z-index: 1;             /* Still on top of background image */
             }
 
             .stat-block {
-                flex: 1 1 0;      /* Original flex behavior */
-                min-width: 120px; /* Original min-width */
-                max-width: none;  /* No max-width needed if not wrapping */
-                background-color: transparent; /* Remove subtle background if only for mobile */
-            }
-
-            .stat-block h4 {
-                font-size: 0.8em;
-                min-height: 2.4em;
-            }
-
-            .stat-block p {
-                font-size: 1.3em;
+                width: 100%; /* Each block takes full width of its parent .stats-row */
+                padding: 8px 5px;
             }
 
             .stat-block p.alfa-slab {
-                font-size: 1.6em;
+                font-size: 1.4em; /* Adjusted for mobile */
+            }
+
+            .stat-block h4 {
+                font-size: 0.7em; /* Adjusted for mobile */
             }
         }
 
-        /* === Smaller Mobile Phones === */
+        /* === Adjustments for Very Small Mobile Phones === */
         @media (max-width: 480px) {
-            body {
-                padding: 10px; /* Less padding on very small screens */
-            }
-
-            .burning-img {
-                width: 70%;       /* Adjust percentage */
-                max-width: 200px; /* Further constrain image size */
-            }
-
             .burn-text-overlay {
                 font-size: 0.9em;
-                padding: 8px;
+                margin: 3vh auto;
+                width: 95%; /* More width for text on very small screens */
             }
-
             .stats-row {
-                margin-top: 15px; /* Adjust if negative margin was removed */
-                gap: 10px;
-                padding: 10px 0;
+                width: 90%; /* Adjust width of stats column */
+                gap: 10px;  /* Reduce gap further */
+                margin-bottom: 3vh;
             }
-
-            .stat-block {
-                flex-basis: calc(50% - 10px); /* Aim for two blocks per row, considering gap */
-                min-width: 130px; /* Ensure they don't get too small if two per row */
-                /* Or, for single column stacking on very small screens: */
-                /* flex-basis: 100%; */
-                /* min-width: unset; */
-            }
-             .stat-block:not(:last-child) { /* Remove any mobile stacking separators if not stacking one per line */
-                border-bottom: none;
-             }
-
-
-            .stat-block h4 {
-                font-size: 0.7em;
-                min-height: 2em; /* Or auto if stacking one per line */
-            }
-
-            .stat-block p {
-                font-size: 1em;
-            }
-
             .stat-block p.alfa-slab {
-                font-size: 1.3em;
+                font-size: 1.2em; 
+            }
+            .stat-block h4 {
+                font-size: 0.65em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="image-text-container">
-        <img src="./assets/jans_fire.png" alt="Jans in a pyre" class="burning-img" />
-        <p class="burn-text-overlay"> 
-            That's Jans, burning money and smoking some shit.... That's what he does...
-            Every time that 5% of the total Jans supply is burned the Jans Pool distribution is activated and players can claim their LP rewards.
-        </p>
-    </div>
+    <img src="./assets/jans_fire.png" alt="Jans in a pyre" class="burning-img" />
+
+    <p class="burn-text-overlay">
+        That's Jans, burning money and smoking some shit... That's what he does... <br>
+        Every time that 5% of the total Jans supply is burned <br>
+        the Jans Pool distribution is activated and players can claim their LP rewards.
+    </p>
 
     <div class="stats-row">
         <div class="stat-block">
@@ -243,7 +197,7 @@
             <p id="burning-cycle" class="alfa-slab">Loading...</p>
         </div>
         <div class="stat-block">
-            <h4>24h Burning ratio (Aprox)</h4> 
+            <h4>24h Burning ratio (Aprox)</h4>
             <p id="burn-ratio-24hs" class="alfa-slab">N/A</p>
         </div>
     </div>
