@@ -35,8 +35,13 @@ import {
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 
 // --- Configuration ---
-const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json';
+// REVIEW THESE PATHS based on your deployed site structure
+const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json'; 
 const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json';
+// Example of root-relative paths if your data folder is at the site root:
+// const SNAPSHOT_FILE_PATH = '/data/snapshots/latest_snapshot.json'; 
+// const DAILY_LOG_INDEX_FILE = '/data/dailylogs_v8/index.json';
+
 const POOLS_TO_SELECT = 10; // Should match contract snapshot size
 const DATA_REFRESH_INTERVAL_MS = 60000; // 1 minute
 const GLOBAL_MESSAGE_DISPLAY_ID_MAIN = "global-message-main";
@@ -88,18 +93,28 @@ function getRandomHexColor() {
 // --- Data Fetching Orchestration ---
 async function refreshAllPageData() { 
     const roContract = getReadOnlyJansGameContract();
-    if (!roContract) { console.warn("MainPageLogic: Read-only contract not available."); return; }
+    if (!roContract) { console.warn("MainPageLogic: Read-only contract not available for data refresh."); return; }
     try {
+        // Fetch external prices first as they might be needed by other contract data interpretations
         localTaraUsdPrice = await fetchTaraUsdPriceFromCoinGecko();
         const roProvider = getReadOnlyProvider();
-        if (roProvider) localJansPerTaraRate = await getJansPerTaraFromDEX(roProvider);
-        else console.warn("MainPageLogic: ReadOnlyProvider not available for JANS/TARA rate fetch.");
+        if (roProvider) {
+            localJansPerTaraRate = await getJansPerTaraFromDEX(roProvider);
+        } else {
+            console.warn("MainPageLogic: ReadOnlyProvider not available for JANS/TARA rate fetch during refresh.");
+        }
 
+        // Update game status display (round, ticket price, sales status)
         await updateCurrentRoundDisplay(); 
-        await Promise.all([updateGlobalStatsDisplay(), fetchAndDisplaySimplifiedTransactions()]);
+        
+        // Update stats and transaction list concurrently
+        await Promise.all([
+            updateGlobalStatsDisplay(), 
+            fetchAndDisplaySimplifiedTransactions()
+        ]);
     } catch (error) {
-        console.error("MainPageLogic: Error during data refresh:", error);
-        showGlobalMessage("Error refreshing some page data.", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+        console.error("MainPageLogic: Error during data refresh cycle:", error);
+        showGlobalMessage("Error refreshing some page data. Retrying soon.", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
     }
 }
 
@@ -107,33 +122,45 @@ async function refreshAllPageData() {
 async function loadAndDisplaySnapshotTable() { 
     const desktopTableBody = document.getElementById(DOM_IDS.snapshotTableBody);
     const mobileTableBody = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
-    const loadingMsg = (cols) => `<tr><td colspan="${cols}" style="text-align:center;">Loading snapshot...</td></tr>`;
-    if (desktopTableBody) desktopTableBody.innerHTML = loadingMsg(6); // Desktop has 6 columns
-    if (mobileTableBody) mobileTableBody.innerHTML = loadingMsg(3); // Mobile has 3 columns
+    const loadingMsg = (cols) => `<tr><td colspan="${cols}" style="text-align:center; padding:10px;">Loading snapshot data...</td></tr>`;
+    
+    if (desktopTableBody) desktopTableBody.innerHTML = loadingMsg(6);
+    if (mobileTableBody) mobileTableBody.innerHTML = loadingMsg(3);
 
     try {
-        const data = await fetchJsonFile(SNAPSHOT_FILE_PATH);
+        // Ensure SNAPSHOT_FILE_PATH is correct relative to your deployed index.html
+        const data = await fetchJsonFile(SNAPSHOT_FILE_PATH + `?v=${Date.now()}`); // Cache buster
         if (data && Array.isArray(data)) {
-            localSnapshotTokens = data.map(token => ({ ...token, prediction: undefined }));
+            localSnapshotTokens = data.map(token => ({ ...token, prediction: undefined })); // Used by ticket modal
             if (desktopTableBody) renderDesktopSnapshotTable();
             if (mobileTableBody) renderMobileSnapshotTable();
-        } else throw new Error("Snapshot data is not a valid array or is null.");
+        } else {
+            // Handle case where data is empty array (valid JSON, but no tokens)
+            if (Array.isArray(data) && data.length === 0) {
+                console.warn("MainPageLogic: Snapshot file is empty (no active round data).");
+                const noDataMsg = (cols) => `<tr><td colspan="${cols}" style="text-align:center; padding:10px;">No active round snapshot available.</td></tr>`;
+                if (desktopTableBody) desktopTableBody.innerHTML = noDataMsg(6);
+                if (mobileTableBody) mobileTableBody.innerHTML = noDataMsg(3);
+            } else {
+                throw new Error("Snapshot data is not a valid array or is null.");
+            }
+        }
     } catch (error) {
         console.error("MainPageLogic: Failed to load or parse snapshot:", error);
-        const errorMsg = (cols) => `<tr><td colspan="${cols}" style="color:red; text-align:center;">Error loading snapshot data.</td></tr>`;
+        const errorMsg = (cols) => `<tr><td colspan="${cols}" style="color:red; text-align:center; padding:10px;">Error loading snapshot. Please try again later.</td></tr>`;
         if (desktopTableBody) desktopTableBody.innerHTML = errorMsg(6);
         if (mobileTableBody) mobileTableBody.innerHTML = errorMsg(3);
-        localSnapshotTokens = [];
+        localSnapshotTokens = []; // Reset on error
     }
 }
 
 function renderDesktopSnapshotTable() { 
     const tableBody = document.getElementById(DOM_IDS.snapshotTableBody);
-    if (!tableBody) return;
+    if (!tableBody) { console.warn("Desktop snapshot table body not found."); return; }
     if (!localSnapshotTokens || localSnapshotTokens.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No token data.</td></tr>`; return;
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:10px;">No token data available for the current snapshot.</td></tr>`; return;
     }
-    tableBody.innerHTML = '';
+    tableBody.innerHTML = ''; // Clear previous
     localSnapshotTokens.forEach(token => {
         const tr = document.createElement('tr');
         const addCell = (content, isHtml = false, textAlign = 'center') => {
@@ -158,11 +185,11 @@ function renderDesktopSnapshotTable() {
 
 function renderMobileSnapshotTable() { 
     const mobileTableBody = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
-    if (!mobileTableBody) return;
+    if (!mobileTableBody) { console.warn("Mobile snapshot table body not found."); return; }
     if (!localSnapshotTokens || localSnapshotTokens.length === 0) {
-        mobileTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No token data.</td></tr>`; return;
+        mobileTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">No token data for current snapshot.</td></tr>`; return;
     }
-    mobileTableBody.innerHTML = '';
+    mobileTableBody.innerHTML = ''; // Clear previous
     localSnapshotTokens.forEach(token => {
         const tr = document.createElement('tr');
         const addCell = (content, isHtml = false, textAlign = 'center') => {
@@ -224,7 +251,7 @@ async function updateCurrentRoundDisplay() {
 
     try {
         const newRoundId = await roContract.currentRoundId();
-        if (localCurrentRoundId?.toString() !== newRoundId.toString()) {
+        if (localCurrentRoundId?.toString() !== newRoundId.toString()) { // If round changed, reset tx log
             localTicketTransactions = []; localLastFetchedTxBlock = null;
         }
         localCurrentRoundId = newRoundId;
@@ -232,10 +259,11 @@ async function updateCurrentRoundDisplay() {
 
         if (localCurrentRoundId > 0n) {
             const roundData = await roContract.roundsData(localCurrentRoundId);
-            localRoundStartTime = Number(roundData.startTime); // Assuming startTime is a BigInt/Number
+            // Ensure roundData fields are accessed safely
+            localRoundStartTime = roundData.startTime ? Number(roundData.startTime.toString()) : null;
 
-            // <<< ADDED CHECK FOR roundData.aborted >>>
-            if (roundData.aborted) {
+            // <<< MODIFIED: Check for 'aborted' field from the new contract ABI >>>
+            if (roundData.aborted) { 
                 localTicketPriceNativeWei = null; localIsSalesOpen = false;
                 if (priceSpan) priceSpan.textContent = "Round Aborted";
                 if (salesStatusSpan) { salesStatusSpan.textContent = `Round ${localCurrentRoundId} Aborted`; salesStatusSpan.className = "status-error"; }
@@ -245,7 +273,7 @@ async function updateCurrentRoundDisplay() {
                 const latestBlock = await provider.getBlock("latest");
                 const currentBlockTimestamp = Number(latestBlock.timestamp);
 
-                if (currentBlockTimestamp <= (localRoundStartTime + Number(salesDurationSec))) {
+                if (localRoundStartTime !== null && currentBlockTimestamp <= (localRoundStartTime + Number(salesDurationSec.toString()))) {
                     const priceNative = await roContract.getCurrentTicketPriceNative();
                     localTicketPriceNativeWei = priceNative;
                     localIsSalesOpen = true;
@@ -259,12 +287,12 @@ async function updateCurrentRoundDisplay() {
                     if (priceSpan) priceSpan.textContent = "Sales Closed";
                     if (salesStatusSpan) { salesStatusSpan.textContent = "Sales CLOSED"; salesStatusSpan.className = "status-closed"; }
                 }
-            } else {
+            } else { // Start snapshot not yet submitted for the current round ID
                 localTicketPriceNativeWei = null; localIsSalesOpen = false; localRoundStartTime = null;
                 if (priceSpan) priceSpan.textContent = "Pending Start";
                 if (salesStatusSpan) { salesStatusSpan.textContent = "Round Pending Start"; salesStatusSpan.className = "status-pending"; }
             }
-        } else {
+        } else { // currentRoundId is 0
             localTicketPriceNativeWei = null; localIsSalesOpen = false; localRoundStartTime = null;
             if (priceSpan) priceSpan.textContent = "N/A";
             if (salesStatusSpan) { salesStatusSpan.textContent = "Awaiting New Round"; salesStatusSpan.className = "status-pending"; }
@@ -280,7 +308,7 @@ async function updateCurrentRoundDisplay() {
 // --- Global Stats Display ---
 async function updateGlobalStatsDisplay() { 
     const roContract = getReadOnlyJansGameContract();
-    if (!roContract) return;
+    if (!roContract) { console.warn("MainPageLogic: Read-only contract not available for stats."); return; }
     const statElements = {
         prizePool: document.getElementById(DOM_IDS.statsPrizePool),
         prizePoolUsd: document.getElementById(DOM_IDS.statsPrizePoolUsd),
@@ -302,14 +330,14 @@ async function updateGlobalStatsDisplay() {
         let jansUsdPrice = null;
         if (localTaraUsdPrice && localJansPerTaraRate !== null && localJansPerTaraRate > 0) {
             jansUsdPrice = localTaraUsdPrice / localJansPerTaraRate;
-        } else if (localJansPerTaraRate === 0) jansUsdPrice = 0;
+        } else if (localJansPerTaraRate === 0) jansUsdPrice = 0; // Explicitly handle rate of 0 to avoid division by zero if logic changes
 
         if (statElements.prizePoolUsd) statElements.prizePoolUsd.textContent = (jansUsdPrice !== null && prizePoolNum > 0) ? `(${(prizePoolNum * jansUsdPrice).toLocaleString(undefined, { style: 'currency', currency: 'USD' })})` : (prizePoolNum === 0 ? "($0.00 USD)" : "(USD N/A)");
         if (statElements.jansBurnedUsd) statElements.jansBurnedUsd.textContent = (jansUsdPrice !== null && burnedNum > 0) ? `(${(burnedNum * jansUsdPrice).toLocaleString(undefined, { style: 'currency', currency: 'USD' })})` : (burnedNum === 0 ? "($0.00 USD)" : "(USD N/A)");
 
         if (statElements.jansBurnedPercentage) {
             const roProvider = getReadOnlyProvider();
-            const jansAbi = await getJansTokenABI();
+            const jansAbi = await getJansTokenABI(); // Assuming JANS_TOKEN_ADDRESS is correct
             const supplyData = await getTokenTotalSupply(roProvider, JANS_TOKEN_ADDRESS, jansAbi, JANS_DECIMALS);
             if (supplyData && supplyData.raw > 0n) {
                 const totalNum = parseFloat(supplyData.formatted);
@@ -319,7 +347,8 @@ async function updateGlobalStatsDisplay() {
         }
 
         if (!localGameLpTokenAddress) {
-            try { localGameLpTokenAddress = await roContract.GAME_LP_TOKEN(); } catch(e){ console.warn("Could not get game LP token address.");}
+            try { localGameLpTokenAddress = await roContract.GAME_LP_TOKEN(); } 
+            catch(e){ console.warn("MainPageLogic: Could not get game LP token address from contract.", e.message);}
         }
         const lpBalRaw = await roContract.getContractLpTokenBalance();
         const lpBalNum = parseFloat(ethersInstance.formatUnits(lpBalRaw, LP_TOKEN_DECIMALS));
@@ -335,6 +364,7 @@ async function updateGlobalStatsDisplay() {
         } else if (statElements.lpBalanceUsd) statElements.lpBalanceUsd.textContent = "(LP Address N/A)";
     } catch (error) {
         console.error("MainPageLogic: Error fetching global stats:", error);
+        // Set all stat elements to "Error" or similar to indicate failure
         Object.values(statElements).forEach(el => { if(el) el.textContent = "Error"; });
     }
 }
@@ -375,16 +405,22 @@ async function fetchAndDisplaySimplifiedTransactions() {
         if (localLastFetchedTxBlock !== null && localLastFetchedTxBlock < currentBlockNumber) {
             fromBlockForQuery = localLastFetchedTxBlock + 1;
         } else if (localLastFetchedTxBlock === null) {
+            // Initial fetch: try to get recent blocks, or further back if round has been active
             const roundData = await roContract.roundsData(localCurrentRoundId);
-            // Assuming roundData.blockNumber is not a standard field. Using startTime to estimate block.
-            // This is a rough estimation. For more accuracy, events should be queried based on round start block.
-            const approximateStartBlock = currentBlockNumber - 70000; // Approx 1 day back if no other info
-            fromBlockForQuery = (roundData.startTime > 0n) ? Math.max(0, approximateStartBlock) : Math.max(0, currentBlockNumber - 5000);
-        } else {
-            if (localTicketTransactions.length > 0) renderMobileLastTransaction();
+            const roundStartTimestamp = roundData.startTime ? Number(roundData.startTime.toString()) : 0;
+            const secondsSinceRoundStart = Math.floor(Date.now()/1000) - roundStartTimestamp;
+            const blocksPerDayApprox = 70000; // Rough estimate for Taraxa, adjust if known
+            let blockRange = 5000; // Default for very new rounds
+            if (secondsSinceRoundStart > 3600 * 6) blockRange = blocksPerDayApprox / 2; // 12 hours
+            if (secondsSinceRoundStart > 3600 * 24) blockRange = blocksPerDayApprox * 2; // 2 days
+            
+            fromBlockForQuery = (roundStartTimestamp > 0) ? Math.max(0, currentBlockNumber - blockRange) : Math.max(0, currentBlockNumber - 5000);
+        } else { // No new blocks since last fetch
+            if (localTicketTransactions.length > 0) renderMobileLastTransaction(); // Re-render in case it was cleared
+            else if (txListUl) txListUl.innerHTML = '<li>No new ticket purchases.</li>'; // Keep existing desktop list
             return; 
         }
-        fromBlockForQuery = Math.max(0, fromBlockForQuery);
+        fromBlockForQuery = Math.max(0, fromBlockForQuery); // Ensure not negative
 
         const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
         const events = await roContract.queryFilter(eventFilter, fromBlockForQuery, currentBlockNumber);
@@ -399,42 +435,43 @@ async function fetchAndDisplaySimplifiedTransactions() {
                         txHash: event.transactionHash, ticketId: event.args.ticketId 
                     });
                     newTxFound = true;
-                } catch (blockError) { console.error("TX_LOG: Error fetching block:", blockError); }
+                } catch (blockError) { console.error("TX_LOG: Error fetching block for event:", blockError); }
             }
         }
         
         if (newTxFound) {
-            localTicketTransactions.sort((a, b) => b.timestamp - a.timestamp);
+            localTicketTransactions.sort((a, b) => b.timestamp - a.timestamp); // Sort by newest first
             if (txListUl) renderDesktopTransactionList();
-            renderMobileLastTransaction();
-        } else if (localTicketTransactions.length === 0 && events.length === 0) {
+            renderMobileLastTransaction(); // Always update mobile with the latest
+        } else if (localTicketTransactions.length === 0 && events.length === 0) { // No Txs at all for this round yet
             const noTxMsg = 'No ticket purchases yet for this round.';
             if(txListUl) txListUl.innerHTML = `<li>${noTxMsg}</li>`;
             if (mobileLastTxDiv) mobileLastTxDiv.textContent = noTxMsg;
-        } else if (localTicketTransactions.length > 0 && !newTxFound) {
-            renderMobileLastTransaction(); 
+        } else if (localTicketTransactions.length > 0 && !newTxFound) { // No new txs, but some exist
+             renderMobileLastTransaction(); // Ensure mobile is up-to-date
+             // Desktop list remains unchanged if no new txs
         }
         localLastFetchedTxBlock = currentBlockNumber;
     } catch (error) { 
         console.error("TX_LOG: Failed to fetch/process transactions:", error);
-        if(txListUl && localTicketTransactions.length === 0) txListUl.innerHTML = '<li>Error loading txs.</li>';
-        if (mobileLastTxDiv && localTicketTransactions.length === 0) mobileLastTxDiv.textContent = 'Error loading tx.';
+        if(txListUl && localTicketTransactions.length === 0) txListUl.innerHTML = '<li>Error loading transaction history.</li>';
+        if (mobileLastTxDiv && localTicketTransactions.length === 0) mobileLastTxDiv.textContent = 'Error loading latest transaction.';
     }
 }
 
 function renderDesktopTransactionList() { 
     const ulElement = document.getElementById(DOM_IDS.transactionList);
     if (!ulElement) return;
-    ulElement.innerHTML = '';
+    ulElement.innerHTML = ''; // Clear previous list
     if (localTicketTransactions.length === 0) {
-        ulElement.innerHTML = '<li>No ticket purchases recorded.</li>'; return;
+        ulElement.innerHTML = '<li>No ticket purchases recorded for this round.</li>'; return;
     }
     const maxToShow = 10;
     localTicketTransactions.slice(0, maxToShow).forEach(tx => {
         const li = document.createElement('li');
         const date = new Date(tx.timestamp * 1000);
-        const timeString = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
-        li.innerHTML = `${timeString} - Wallet: <span title="${tx.player}">${shortenAddress(tx.player, 4)}</span>`;
+        const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2,'0'\)\}\:</span>{date.getMinutes().toString().padStart(2,'0')}`;
+        li.innerHTML = `<span class="math-inline">\{timeString\} \- Wallet\: <span title\="</span>{tx.player}">${shortenAddress(tx.player, 4)}</span>`;
         li.style.color = getRandomHexColor();
         li.style.padding = "3px 5px"; li.style.fontSize = "0.8em";
         li.style.marginBottom = "2px"; li.style.borderRadius = "3px";
@@ -448,10 +485,10 @@ function renderMobileLastTransaction() {
     if (localTicketTransactions.length === 0) {
         mobileTxDiv.textContent = 'No purchases this round.'; return;
     }
-    const lastTx = localTicketTransactions[0];
+    const lastTx = localTicketTransactions[0]; // Already sorted newest first
     const date = new Date(lastTx.timestamp * 1000);
-    const timeString = `${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')}`;
-    mobileTxDiv.innerHTML = `Latest: ${timeString} - Wallet <span title="${lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
+    const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2,'0'\)\}\:</span>{date.getMinutes().toString().padStart(2,'0')}`;
+    mobileTxDiv.innerHTML = `Latest: <span class="math-inline">\{timeString\} \- Wallet <span title\="</span>{lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
     mobileTxDiv.style.color = getRandomHexColor();
 }
 
@@ -462,26 +499,28 @@ async function displayDailyLogLinks() {
     logLinksContainer.innerHTML = '<li>Loading log list...</li>';
 
     try {
-        const logIndex = await fetchJsonFile(DAILY_LOG_INDEX_FILE);
+        const logIndex = await fetchJsonFile(DAILY_LOG_INDEX_FILE + `?v=${Date.now()}`); // Cache buster
         if (logIndex && Array.isArray(logIndex) && logIndex.length > 0) {
-            logLinksContainer.innerHTML = '';
-            logIndex.sort((a,b) => b.date.localeCompare(a.date)); 
+            logLinksContainer.innerHTML = ''; // Clear loading message
+            logIndex.sort((a,b) => b.date.localeCompare(a.date)); // Sort newest first
             logIndex.forEach(logEntry => {
                 const li = document.createElement('li');
                 const link = document.createElement('a');
-                link.href = `view_log_page.html?logFile=dailylogs_v8/${encodeURIComponent(logEntry.file)}`;
-                let textContent = `Log: ${logEntry.date}`;
+                // Corrected path construction assuming dailylogs_v8 is at the same level as 'data' or handled by server routing
+                link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;let textContent = `Log: ${logEntry.date}`;
                 if(logEntry.roundStartedId || logEntry.roundClosedId) {
                     textContent += ` (R${logEntry.roundStartedId || '_'}S / R${logEntry.roundClosedId || '_'}E)`;
                 }
                 link.textContent = textContent;
-                link.target = "_blank";
+                link.target = "_blank"; // Open in new tab
                 link.style.color = getRandomHexColor(); 
                 li.appendChild(link);
                 li.style.marginBottom = "3px";
                 logLinksContainer.appendChild(li);
             });
-        } else { logLinksContainer.innerHTML = '<li>No daily logs found.</li>'; }
+        } else { 
+            logLinksContainer.innerHTML = '<li>No daily logs found.</li>'; 
+        }
     } catch (error) {
         console.error("Error loading daily log links:", error);
         logLinksContainer.innerHTML = '<li style="color:red;">Error loading log list.</li>';
@@ -491,17 +530,23 @@ async function displayDailyLogLinks() {
 // --- UI Timers ---
 function initializeUiTimers() {
     const updateAllTimes = () => { updateSnapshotTimeDisplay(); updateCountdownTimerDisplay(); };
-    updateAllTimes();
-    setInterval(updateAllTimes, 1000);
+    updateAllTimes(); // Initial call
+    setInterval(updateAllTimes, 1000); // Update every second
 }
 
 function updateSnapshotTimeDisplay() { 
     const span = document.getElementById(DOM_IDS.snapshotTimestamp);
     if (!span) return;
     const now = new Date();
+    // Assumes snapshot is for 21:00 UTC of the current or previous day
     let snapshotForDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0));
-    if (now.getUTCHours() < 21) snapshotForDate.setUTCDate(snapshotForDate.getUTCDate() - 1);
-    span.textContent = snapshotForDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + " UTC";
+    if (now.getUTCHours() < 21) { // If current UTC hour is before 21:00, snapshot is for yesterday
+        snapshotForDate.setUTCDate(snapshotForDate.getUTCDate() - 1);
+    }
+    span.textContent = snapshotForDate.toLocaleString('en-GB', { 
+        day: '2-digit', month: 'short', year: 'numeric', 
+        hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
+    }) + " UTC";
 }
 
 function updateCountdownTimerDisplay() {
@@ -513,15 +558,17 @@ function updateCountdownTimerDisplay() {
     const minuteUTC = nowUTC.getMinutes();
 
     let inBreakPeriod = false;
-    if ( (dayUTC === 6 && hourUTC >= 21) || 
-         (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45))) ) {
+    if ( (dayUTC === 6 && hourUTC >= 21) || // Saturday 21:00 UTC onwards
+         (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45))) ) { // Sunday before 20:45 UTC
         inBreakPeriod = true;
     }
 
     if (inBreakPeriod) {
         let targetTimeForBreakCountdown = new Date(Date.UTC(nowUTC.getUTCFullYear(), nowUTC.getUTCMonth(), nowUTC.getUTCDate()));
-        if (dayUTC === 6) { 
-            targetTimeForBreakCountdown.setUTCDate(targetTimeForBreakCountdown.getUTCDate() + 1);
+        // Set to next Sunday 20:45 UTC
+        targetTimeForBreakCountdown.setUTCDate(nowUTC.getUTCDate() + (7 - dayUTC) % 7); // Go to Sunday
+        if (dayUTC === 0 && (hourUTC > 20 || (hourUTC === 20 && minuteUTC >= 45))) { // If it's Sunday past the time, aim for next Sunday
+             targetTimeForBreakCountdown.setUTCDate(targetTimeForBreakCountdown.getUTCDate() + 7);
         }
         targetTimeForBreakCountdown.setUTCHours(20, 45, 0, 0);
 
@@ -532,30 +579,43 @@ function updateCountdownTimerDisplay() {
             const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
             span.textContent = `Next round (Sun 20:45 UTC) in: ${h}h ${m}m ${s}s`;
         } else {
-            span.textContent = "New round starting soon / Awaiting data...";
+            span.textContent = "New round window opening soon...";
         }
         return; 
     }
     
-    // <<< ADDED CHECK FOR localRoundDurationSeconds before using it >>>
     if (localCurrentRoundId > 0n && localRoundStartTime && localRoundDurationSeconds !== null && localRoundDurationSeconds > 0) {
         const roundEndTimeEpoch = localRoundStartTime + localRoundDurationSeconds;
         const nowEpoch = Math.floor(nowUTC.getTime() / 1000);
         const diff = roundEndTimeEpoch - nowEpoch;
-        if (diff > 0) {
+
+        if (localIsSalesOpen) { // If sales are open, countdown to sales close
+            const salesDuration = Number(localRoundDurationSeconds); // TEMP: Assuming salesDuration is what localRoundDurationSeconds is. This needs contract's ticketSalesDurationSeconds
+            const salesEndTimeEpoch = localRoundStartTime + salesDuration; // This needs fixing
+             // TODO: Fetch and use actual 'ticketSalesDurationSeconds' from contract for sales countdown
+            const salesDiff = salesEndTimeEpoch - nowEpoch; // Placeholder, will be inaccurate
+            if (salesDiff > 0) {
+                const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
+                const m = String(Math.floor((salesDiff % 3600) / 60)).padStart(2, '0');
+                const s = String(Math.floor(salesDiff % 60)).padStart(2, '0');
+                 span.textContent = `Sales close in: ${h}h ${m}m ${s}s`;
+            } else {
+                 span.textContent = "Sales just closed. Round ending soon...";
+            }
+        } else if (diff > 0) { // Sales closed, but round still active
             const h = String(Math.floor(diff / 3600)).padStart(2, '0');
             const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
             const s = String(Math.floor(diff % 60)).padStart(2, '0');
-            span.textContent = `${h}h ${m}m ${s}s until current round ends`;
-        } else {
-            span.textContent = "Round ended, evaluating...";
+            span.textContent = `Round ends in: ${h}h ${m}m ${s}s`;
+        } else { // Round has ended based on duration
+            span.textContent = "Round ended, awaiting evaluation...";
         }
     } else if ((localCurrentRoundId === 0n && !localIsSalesOpen) || (!localRoundStartTime && !inBreakPeriod)) { 
-        span.textContent = "Awaiting new round";
-    } else if (!localIsSalesOpen) { 
-        span.textContent = "Sales closed / Pending start";
+        span.textContent = "Awaiting new round start";
+    } else if (!localIsSalesOpen && localCurrentRoundId > 0n) { // Round exists but sales not open (either pending start or closed)
+        span.textContent = "Sales closed / Round pending/ended";
     } else {
-        span.textContent = "Calculating...";
+        span.textContent = "Loading game status...";
     }
 }
 
@@ -573,15 +633,15 @@ function updateAllDisplaysOnError(message = "Error") {
     ];
     secondarySpans.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ""; });
     const txList = document.getElementById(DOM_IDS.transactionList);
-    if(txList) txList.innerHTML = `<li>${message} txs.</li>`;
+    if(txList) txList.innerHTML = `<li>${message} (transactions).</li>`;
     const mobileTx = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
-    if(mobileTx) mobileTx.textContent = `${message} tx.`;
+    if(mobileTx) mobileTx.textContent = `${message} (latest transaction).`;
     const desktopTable = document.getElementById(DOM_IDS.snapshotTableBody);
-    if(desktopTable) desktopTable.innerHTML = `<tr><td colspan="6" style="text-align:center;">${message} snapshot.</td></tr>`;
+    if(desktopTable) desktopTable.innerHTML = `<tr><td colspan="6" style="text-align:center;">${message} (snapshot).</td></tr>`;
     const mobileTable = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
-    if(mobileTable) mobileTable.innerHTML = `<tr><td colspan="3" style="text-align:center;">${message} snapshot.</td></tr>`;
+    if(mobileTable) mobileTable.innerHTML = `<tr><td colspan="3" style="text-align:center;">${message} (snapshot).</td></tr>`;
     const logLinks = document.getElementById(DOM_IDS.dailyLogLinksContainer);
-    if(logLinks) logLinks.innerHTML = `<li>${message} logs.</li>`;
+    if(logLinks) logLinks.innerHTML = `<li>${message} (logs).</li>`;
     const buyBtnDesktop = document.getElementById(DOM_IDS.buyTicketButton);
     if (buyBtnDesktop) buyBtnDesktop.disabled = true;
     const buyBtnMobile = document.getElementById(DOM_IDS_MOBILE.mobileBuyTicketButton);
@@ -589,77 +649,70 @@ function updateAllDisplaysOnError(message = "Error") {
 }
 
 // --- Initialization ---
-// MODIFIED: Combined initializeMainPage and DOMContentLoaded
-// This function will be called once Ethers.js is available.
 async function initializeMainPageOnceEthersReady() {
     if (localIsAppInitialized) return;
-    console.log("MainPageLogic: Initializing...");
+    console.log("MainPageLogic: Initializing main page components...");
     try {
-        // Ethers core is already initialized by the time this is called from attemptInit
-        console.log("MainPageLogic: Ethers core assumed initialized.");
+        console.log("MainPageLogic: Ethers core assumed initialized from previous step.");
 
         const roContract = getReadOnlyJansGameContract();
-        if (roContract && localRoundDurationSeconds === null) {
+        if (roContract && localRoundDurationSeconds === null) { // Fetch only if not already set
             try {
-                const durationFromContract = await roContract.currentRoundResultDurationSeconds(); // Corrected
+                const durationFromContract = await roContract.currentRoundResultDurationSeconds(); 
                 localRoundDurationSeconds = Number(durationFromContract.toString());
                 console.log(`MainPageLogic: Fetched currentRoundResultDurationSeconds: ${localRoundDurationSeconds}`);
             } catch (e) { 
-                console.error("MainPageLogic: Error fetching currentRoundResultDurationSeconds", e); 
-                localRoundDurationSeconds = 86400; // Fallback
-                showGlobalMessage("Could not fetch round duration, using default (24h).", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+                console.error("MainPageLogic: Error fetching currentRoundResultDurationSeconds from contract:", e); 
+                localRoundDurationSeconds = 86400; // Default to 24 hours as a fallback
+                showGlobalMessage("Could not fetch round duration from contract, using default (24h).", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
             }
         } else if (!roContract) {
-             console.error("MainPageLogic: Read-only contract instance not available for fetching round duration.");
-             localRoundDurationSeconds = 86400; // Fallback
-             showGlobalMessage("Contract not available, using default round duration (24h).", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+             console.error("MainPageLogic: Read-only contract instance is not available. Cannot fetch round duration.");
+             localRoundDurationSeconds = 86400; // Default to 24 hours
+             showGlobalMessage("Contract not available to fetch settings, using defaults.", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
         }
         
-        // These functions MUST be defined in this file and accessible in this scope
-        await loadAndDisplaySnapshotTable(); // Error was here
+        await loadAndDisplaySnapshotTable();
         await displayDailyLogLinks();
-        await refreshAllPageData(); 
-        setInterval(refreshAllPageData, DATA_REFRESH_INTERVAL_MS);
-        initializeUiTimers();
+        await refreshAllPageData(); // Initial full data refresh
+        setInterval(refreshAllPageData, DATA_REFRESH_INTERVAL_MS); // Set up periodic refresh
+        initializeUiTimers(); // Initialize countdowns and other timers
 
         const buyBtnDesktop = document.getElementById(DOM_IDS.buyTicketButton);
         if (buyBtnDesktop) buyBtnDesktop.addEventListener('click', handleBuyTicketClick);
-        else console.warn(`Desktop buy button '${DOM_IDS.buyTicketButton}' not found.`);
+        else console.warn(`Desktop buy button ('${DOM_IDS.buyTicketButton}') not found.`);
         
         const buyBtnMobile = document.getElementById(DOM_IDS_MOBILE.mobileBuyTicketButton);
         if (buyBtnMobile) buyBtnMobile.addEventListener('click', handleBuyTicketClick);
-        else console.warn(`Mobile buy button '${DOM_IDS_MOBILE.mobileBuyTicketButton}' not found.`);
+        else console.warn(`Mobile buy button ('${DOM_IDS_MOBILE.mobileBuyTicketButton}') not found.`);
 
-        // Expose main page refresh trigger globally if needed by modal
         window.triggerMainPageRefresh = async () => {
-            console.log("MainPageLogic: Refresh triggered by modal.");
-            showGlobalMessage("Refreshing data after ticket purchase...", "info", 2000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+            console.log("MainPageLogic: Refresh triggered (e.g., by modal).");
+            showGlobalMessage("Refreshing page data...", "info", 2000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
             await refreshAllPageData();
         };
-
 
         localIsAppInitialized = true;
         console.log("MainPageLogic: Initialization complete.");
         showGlobalMessage("Page initialized successfully!", "success", 3000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
     } catch (error) {
         console.error("MainPageLogic: CRITICAL Initialization Error:", error);
-        showGlobalMessage(`Page Init Failed: ${error.message}. Check console.`, "error", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
-        updateAllDisplaysOnError("Init Failed");
+        showGlobalMessage(`Page Initialization Failed: ${error.message}. Check console for details.`, "error", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+        updateAllDisplaysOnError("Page Init Failed");
     }
 }
 
-
 // --- Main Event Listener & Ethers.js Check ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Loaded for Main Page. Setting up Ethers.js check...");
+    console.log("DOM Loaded for Main Page. Setting up Ethers.js initialization check...");
     
     function attemptEthersInitAndRun() {
         if (window.ethers && typeof initializeEthersCore === 'function') {
-            initializeEthersCore(window.ethers) // Initialize from wallet.js
+            initializeEthersCore(window.ethers) 
                 .then(() => {
                     console.log("Ethers Core initialized from DOMContentLoaded. Proceeding to main page logic.");
-                    initializeMainPageOnceEthersReady().catch(err => { // Changed function name here
-                        console.error("MainPageLogic Init sequence error after Ethers ready:", err);
+                    initializeMainPageOnceEthersReady().catch(err => { 
+                        console.error("MainPageLogic: Init sequence error after Ethers ready:", err);
                         showGlobalMessage(`Initialization failed: ${err.message}`, "error", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
                         updateAllDisplaysOnError("Init Error");
                     });
@@ -670,16 +723,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateAllDisplaysOnError("Ethers Init Error");
                 });
         } else {
-            console.warn("Ethers.js or initializeEthersCore not found. Waiting...");
-            showGlobalMessage("Loading blockchain library...", "info", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
-            setTimeout(attemptEthersInitAndRun, 500); // Retry after a short delay
+            console.warn("Ethers.js or initializeEthersCore not found. Waiting to retry...");
+            showGlobalMessage("Loading blockchain library, please wait...", "info", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+            setTimeout(attemptEthersInitAndRun, 700); // Retry after a slightly longer delay
         }
     }
     attemptEthersInitAndRun();
 });
 
-// Make sure this function is defined, as it's called by the modal
-// This function was missing from your "sin cambios" stubs but is essential
 function handleBuyTicketClick() {
     const nowUTC = new Date();
     const dayUTC = nowUTC.getUTCDay();
@@ -687,7 +738,6 @@ function handleBuyTicketClick() {
     const minuteUTC = nowUTC.getMinutes();
 
     let inBreakPeriod = false;
-    // Período de pausa: Desde Sábado 21:00 UTC hasta Domingo 20:45 UTC (sin incluir 20:45)
     if ( (dayUTC === 6 && hourUTC >= 21) || 
          (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45))) ) {
         inBreakPeriod = true;
@@ -701,16 +751,16 @@ function handleBuyTicketClick() {
     if (!localIsSalesOpen || !localSnapshotTokens || localSnapshotTokens.length !== POOLS_TO_SELECT || localTicketPriceNativeWei === null) {
         let message = "Cannot buy ticket: ";
         if (!localIsSalesOpen) message += "Sales are currently closed for this round. ";
-        if (!localSnapshotTokens || localSnapshotTokens.length !== POOLS_TO_SELECT) message += "Snapshot data not ready. ";
+        if (!localSnapshotTokens || localSnapshotTokens.length !== POOLS_TO_SELECT) message += "Snapshot data not ready or incomplete. ";
         if (localTicketPriceNativeWei === null) message += "Ticket price not available. ";
         showGlobalMessage(message.trim(), "warning", 7000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
         return;
     }
-    // Assuming localSnapshotTokens and localTicketPriceNativeWei are correctly populated
+    
     if (typeof openTicketPurchaseModal === 'function') {
         openTicketPurchaseModal(localSnapshotTokens, localTicketPriceNativeWei);
     } else {
         console.error("openTicketPurchaseModal is not defined or not imported correctly.");
-        showGlobalMessage("Error: Ticket purchase feature not available.", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+        showGlobalMessage("Error: Ticket purchase feature is currently unavailable.", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
     }
 }

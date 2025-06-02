@@ -2,7 +2,9 @@
 // Handles fetching, displaying a specific daily log, and applying random readable colors.
 
 // --- Constants for this page ---
-const LOG_FILES_BASE_URL = 'data/dailylogs_v8/'; // Ensure this path is correct for your deployment
+// MODIFIED: Path to the parent 'data' directory. 
+// The 'logFile' URL parameter should now provide the rest of the path (e.g., "dailylogs_v8/your_log.json")
+const LOG_FILES_BASE_URL = 'data/'; 
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 const GLOBAL_MESSAGE_DISPLAY_ID_LOG_VIEW = "global-message-log-view";
@@ -58,6 +60,9 @@ function showLogPageViewMessage(message, type = 'info') {
         messageDiv.textContent = message;
         messageDiv.className = `message-container message-${type}`; // Ensure you have these CSS classes
         messageDiv.style.display = 'block';
+        if (type !== 'info' && type !== 'success') { // Auto-hide for info/success might not be needed
+            setTimeout(() => { messageDiv.style.display = 'none'; }, 7000);
+        }
     } else {
         alert(`[${type.toUpperCase()}] ${message}`); // Fallback
     }
@@ -87,13 +92,12 @@ function applyRandomColors() {
     if (logContentEl) {
         logContentEl.style.color = contrastTextColor;
         if (contrastTextColor === '#FFFFFF') { 
-            logContentEl.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-            logContentEl.style.borderColor = "rgba(255, 255, 255, 0.15)";
+            logContentEl.style.backgroundColor = "rgba(30, 30, 30, 0.5)"; // Darker background for white text
+            logContentEl.style.borderColor = "rgba(255, 255, 255, 0.25)";
         } else { 
-            logContentEl.style.backgroundColor = "rgba(0, 0, 0, 0.03)";
-            logContentEl.style.borderColor = "rgba(0, 0, 0, 0.1)";
+            logContentEl.style.backgroundColor = "rgba(240, 240, 240, 0.5)"; // Lighter background for black text
+            logContentEl.style.borderColor = "rgba(0, 0, 0, 0.2)";
         }
-         // Add some padding and border to the main content area for better visual separation
         logContentEl.style.padding = "15px";
         logContentEl.style.border = `1px solid ${contrastTextColor === '#FFFFFF' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`;
         logContentEl.style.borderRadius = "8px";
@@ -104,22 +108,45 @@ function applyRandomColors() {
 /**
  * Helper function to create a key-value pair list item.
  * @param {string} key The label.
- * @param {string|number|boolean} value The value.
+ * @param {string|number|boolean|object} value The value.
  * @param {boolean} isHtmlValue If true, value is treated as raw HTML.
  * @returns {string} HTML string for a list item.
  */
 function createKeyValueListItem(key, value, isHtmlValue = false) {
     const displayKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    let displayValue = (value === undefined || value === null || value === '') ? 'N/A' : value;
+    let displayValue = (value === undefined || value === null || String(value).trim() === '') ? 'N/A' : value;
     
     if (typeof value === 'object' && value !== null && !isHtmlValue) {
-        displayValue = `<pre class="nested-json">${JSON.stringify(value, null, 2)}</pre>`;
-    } else if ( (key.toLowerCase().includes('timestamp') || key.toLowerCase().includes('time')) && 
-                typeof value === 'string' && value !== 'N/A' && value !== 'Not Set' && !value.includes('GMT') && !value.includes('Closed') && !value.includes('Aborted')) {
-        // Attempt to format if it looks like an ISO string or Unix ms timestamp
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) { // Check if date is valid
-             displayValue = `${value} (${date.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })} ART)`;
+        if (Array.isArray(value)) {
+            // Smart display for arrays, especially actualOutcomes which are booleans
+            if (key.toLowerCase().includes('outcomes') && value.every(item => typeof item === 'boolean')) {
+                displayValue = value.map((val, idx) => `${idx+1}: ${val ? '⬆️ Up' : '⬇️ Down/Same'}`).join('<br>');
+                isHtmlValue = true; // Since we added <br>
+            } else {
+                 displayValue = `<pre class="nested-json">${JSON.stringify(value, null, 2)}</pre>`;
+            }
+        } else {
+             displayValue = `<pre class="nested-json">${JSON.stringify(value, null, 2)}</pre>`;
+        }
+    } else if ( (key.toLowerCase().includes('timestamp') || key.toLowerCase().includes('time') || key.toLowerCase().includes('utc')) && 
+                typeof value === 'string' && value !== 'N/A' && value !== 'Not Set' && 
+                !value.includes('GMT') && !value.includes('ART') && // Avoid re-formatting if already formatted
+                !value.toLowerCase().includes('closed') && !value.toLowerCase().includes('aborted')) {
+        
+        const date = new Date(value); // Handles ISO strings like "2025-06-02T00:01:33.384Z"
+        let unixTimestamp = value.length === 10 || value.length === 13 ? parseInt(value, 10) : NaN;
+
+        if (!isNaN(date.getTime())) { 
+             displayValue = `${value} <br><small>(${date.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
+             isHtmlValue = true;
+        } else if (!isNaN(unixTimestamp) && String(unixTimestamp).length === 10) { // Unix seconds
+            const dateFromUnix = new Date(unixTimestamp * 1000);
+             displayValue = `${value} <br><small>(${dateFromUnix.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
+             isHtmlValue = true;
+        } else if (!isNaN(unixTimestamp) && String(unixTimestamp).length === 13) { // Unix ms
+            const dateFromUnixMs = new Date(unixTimestamp);
+             displayValue = `${value} <br><small>(${dateFromUnixMs.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
+             isHtmlValue = true;
         }
     }
 
@@ -129,93 +156,83 @@ function createKeyValueListItem(key, value, isHtmlValue = false) {
 
 /**
  * Renders the log data into a more readable HTML format.
- * @param {object} logData The parsed JSON log data.
+ * @param {object} logData The parsed JSON log data from snapshot_history_YYYY-MM-DD.json.
  * @returns {string} An HTML string representing the log data.
  */
 function renderLogDataAsHtml(logData) {
     let html = '<div class="log-details-container">';
 
-    // Helper to render a section object into a list
-    const renderObjectAsList = (obj) => {
-        let listHtml = '<ul class="log-key-values">';
+    const renderObjectAsList = (obj, sectionTitle = "") => {
+        if (obj === null || typeof obj !== 'object' || Object.keys(obj).length === 0) {
+            if (sectionTitle) return `<div class="log-section"><h2>${sectionTitle}</h2><p>N/A or empty.</p></div>`;
+            return 'N/A';
+        }
+        let listHtml = sectionTitle ? `<div class="log-section"><h2>${sectionTitle}</h2><ul class="log-key-values">` : '<ul class="log-key-values">';
         for (const [key, value] of Object.entries(obj)) {
             listHtml += createKeyValueListItem(key, value);
         }
         listHtml += '</ul>';
+        if (sectionTitle) listHtml += '</div>';
         return listHtml;
     };
 
-    html += `<div class="log-section"><h2>Log Overview</h2><ul class="log-key-values">`;
-    html += createKeyValueListItem('Log Generated At', logData.logTimestamp);
-    html += createKeyValueListItem('Contract Address', logData.contractAddress);
-    html += createKeyValueListItem('Chain Timestamp (at log)', logData.currentChainTimestamp);
-    html += createKeyValueListItem('Block Number (at log)', logData.currentBlockNumber);
-    html += createKeyValueListItem('Current Round ID (at log)', logData.currentRoundIdOnChain);
+    // Top-level info from the log file itself
+    html += `<div class="log-section"><h2>Log File Overview</h2><ul class="log-key-values">`;
+    html += createKeyValueListItem('Log Date', logData.date);
+    html += createKeyValueListItem('Processed At UTC', logData.processedAtUTC);
     html += `</ul></div>`;
 
-    if (logData.errorEncountered) {
-        html += `<div class="log-section error-section"><h2>⚠️ Error During Log Generation</h2><ul class="log-key-values">`;
-        html += createKeyValueListItem('Message', logData.errorEncountered.message);
-        html += createKeyValueListItem('Stack', `<pre>${logData.errorEncountered.stack || "N/A"}</pre>`, true);
-        html += `</ul></div>`;
+    // Display roundStartedInfo if it exists and has content
+    if (logData.roundStartedInfo && Object.keys(logData.roundStartedInfo).length > 0) {
+        html += renderObjectAsList(logData.roundStartedInfo, `Round Started Info (Attempted Next Round ID: ${logData.roundStartedInfo.roundId || 'N/A'})`);
+    } else {
+        html += `<div class="log-section"><h2>Round Started Info</h2><p>No new round start was attempted in this run.</p></div>`;
     }
-
-    html += `<div class="log-section"><h2>Current Round Details (Snapshot at time of log)</h2>${renderObjectAsList(logData.currentRoundDetails)}</div>`;
     
-    // --- Evaluated Round Info ---
-    const evalInfo = logData.evaluatedRoundInfo;
-    html += `<div class="log-section"><h2>Evaluated Round Information (Round ID: ${evalInfo.roundId || 'N/A'})</h2>`;
-    if (evalInfo && evalInfo.roundId !== 'N/A' && evalInfo.roundId !== '0') {
-        html += `<ul class="log-key-values">`;
-        html += createKeyValueListItem('Status', evalInfo.isAborted ? 'Aborted' : (evalInfo.resultsEvaluated ? 'Results Evaluated' : 'Status Unknown/Not Fully Evaluated'));
-        if (evalInfo.note) html += createKeyValueListItem('Note', evalInfo.note);
-        html += createKeyValueListItem('Start Time', evalInfo.startTime);
-        html += createKeyValueListItem('Start Snapshot Submitted', evalInfo.startSnapshotSubmitted);
-        html += createKeyValueListItem('End Snapshot Submitted', evalInfo.endSnapshotSubmitted);
+    // Display roundClosedInfo if it exists and has content
+    const evalInfo = logData.roundClosedInfo;
+    if (evalInfo && Object.keys(evalInfo).length > 0 && evalInfo.roundId && evalInfo.roundId !== "0") {
+        let title = `Round Closed/Processed Info (Round ID: ${evalInfo.roundId})`;
+        // Use the status field to determine if it was aborted or evaluated.
+        // This relies on your automator script setting a clear 'status' field.
+        let statusDisplay = evalInfo.status || 'Status Unknown';
+        if (evalInfo.status && evalInfo.status.toLowerCase().includes('aborted')) {
+             title = `Round ABORTED (Round ID: ${evalInfo.roundId})`;
+        } else if (evalInfo.status && evalInfo.status.toLowerCase().includes('evaluated')) {
+             title = `Round EVALUATED (Round ID: ${evalInfo.roundId})`;
+        }
+
+        html += `<div class="log-section"><h2>${title}</h2><ul class="log-key-values">`;
+        html += createKeyValueListItem('Recorded Status', statusDisplay);
+
+        // Iterate over other fields in evalInfo, excluding 'roundId' and 'status' if already handled
+        for (const [key, value] of Object.entries(evalInfo)) {
+            if (key !== 'roundId' && key !== 'status') {
+                html += createKeyValueListItem(key, value);
+            }
+        }
         html += `</ul>`;
 
-        if (Array.isArray(evalInfo.startPrices) && evalInfo.startPrices.length > 0) {
-            html += `<h3>Token Prices & Outcomes</h3>`;
-            html += `<div class="table-responsive"><table class="log-data-table"><thead><tr><th>#</th><th>Start Price</th><th>End Price</th><th>Outcome (Price Up?)</th></tr></thead><tbody>`;
-            for (let i = 0; i < 10; i++) { // Assuming 10 tokens always
-                const startP = (evalInfo.startPrices && evalInfo.startPrices[i] !== undefined) ? evalInfo.startPrices[i] : 'N/A';
-                const endP = (evalInfo.endPrices && evalInfo.endPrices[i] !== undefined) ? evalInfo.endPrices[i] : 'N/A';
-                const outcomeVal = (evalInfo.actualOutcomes && evalInfo.actualOutcomes[i] !== undefined) ? evalInfo.actualOutcomes[i] : null;
+        // If it was evaluated and has actualOutcomes (ensure your automator logs this for evaluated rounds)
+        if (evalInfo.status && evalInfo.status.toLowerCase().includes('evaluated') && Array.isArray(evalInfo.actualOutcomes)) {
+            html += `<h3>Token Outcomes for Evaluated Round</h3>`;
+            html += `<div class="table-responsive"><table class="log-data-table"><thead><tr><th>#</th><th>Outcome (Price Up?)</th></tr></thead><tbody>`;
+            for (let i = 0; i < 10; i++) { 
+                const outcomeVal = (evalInfo.actualOutcomes[i] !== undefined) ? evalInfo.actualOutcomes[i] : null;
                 const outcomeDisplay = outcomeVal === null ? 'N/A' : (outcomeVal ? '⬆️ Yes (Up)' : '⬇️ No (Down/Same)');
-                html += `<tr><td>${i + 1}</td><td>${startP}</td><td>${endP}</td><td>${outcomeDisplay}</td></tr>`;
+                html += `<tr><td>${i + 1}</td><td>${outcomeDisplay}</td></tr>`;
             }
             html += `</tbody></table></div>`;
-        } else {
-            html += `<p>Token price data (startPrices, endPrices, outcomes) not available or empty for this evaluated round.</p>`;
         }
+        html += '</div>';
 
-        html += `<h3>Evaluation Summary</h3><ul class="log-key-values">`;
-        html += createKeyValueListItem('Highest Score Achieved', evalInfo.highestScoreAchieved);
-        html += createKeyValueListItem('Prize Pool (Global at log time)', `${logData.currentRoundDetails.prizePoolJANS || 'N/A'} JANS`);
-        html += createKeyValueListItem('JANS Distributed This Round', `${evalInfo.totalPrizeJansDistributedThisRound || 'N/A'} JANS`);
-        html += createKeyValueListItem('Winning Ticket Count', evalInfo.winningTicketCount === undefined ? 'N/A' : evalInfo.winningTicketCount);
-        
-        let playersText = "None";
-        if (Array.isArray(evalInfo.winningPlayers) && evalInfo.winningPlayers.length > 0) {
-            playersText = `<ul>${evalInfo.winningPlayers.map(p => `<li>${p} (Wallet)</li>`).join('')}</ul>`;
-        }
-        html += createKeyValueListItem('Winning Players (Wallets)', playersText, true);
-        
-        if (evalInfo.transactionHash && evalInfo.transactionHash !== 'N/A') {
-             html += createKeyValueListItem('Evaluation/Prize Tx Hash', evalInfo.transactionHash);
-             html += createKeyValueListItem('Evaluation Block', evalInfo.blockNumber);
-        }
-        html += createKeyValueListItem('Event Processed in Log Run', evalInfo.evaluatedThisLogRun);
-        html += `</ul>`;
-
+    } else if (evalInfo && evalInfo.status === "NoPriorRound") {
+        html += `<div class="log-section"><h2>Round Closed/Processed Info</h2><p>No prior round to process (Round ID was 0).</p></div>`;
     } else {
-        html += `<p>No specific evaluated round information available in this log, or Round ID is 0/N/A.</p>`;
+        html += `<div class="log-section"><h2>Round Closed/Processed Info</h2><p>No specific round closing/evaluation information in this log.</p></div>`;
     }
-    html += '</div>';
 
-    html += `<div class="log-section"><h2>General Contract State (Snapshot at time of log)</h2>${renderObjectAsList(logData.generalContractState)}</div>`;
-
-    html += '</div>';
+    html += '</div>'; // Close log-details-container
     return html;
 }
 
@@ -233,27 +250,37 @@ async function displayLogContent() {
     applyRandomColors(); 
 
     logTitleEl.textContent = "Loading Log...";
-    logContentEl.innerHTML = "<p>Fetching log data...</p>"; // Use innerHTML for rich content
+    logContentEl.innerHTML = "<p>Fetching log data...</p>"; 
 
     try {
         const queryParams = new URLSearchParams(window.location.search);
-        const logFileName = queryParams.get('logFile');
+        let logFileRelativePath = queryParams.get('logFile'); 
 
-        if (!logFileName) {
-            throw new Error("No log file specified in the URL (e.g., ?logFile=filename.json).");
+        if (!logFileRelativePath) {
+            throw new Error("No log file specified in the URL (e.g., ?logFile=dailylogs_v8/filename.json).");
+        }
+        
+        // Basic sanitization: ensure it doesn't try to go up directories with ".."
+        if (logFileRelativePath.includes("..")) {
+            throw new Error("Invalid log file path specified.");
         }
 
-        logTitleEl.textContent = `Log Details: ${decodeURIComponent(logFileName)}`;
+        const justTheFilename = logFileRelativePath.split('/').pop();
+        logTitleEl.textContent = `Log Details: ${decodeURIComponent(justTheFilename || "Unknown File")}`;
         
-        const logUrl = `${LOG_FILES_BASE_URL}${logFileName}`;
+        const logUrl = `${LOG_FILES_BASE_URL}${logFileRelativePath}`; 
         console.log("Attempting to fetch log from URL:", logUrl);
         
-        const response = await fetch(logUrl);
+        const response = await fetch(logUrl + `?v=${Date.now()}`); // Cache buster
         if (!response.ok) {
-            console.error(`Failed to fetch: ${response.url}, Status: ${response.status}`);
-            throw new Error(`Failed to fetch log file '${decodeURIComponent(logFileName)}'. Status: ${response.status} ${response.statusText}. Tried URL: ${logUrl}`);
+            console.error(`Failed to fetch: ${response.url}, Status: ${response.status} ${response.statusText}`);
+            throw new Error(`Failed to fetch log file '${decodeURIComponent(logFileRelativePath)}'. Server responded with ${response.status}.`);
         }
         const logData = await response.json();
+
+        if (typeof logData !== 'object' || logData === null) {
+            throw new Error("Log data is not valid JSON or is empty.");
+        }
 
         logContentEl.innerHTML = renderLogDataAsHtml(logData);
         showLogPageViewMessage("Log loaded successfully!", "success");
@@ -262,7 +289,7 @@ async function displayLogContent() {
         console.error("ViewLogPage: Error loading or displaying log content:", error);
         logTitleEl.textContent = "Error Loading Log";
         const errorMessage = `Could not load log details. ${error.message}`;
-        logContentEl.innerHTML = `<p class="error-text">${errorMessage}</p><p>Attempted URL: ${error.message.includes("Tried URL:") ? error.message.split("Tried URL:")[1] : 'N/A'}</p>`;
+        logContentEl.innerHTML = `<p class="error-text" style="color: red; font-weight: bold;">${errorMessage}</p>`;
         showLogPageViewMessage(errorMessage, "error");
     }
 }
