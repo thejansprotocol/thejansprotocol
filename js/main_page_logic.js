@@ -35,7 +35,7 @@ import {
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 
 // --- Configuration ---
-const SNAPSHOT_FILE_PATH = './data/snapshots/latest_snapshot.json';
+const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json';
 const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json';
 const POOLS_TO_SELECT = 10; // Should match contract snapshot size
 const DATA_REFRESH_INTERVAL_MS = 60000; // 1 minute
