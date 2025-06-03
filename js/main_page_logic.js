@@ -470,9 +470,8 @@ function renderDesktopTransactionList() {
     localTicketTransactions.slice(0, maxToShow).forEach(tx => {
         const li = document.createElement('li');
         const date = new Date(tx.timestamp * 1000);
-        const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2,'0'\)\}\:</span>{date.getMinutes().toString().padStart(2,'0')}`;
-        li.innerHTML = `<span class="math-inline">\{timeString\} \- Wallet\: <span title\="</span>{tx.player}">${shortenAddress(tx.player, 4)}</span>`;
-        li.style.color = getRandomHexColor();
+        const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2, '0'\)\}\:</span>{date.getMinutes().toString().padStart(2, '0')}`;
+        li.innerHTML = `<span class="math-inline"><span class="math-inline">\{actualTimeText\}</span\> \- Wallet\: <span title\="</span>{tx.player}">${shortenAddress(tx.player, 4)}</span>`;        li.style.color = getRandomHexColor();
         li.style.padding = "3px 5px"; li.style.fontSize = "0.8em";
         li.style.marginBottom = "2px"; li.style.borderRadius = "3px";
         ulElement.appendChild(li);
@@ -487,8 +486,8 @@ function renderMobileLastTransaction() {
     }
     const lastTx = localTicketTransactions[0]; // Already sorted newest first
     const date = new Date(lastTx.timestamp * 1000);
-    const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2,'0'\)\}\:</span>{date.getMinutes().toString().padStart(2,'0')}`;
-    mobileTxDiv.innerHTML = `Latest: <span class="math-inline">\{timeString\} \- Wallet <span title\="</span>{lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
+    const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2, '0'\)\}\:</span>{date.getMinutes().toString().padStart(2, '0')}`;
+    mobileTxDiv.innerHTML = `Latest: <span class="math-inline"> {timeString} \- Wallet <span title\="</span>{lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
     mobileTxDiv.style.color = getRandomHexColor();
 }
 
