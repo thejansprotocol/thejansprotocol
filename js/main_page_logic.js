@@ -459,35 +459,71 @@ async function fetchAndDisplaySimplifiedTransactions() {
     }
 }
 
-function renderDesktopTransactionList() { 
+
+function renderDesktopTransactionList() {
     const ulElement = document.getElementById(DOM_IDS.transactionList);
     if (!ulElement) return;
     ulElement.innerHTML = ''; // Clear previous list
     if (localTicketTransactions.length === 0) {
-        ulElement.innerHTML = '<li>No ticket purchases recorded for this round.</li>'; return;
+        ulElement.innerHTML = '<li>No ticket purchases recorded for this round.</li>';
+        return;
     }
     const maxToShow = 10;
     localTicketTransactions.slice(0, maxToShow).forEach(tx => {
         const li = document.createElement('li');
         const date = new Date(tx.timestamp * 1000);
-        const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2, '0'\)\}\:</span>{date.getMinutes().toString().padStart(2, '0')}`;
-        li.innerHTML = `<span class="math-inline"><span class="math-inline">\{actualTimeText\}</span\> \- Wallet\: <span title\="</span>{tx.player}">${shortenAddress(tx.player, 4)}</span>`;        li.style.color = getRandomHexColor();
-        li.style.padding = "3px 5px"; li.style.fontSize = "0.8em";
-        li.style.marginBottom = "2px"; li.style.borderRadius = "3px";
+
+        // Define actualTimeText correctly with the formatted time
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        // const seconds = date.getSeconds().toString().padStart(2, '0'); // Uncomment if you want seconds
+
+        const actualTimeText = `${hours}:${minutes}`;
+        // Or to include seconds: const actualTimeText = `${hours}:${minutes}:${seconds}`;
+
+        // --- ALTERNATIVE (Recommended for locale-awareness): ---
+        // const actualTimeText = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // Or for default locale time with seconds:
+        // const actualTimeText = date.toLocaleTimeString();
+
+        // Set innerHTML correctly, using template literals properly
+        li.innerHTML = `<span class="math-inline">${actualTimeText}</span> - Wallet: <span title="${tx.player}">${shortenAddress(tx.player, 4)}</span>`;
+        
+        li.style.color = getRandomHexColor();
+        li.style.padding = "3px 5px";
+        li.style.fontSize = "0.8em";
+        li.style.marginBottom = "2px";
+        li.style.borderRadius = "3px";
         ulElement.appendChild(li);
     });
 }
 
-function renderMobileLastTransaction() { 
+function renderMobileLastTransaction() {
     const mobileTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
     if (!mobileTxDiv) return;
     if (localTicketTransactions.length === 0) {
-        mobileTxDiv.textContent = 'No purchases this round.'; return;
+        mobileTxDiv.textContent = 'No purchases this round.';
+        return;
     }
     const lastTx = localTicketTransactions[0]; // Already sorted newest first
     const date = new Date(lastTx.timestamp * 1000);
-    const timeString = `<span class="math-inline">\{date\.getHours\(\)\.toString\(\)\.padStart\(2, '0'\)\}\:</span>{date.getMinutes().toString().padStart(2, '0')}`;
-    mobileTxDiv.innerHTML = `Latest: <span class="math-inline"> {timeString} \- Wallet <span title\="</span>{lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
+
+    // Define actualTimeText correctly with the formatted time
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    // const seconds = date.getSeconds().toString().padStart(2, '0'); // Uncomment if you want seconds
+
+    const actualTimeText = `${hours}:${minutes}`;
+    // Or to include seconds: const actualTimeText = `${hours}:${minutes}:${seconds}`;
+
+    // --- ALTERNATIVE (Recommended for locale-awareness): ---
+    // const actualTimeText = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Or for default locale time with seconds:
+    // const actualTimeText = date.toLocaleTimeString();
+
+    // Set innerHTML correctly
+    mobileTxDiv.innerHTML = `Latest: <span class="math-inline">${actualTimeText}</span> - Wallet: <span title="${lastTx.player}">${shortenAddress(lastTx.player, 4)}</span>`;
+    
     mobileTxDiv.style.color = getRandomHexColor();
 }
 
