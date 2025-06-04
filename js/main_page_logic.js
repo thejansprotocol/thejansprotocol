@@ -168,7 +168,7 @@ function renderDesktopSnapshotTable() {
             if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
             td.style.textAlign = textAlign; return td;
         };
-        let baseTokenName = token.name || 'N/A';
+        let baseTokenName = token.pool_name || 'N/A'; // Use token.pool_name
         if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
         tr.appendChild(addCell(baseTokenName, false, 'left'));
         const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);
@@ -197,7 +197,7 @@ function renderMobileSnapshotTable() {
             if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
             td.style.textAlign = textAlign; return td;
         };
-        let baseTokenName = token.name || 'N/A';
+        let baseTokenName = token.pool_name || 'N/A'; // Use token.pool_name
         if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
         tr.appendChild(addCell(baseTokenName, false, 'left'));
         const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);
