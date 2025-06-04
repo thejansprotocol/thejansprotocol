@@ -12,7 +12,7 @@
 
 // OPTION 2: Define directly (Simpler for a standalone page)
 const RPC_URL = "https://rpc.mainnet.taraxa.io"; // YOUR ACTUAL RPC URL
-const JANSGAME_CONTRACT_ADDRESS = "0x77fA219EB588bF1312B44E5F4FF0CDdA5cdc9f8c"; // YOUR JANS GAME CONTRACT ADDRESS
+const JANSGAME_CONTRACT_ADDRESS = "0xd69E5A84108ce8d50244fBfaE9B9199A6e1ab752"; // YOUR JANS GAME CONTRACT ADDRESS
 const JANS_TOKEN_ADDRESS = "0xA52fc8BD9b64cb971cCa78b558de8DE8615c9a28"; // ❗ IMPORTANT: Add your JANS token address
 
 // Minimal ABI for ERC20 totalSupply function
