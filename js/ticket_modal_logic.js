@@ -215,15 +215,15 @@ function fillPredictionTableInModal() {
         const row = document.createElement("tr");
         row.className = "prediction-row";
 
-        let baseTokenNameModal = 'N/A'; 
-        if (token && typeof token.name === 'string') {
-            baseTokenNameModal = token.name; 
+      let baseTokenNameModal = 'N/A';
+        if (token && token.pool_name && typeof token.pool_name === 'string') { // Check for token.pool_name
+            baseTokenNameModal = token.pool_name;
             if (baseTokenNameModal.includes('/')) {
                 baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
             }
-        } else if (token && token.name !== undefined && token.name !== null) {
-            baseTokenNameModal = String(token.name);
-            if (baseTokenNameModal.includes('/')) {
+        } else if (token && token.pool_name) { // Fallback for non-string but existing pool_name
+             baseTokenNameModal = String(token.pool_name);
+             if (baseTokenNameModal.includes('/')) {
                 baseTokenNameModal = baseTokenNameModal.split('/')[0].trim();
             }
         }
