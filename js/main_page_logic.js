@@ -37,8 +37,7 @@ import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 // --- Configuration ---
 // REVIEW THESE PATHS based on your deployed site structure
 const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json'; 
-const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json';
-// Example of root-relative paths if your data folder is at the site root:
+const DAILY_LOG_INDEX_FILE = '/public/data/snapshots/index.json'; 
 // const SNAPSHOT_FILE_PATH = '/data/snapshots/latest_snapshot.json'; 
 // const DAILY_LOG_INDEX_FILE = '/data/dailylogs_v8/index.json';
 
