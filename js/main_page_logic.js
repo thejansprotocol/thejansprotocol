@@ -37,8 +37,7 @@ import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 // --- Configuration ---
 // REVIEW THESE PATHS based on your deployed site structure
 const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json'; 
-const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json';
-// Example of root-relative paths if your data folder is at the site root:
+const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json'; 
 // const SNAPSHOT_FILE_PATH = '/data/snapshots/latest_snapshot.json'; 
 // const DAILY_LOG_INDEX_FILE = '/data/dailylogs_v8/index.json';
 
@@ -168,7 +167,7 @@ function renderDesktopSnapshotTable() {
             if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
             td.style.textAlign = textAlign; return td;
         };
-        let baseTokenName = token.name || 'N/A';
+        let baseTokenName = token.pool_name || 'N/A'; // Use token.pool_name
         if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
         tr.appendChild(addCell(baseTokenName, false, 'left'));
         const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);
@@ -197,7 +196,7 @@ function renderMobileSnapshotTable() {
             if (isHtml) { td.innerHTML = content; } else { td.textContent = content; }
             td.style.textAlign = textAlign; return td;
         };
-        let baseTokenName = token.name || 'N/A';
+        let baseTokenName = token.pool_name || 'N/A'; // Use token.pool_name
         if (baseTokenName.includes('/')) baseTokenName = baseTokenName.split('/')[0].trim();
         tr.appendChild(addCell(baseTokenName, false, 'left'));
         const formattedPrice = formatPriceWithZeroCount(token.base_token_price_usd, TABLE_PRICE_DISPLAY_OPTIONS);

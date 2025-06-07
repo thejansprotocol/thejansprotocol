@@ -4,7 +4,7 @@
 // --- Constants for this page ---
 // MODIFIED: Path to the parent 'data' directory. 
 // The 'logFile' URL parameter should now provide the rest of the path (e.g., "dailylogs_v8/your_log.json")
-const LOG_FILES_BASE_URL = 'data/'; 
+const LOG_FILES_BASE_URL = './data/dailylogs_v8/';
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 const GLOBAL_MESSAGE_DISPLAY_ID_LOG_VIEW = "global-message-log-view";
