@@ -368,7 +368,7 @@ async function updateGlobalStatsDisplay() {
     }
 }
 
-// --- Transaction Log Display ---
+// --- Transaction Log Display (UPDATED) ---
 async function fetchAndDisplaySimplifiedTransactions() { 
     const txListUl = document.getElementById(DOM_IDS.transactionList);
     const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
@@ -422,7 +422,11 @@ async function fetchAndDisplaySimplifiedTransactions() {
         fromBlockForQuery = Math.max(0, fromBlockForQuery); // Ensure not negative
 
         const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
-        const events = await roContract.queryFilter(eventFilter, fromBlockForQuery, currentBlockNumber);
+        
+        // ===========================================================================
+        //                      *** THIS IS THE ONLY LINE WE CHANGED ***
+        const events = await getPastEventsInBatches(roContract, eventFilter, fromBlockForQuery, currentBlockNumber);
+        // ===========================================================================
         
         let newTxFound = false;
         for (const event of events) {
@@ -457,7 +461,6 @@ async function fetchAndDisplaySimplifiedTransactions() {
         if (mobileLastTxDiv && localTicketTransactions.length === 0) mobileLastTxDiv.textContent = 'Error loading latest transaction.';
     }
 }
-
 
 function renderDesktopTransactionList() {
     const ulElement = document.getElementById(DOM_IDS.transactionList);
@@ -797,4 +800,45 @@ function handleBuyTicketClick() {
         console.error("openTicketPurchaseModal is not defined or not imported correctly.");
         showGlobalMessage("Error: Ticket purchase feature is currently unavailable.", "error", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
     }
+}
+
+async function getPastEventsInBatches(contract, eventFilter, fromBlock, toBlock) {
+    // The RPC provider's limit for block range queries.
+    const BATCH_SIZE = 1000;
+    let allLogs = [];
+
+    console.log(`Fetching logs from block ${fromBlock} to ${toBlock}`);
+
+    // Start fetching from the beginning of the range
+    let currentFromBlock = fromBlock;
+
+    while (currentFromBlock <= toBlock) {
+        // Calculate the end of the current batch, ensuring it doesn't go past the final toBlock
+        let currentToBlock = currentFromBlock + BATCH_SIZE - 1;
+        if (currentToBlock > toBlock) {
+            currentToBlock = toBlock;
+        }
+
+        try {
+            console.log(`   Querying batch: ${currentFromBlock} to ${currentToBlock}`);
+
+            // Fetch logs for the current batch
+            const logs = await contract.queryFilter(eventFilter, currentFromBlock, currentToBlock);
+
+            // Add the logs from this batch to our master list
+            allLogs = allLogs.concat(logs);
+
+        } catch (error) {
+            console.error(`Failed to fetch logs for batch ${currentFromBlock}-${currentToBlock}:`, error);
+            // Depending on your needs, you might want to retry or handle the error appropriately.
+            // For now, we'll stop processing on failure.
+            throw new Error("Failed during batch log fetching.");
+        }
+
+        // Set the starting block for the next iteration
+        currentFromBlock = currentToBlock + 1;
+    }
+
+    console.log("Successfully fetched all logs in batches.");
+    return allLogs;
 }
