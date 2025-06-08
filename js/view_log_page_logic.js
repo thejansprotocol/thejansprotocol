@@ -237,63 +237,67 @@ function renderLogDataAsHtml(logData) {
 }
 
 
-async function displayLogContent() {
+
+function displayLogContent(logData) {
+    // Convert logData back to pretty JSON string to show raw JSON if needed
+    const rawJsonString = JSON.stringify(logData, null, 2);
+    
+    // Render your existing processed HTML log (using your renderLogDataAsHtml function)
+    const formattedHtml = renderLogDataAsHtml(logData);
+
     const logContentEl = document.getElementById(LOG_CONTENT_ELEMENT_ID);
-    const logTitleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
+    if (!logContentEl) return;
 
-    if (!logContentEl || !logTitleEl) {
-        console.error("ViewLogPage: Essential HTML elements (log-title or log-content) are missing.");
-        showLogPageViewMessage("Error: Page structure is incomplete.", "error");
-        return;
-    }
+    // Clear previous content
+    logContentEl.innerHTML = '';
 
-    applyRandomColors(); 
+    // Create a container div to hold the button and JSON text
+    const container = document.createElement('div');
+    container.style.position = 'relative';
 
-    logTitleEl.textContent = "Loading Log...";
-    logContentEl.innerHTML = "<p>Fetching log data...</p>"; 
+    // Create the "Copy JSON" button
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy JSON to Clipboard';
+    copyButton.style.marginBottom = '10px';
+    copyButton.style.cursor = 'pointer';
 
-    try {
-        const queryParams = new URLSearchParams(window.location.search);
-        let logFileRelativePath = queryParams.get('logFile'); 
+    // When button is clicked, copy raw JSON text
+    copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(rawJsonString)
+            .then(() => {
+                showLogPageViewMessage('JSON copied to clipboard!', 'success');
+            })
+            .catch(() => {
+                showLogPageViewMessage('Failed to copy JSON.', 'error');
+            });
+    });
 
-        if (!logFileRelativePath) {
-            throw new Error("No log file specified in the URL (e.g., ?logFile=dailylogs_v8/filename.json).");
-        }
-        
-        // Basic sanitization: ensure it doesn't try to go up directories with ".."
-        if (logFileRelativePath.includes("..")) {
-            throw new Error("Invalid log file path specified.");
-        }
+    // Create a <pre> element to show raw JSON (optional, if you want to display it)
+    const pre = document.createElement('pre');
+    pre.textContent = rawJsonString;
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.maxHeight = '400px';
+    pre.style.overflow = 'auto';
+    pre.style.border = '1px solid #ccc';
+    pre.style.padding = '10px';
+    pre.style.borderRadius = '5px';
+    pre.style.backgroundColor = '#f5f5f5';
+    pre.style.color = '#333';
 
-        const justTheFilename = logFileRelativePath.split('/').pop();
-        logTitleEl.textContent = `Log Details: ${decodeURIComponent(justTheFilename || "Unknown File")}`;
-        
-        const logUrl = `${LOG_FILES_BASE_URL}${logFileRelativePath}`; 
-        console.log("Attempting to fetch log from URL:", logUrl);
-        
-        const response = await fetch(logUrl + `?v=${Date.now()}`); // Cache buster
-        if (!response.ok) {
-            console.error(`Failed to fetch: ${response.url}, Status: ${response.status} ${response.statusText}`);
-            throw new Error(`Failed to fetch log file '${decodeURIComponent(logFileRelativePath)}'. Server responded with ${response.status}.`);
-        }
-        const logData = await response.json();
+    // Append the button and the JSON display inside container
+    container.appendChild(copyButton);
+    container.appendChild(pre);
 
-        if (typeof logData !== 'object' || logData === null) {
-            throw new Error("Log data is not valid JSON or is empty.");
-        }
+    // Append the formatted HTML log view below or above the raw JSON
+    const formattedDiv = document.createElement('div');
+    formattedDiv.innerHTML = formattedHtml;
+    formattedDiv.style.marginTop = '20px';
 
-        logContentEl.innerHTML = renderLogDataAsHtml(logData);
-        showLogPageViewMessage("Log loaded successfully!", "success");
+    container.appendChild(formattedDiv);
 
-    } catch (error) {
-        console.error("ViewLogPage: Error loading or displaying log content:", error);
-        logTitleEl.textContent = "Error Loading Log";
-        const errorMessage = `Could not load log details. ${error.message}`;
-        logContentEl.innerHTML = `<p class="error-text" style="color: red; font-weight: bold;">${errorMessage}</p>`;
-        showLogPageViewMessage(errorMessage, "error");
-    }
+    // Finally add the container to the page
+    logContentEl.appendChild(container);
 }
-
 // --- Page Load Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded for View Log Page. Initializing displayLogContent...");
