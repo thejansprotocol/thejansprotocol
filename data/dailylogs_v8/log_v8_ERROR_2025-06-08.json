@@ -1,0 +1,91 @@
+{
+  "logTimestamp": "2025-06-08T23:11:41.817Z",
+  "contractAddress": "0x7964861254d0e3Dd30f732DB49052198A9b90eae",
+  "currentChainTimestamp": "2025-06-08T23:11:37.000Z",
+  "currentBlockNumber": "18893219",
+  "currentRoundIdOnChain": "2",
+  "currentRoundDetails": {
+    "startTime": "2025-06-08T21:11:09.000Z",
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": false,
+    "resultsEvaluated": false,
+    "prizePoolJANS": "1309239349.18719550634506153",
+    "calculatedTicketPriceTara": "3.776748823542741107 TARA",
+    "calculatedTicketPriceUsdCents": "1 USD Cents",
+    "calculatedShareAllocation": "0.007083333333333333x"
+  },
+  "evaluatedRoundInfo": {
+    "roundId": "1",
+    "startTime": "2025-06-07T20:52:58.000Z",
+    "isAborted": false,
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": true,
+    "resultsEvaluated": true,
+    "evaluatedThisLogRun": true,
+    "transactionHash": "0xa35a27cab0fa41d43b371b5182bca914a0d532ef907ea9463032263f3cc6c4f2",
+    "blockNumber": "18891227",
+    "startPrices": [
+      "8162588046000000",
+      "2303325587315140000000",
+      "4118295524608930",
+      "37586013750",
+      "487271956272437",
+      "941407047101261000",
+      "48112924888251",
+      "149041815637",
+      "18828957174124100",
+      "194178415612916000000"
+    ],
+    "endPrices": [
+      "8162588046000000",
+      "2497238251658070000000",
+      "4203097713378830",
+      "37586013750",
+      "519638356569845",
+      "932074121812647000",
+      "47175592235929",
+      "149041815637",
+      "18828957170000000",
+      "192542460962785000000"
+    ],
+    "actualOutcomes": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "highestScoreAchieved": "0",
+    "winningTicketCount": 0,
+    "totalPrizeJansDistributedThisRound": "0.0",
+    "winningPlayers": [],
+    "note": "Details for normally evaluated Round 1."
+  },
+  "generalContractState": {
+    "owner": "0xfB8aED...DeeCe0",
+    "currentTaraWeiPerUsdCent": "3776748823542741107",
+    "configuredStartPriceUsdCents": "1",
+    "configuredMidPriceUsdCents": "2",
+    "configuredEndPriceUsdCents": "10",
+    "ticketSalesDurationSeconds": "79200",
+    "totalJansBurnedInGame": "128305456.220345159621816029",
+    "currentTotalTrackedShares": "0.007361111111111111",
+    "totalNativeTaraAccumulatedForLPSide": "0.736466020590834515",
+    "totalJansAccumulatedForLPSide": "510603346.183006247474573996",
+    "totalNativeTaraRewardForLPFormers": "0.037767488235427411",
+    "contractGameLpTokenBalance": "0.0",
+    "currentLpDistributionId": "0",
+    "isCurrentLpDistributionFinalized": false,
+    "isLpDistributionTriggerable": false,
+    "lpDistributionBurnTargetDivisor": "200000"
+  },
+  "errorEncountered": {
+    "message": "GH_TOKEN not found in environment variables",
+    "stack": "Error: GH_TOKEN not found in environment variables\n    at uploadToFrontendRepo (/home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:47:30)\n    at createDailyLog (/home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:423:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"
+  }
+}
