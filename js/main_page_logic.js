@@ -33,7 +33,6 @@ import {
 
 // Import for Ticket Modal
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
-import { getPaginatedLogs } from './transactions.js';
 import { ethers } from 'ethers';
 
 
@@ -98,6 +97,7 @@ sync function fetchLogs() {
     toBlock: 18811537
   });
 
+}
 
 // --- Helper Functions ---
 function getRandomHexColor() {
