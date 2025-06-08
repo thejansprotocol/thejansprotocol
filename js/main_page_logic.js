@@ -33,9 +33,6 @@ import {
 
 // Import for Ticket Modal
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
-import { ethers } from 'ethers';
-
-
 
 // --- Configuration ---
 // REVIEW THESE PATHS based on your deployed site structure
