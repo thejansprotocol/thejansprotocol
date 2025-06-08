@@ -1,14 +1,54 @@
 {
   "date": "2025-06-08",
-  "processedAtUTC": "2025-06-08T20:52:28.998Z",
-  "jobDurationSeconds": "3.65",
-  "finalChainRoundIdFromScriptEnd": "1",
+  "processedAtUTC": "2025-06-08T21:10:24.852Z",
+  "jobDurationSeconds": "52.13",
+  "finalChainRoundIdFromScriptEnd": "2",
   "roundClosedInfo": {
     "roundId": "1",
-    "status": "DurationNotMetForEnd",
-    "expectedEndTime": "2025-06-08T20:52:58.000Z"
+    "status": "EndSnapshotSubmittedThisRun",
+    "txHash": "0xa86bab086d3b80cc5cf54e258a599080fe6b43de8d01709c7b3608fa078ea3d8",
+    "endPrices": [
+      "8162588046000000",
+      "2497238251658070000000",
+      "4203097713378830",
+      "37586013750",
+      "519638356569845",
+      "932074121812647000",
+      "47175592235929",
+      "149041815637",
+      "18828957170000000",
+      "192542460962785000000"
+    ],
+    "endChecksum": "0x1b93a8aa50b0a92e9f78f937535fb5d15bf1df16dfbf7a01806411cc7ab10ad7",
+    "statusEvaluation": "EvaluatedThisRun",
+    "evaluationTxHash": "0xa35a27cab0fa41d43b371b5182bca914a0d532ef907ea9463032263f3cc6c4f2",
+    "blockNumberOfEval": "18891227",
+    "actualOutcomes": [],
+    "highestScore": "0"
   },
-  "roundStartedInfo": null,
+  "roundStartedInfo": {
+    "roundId": "2",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0xf0c4150fce606a885a90962eb6e16498c1ff63d8e923e7a9c995e64df51b68f3",
+    "blockNumberOfStart": "18891232",
+    "isFirstRound": false,
+    "selectedPoolsActualCount": 10,
+    "paddedTo": 10,
+    "startTimeOnChain": "1749417069",
+    "startPrices": [
+      "932074121812647000",
+      "18828957170000000",
+      "37586013750",
+      "47175592235929",
+      "519638356569845",
+      "8162588046000000",
+      "149041815637",
+      "4203097713378830",
+      "192542460962785000000",
+      "2497238251658070000000"
+    ],
+    "startChecksum": "0x896e3f62f99e023e54ac10efdfb8879f773bfcfee4bb3c7ec244a52fb847d2c7"
+  },
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
 }
