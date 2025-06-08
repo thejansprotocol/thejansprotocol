@@ -81,24 +81,6 @@ const TABLE_PRICE_DISPLAY_OPTIONS = {
     zeroCountThreshold: 4, significantDigits: 4, defaultDisplayDecimals: 6, minNormalDecimals: 2
 };
 
-//function_transactions _block rpc
-
-sync function fetchLogs() {
-  const provider = new ethers.providers.JsonRpcProvider("https://...");
-
-  const logs = await getPaginatedLogs({
-    provider,
-    address: "0x7964861254d0e3dd30f732db49052198a9b90eae",
-    topics: [
-      "0xc302ec676fdf3ee8d1683cf3947b1319f15e286d74964fd23b31bfc0aa85ef8e",
-      "0x0000000000000000000000000000000000000000000000000000000000000002"
-    ],
-    fromBlock: 18809609,
-    toBlock: 18811537
-  });
-
-}
-
 // --- Helper Functions ---
 function getRandomHexColor() {
     let color = '#';
