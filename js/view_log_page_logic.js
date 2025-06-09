@@ -86,8 +86,10 @@ function applyRandomColors() {
     
     const contrastTextColor = getContrastTextColor(opaqueHexColorForContrast);
 
-    document.body.style.backgroundColor = randomBgColorRgba;
-    document.body.style.color = contrastTextColor;
+    if (document.body) {
+        document.body.style.backgroundColor = randomBgColorRgba;
+        document.body.style.color = contrastTextColor;
+    }
 
     const logTitleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
     if (logTitleEl) {
@@ -135,7 +137,7 @@ function renderLog(log, title = "") {
 
   if (titleEl) titleEl.innerText = `Viewing Log: ${title}`;
 
-  const shorten = (s) => s && s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : s;
+  const shorten = (s) => s && s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : (s ?? 'N/A');
   const formatTime = (iso) => iso ? new Date(iso).toLocaleString() : 'N/A';
 
   const currentRound = log?.currentRoundDetails || {};
