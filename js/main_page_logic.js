@@ -414,6 +414,9 @@ async function fetchAndDisplaySimplifiedTransactions() {
             if (secondsSinceRoundStart > 3600 * 24) blockRange = blocksPerDayApprox * 2; // 2 days
 
             fromBlockForQuery = (roundStartTimestamp > 0) ? Math.max(0, currentBlockNumber - blockRange) : Math.max(0, currentBlockNumber - 5000);
+        } // <-- MISSING CLOSING BRACE ADDED HERE FOR else if (localLastFetchedTxBlock === null) -->
+        
+        // The closing brace above fixes the block structure
 
         const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
         
