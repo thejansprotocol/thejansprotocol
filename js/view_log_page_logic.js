@@ -199,6 +199,30 @@ function renderLog(log, title = "") {
 }
 
 
+/**
+ * Loads the log file specified in the URL and displays it.
+ */
+async function loadAndDisplayLog() {
+  const logFile = getLogFilenameFromUrl();
+  if (!logFile) {
+    showLogPageViewMessage("No log file specified in the URL.", "error");
+    displayMessage("No log file specified in the URL.");
+    return;
+  }
+  try {
+    const response = await fetch(LOG_FILES_BASE_URL + logFile);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch log file: ${response.status} ${response.statusText}`);
+    }
+    const logData = await response.json();
+    renderLog(logData, logFile);
+  } catch (err) {
+    showLogPageViewMessage("Error loading log file: " + err.message, "error");
+    displayMessage("Error loading log file: " + err.message);
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
   applyRandomColors();
   loadAndDisplayLog();
