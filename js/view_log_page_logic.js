@@ -116,27 +116,7 @@ function getLogFilenameFromUrl() {
   return params.get("logFile");
 }
 
-  try {
-    const logUrl = LOG_FILES_BASE_URL + logFileName;
-    const response = await fetch(logUrl);
-    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
-    const log = await response.json();
-    console.log("========== JANS Prediction Game Log ==========");
-    console.log(log); // ✅ log is defined here
-    renderLog(log, logFileName);
-  } catch (err) {
-    displayMessage("Error loading log file: " + err.message);
-    console.error(err);
-  }
-    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
-    const log = await response.json();
-    console.log("========== JANS Prediction Game Log ==========");
-    console.log(log); // ✅ log is defined here
-    renderLog(log, logFileName);
-   catch (err) {
-    displayMessage("Error loading log file: " + err.message);
-    console.error(err);
-  }
+  // Removed duplicated and malformed async logic; see loadAndDisplayLog() for correct implementation.
 
 
 // Display message in fallback element
@@ -158,29 +138,29 @@ function renderLog(log, title = "") {
 
   const html = `
     <h3>🧾 Log Metadata</h3>
-    <p><strong>Timestamp:</strong> ${formatTime(log.logTimestamp)}</p>
-    <p><strong>Contract:</strong> ${shorten(log.contractAddress)}</p>
-    <p><strong>Block Number:</strong> ${log.currentBlockNumber}</p>
+    <p><strong>Timestamp:</strong> ${log?.logTimestamp ? formatTime(log.logTimestamp) : 'N/A'}</p>
+    <p><strong>Contract:</strong> ${log?.contractAddress ? shorten(log.contractAddress) : 'N/A'}</p>
+    <p><strong>Block Number:</strong> ${log?.currentBlockNumber ?? 'N/A'}</p>
 
-    <h3>📍 Current Round (${log.currentRoundIdOnChain})</h3>
+    <h3>📍 Current Round (${log?.currentRoundIdOnChain ?? 'N/A'})</h3>
     <ul>
-      <li>Start: ${formatTime(log.currentRoundDetails.startTime)}</li>
-      <li>Start Snapshot: ${log.currentRoundDetails.startSnapshotSubmitted}</li>
-      <li>End Snapshot: ${log.currentRoundDetails.endSnapshotSubmitted}</li>
-      <li>Results Evaluated: ${log.currentRoundDetails.resultsEvaluated}</li>
-      <li>Prize Pool (JANS): ${Number(log.currentRoundDetails.prizePoolJANS).toFixed(2)}</li>
-      <li>Ticket Price (TARA): ${log.currentRoundDetails.calculatedTicketPriceTara}</li>
-      <li>Share Allocation: ${log.currentRoundDetails.calculatedShareAllocation}</li>
+      <li>Start: ${log?.currentRoundDetails?.startTime ? formatTime(log.currentRoundDetails.startTime) : 'N/A'}</li>
+      <li>Start Snapshot: ${log?.currentRoundDetails?.startSnapshotSubmitted ?? 'N/A'}</li>
+      <li>End Snapshot: ${log?.currentRoundDetails?.endSnapshotSubmitted ?? 'N/A'}</li>
+      <li>Results Evaluated: ${log?.currentRoundDetails?.resultsEvaluated ?? 'N/A'}</li>
+      <li>Prize Pool (JANS): ${log?.currentRoundDetails?.prizePoolJANS !== undefined ? Number(log.currentRoundDetails.prizePoolJANS).toFixed(2) : 'N/A'}</li>
+      <li>Ticket Price (TARA): ${log?.currentRoundDetails?.calculatedTicketPriceTara ?? 'N/A'}</li>
+      <li>Share Allocation: ${log?.currentRoundDetails?.calculatedShareAllocation ?? 'N/A'}</li>
     </ul>
 
     <h3>✅ Last Evaluated Round</h3>
     <ul>
-      <li>Round ID: ${log.evaluatedRoundInfo.roundId}</li>
-      <li>Start: ${formatTime(log.evaluatedRoundInfo.startTime)}</li>
-      <li>Results Evaluated: ${log.evaluatedRoundInfo.resultsEvaluated}</li>
-      <li>Outcomes: ${log.evaluatedRoundInfo.actualOutcomes.map(o => o ? '↑' : '↓').join(' ')}</li>
-      <li>Winning Tickets: ${log.evaluatedRoundInfo.winningTicketCount}</li>
-      <li>Total Prize: ${log.evaluatedRoundInfo.totalPrizeJansDistributedThisRound}</li>
+      <li>Round ID: ${log?.evaluatedRoundInfo?.roundId ?? 'N/A'}</li>
+      <li>Start: ${log?.evaluatedRoundInfo?.startTime ? formatTime(log.evaluatedRoundInfo.startTime) : 'N/A'}</li>
+      <li>Results Evaluated: ${log?.evaluatedRoundInfo?.resultsEvaluated ?? 'N/A'}</li>
+      <li>Outcomes: ${Array.isArray(log?.evaluatedRoundInfo?.actualOutcomes) ? log.evaluatedRoundInfo.actualOutcomes.map(o => o ? '↑' : '↓').join(' ') : 'N/A'}</li>
+      <li>Winning Tickets: ${log?.evaluatedRoundInfo?.winningTicketCount ?? 'N/A'}</li>
+      <li>Total Prize: ${log?.evaluatedRoundInfo?.totalPrizeJansDistributedThisRound ?? 'N/A'}</li>
     </ul>
   `;
 
