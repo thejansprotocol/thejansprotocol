@@ -803,42 +803,39 @@ function handleBuyTicketClick() {
 }
 
 async function getPastEventsInBatches(contract, eventFilter, fromBlock, toBlock) {
-    // The RPC provider's limit for block range queries.
     const BATCH_SIZE = 1000;
-    let allLogs = [];
+    const MAX_CONCURRENCY = 5; // Adjust based on RPC limits
 
-    console.log(`Fetching logs from block ${fromBlock} to ${toBlock}`);
-
-    // Start fetching from the beginning of the range
-    let currentFromBlock = fromBlock;
-
-    while (currentFromBlock <= toBlock) {
-        // Calculate the end of the current batch, ensuring it doesn't go past the final toBlock
-        let currentToBlock = currentFromBlock + BATCH_SIZE - 1;
-        if (currentToBlock > toBlock) {
-            currentToBlock = toBlock;
-        }
-
-        try {
-            console.log(`   Querying batch: ${currentFromBlock} to ${currentToBlock}`);
-
-            // Fetch logs for the current batch
-            const logs = await contract.queryFilter(eventFilter, currentFromBlock, currentToBlock);
-
-            // Add the logs from this batch to our master list
-            allLogs = allLogs.concat(logs);
-
-        } catch (error) {
-            console.error(`Failed to fetch logs for batch ${currentFromBlock}-${currentToBlock}:`, error);
-            // Depending on your needs, you might want to retry or handle the error appropriately.
-            // For now, we'll stop processing on failure.
-            throw new Error("Failed during batch log fetching.");
-        }
-
-        // Set the starting block for the next iteration
-        currentFromBlock = currentToBlock + 1;
+    const batchRanges = [];
+    for (let i = fromBlock; i <= toBlock; i += BATCH_SIZE) {
+        batchRanges.push([
+            i,
+            Math.min(i + BATCH_SIZE - 1, toBlock)
+        ]);
     }
 
-    console.log("Successfully fetched all logs in batches.");
+    const allLogs = [];
+    let currentIndex = 0;
+
+    async function processBatch() {
+        while (currentIndex < batchRanges.length) {
+            const index = currentIndex++;
+            const [start, end] = batchRanges[index];
+
+            try {
+                console.log(`   Querying batch: ${start} to ${end}`);
+                const logs = await contract.queryFilter(eventFilter, start, end);
+                allLogs.push(...logs);
+            } catch (error) {
+                console.error(`Failed to fetch logs for batch ${start}-${end}:`, error);
+                throw new Error(`Batch failed: ${start}–${end}`);
+            }
+        }
+    }
+
+    // Launch concurrent batch processors
+    const workers = Array.from({ length: MAX_CONCURRENCY }, () => processBatch());
+    await Promise.all(workers);
+
     return allLogs;
 }
