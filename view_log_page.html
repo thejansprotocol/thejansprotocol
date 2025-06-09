@@ -5,35 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Jans Protocol Log Viewer</title>
   <style>
-    /* --- ULTRA-MINIMAL TERMINAL-STYLE LOG VIEWER --- */
-    
+    /* --- MINIMAL ULTRA-COMPACT TERMINAL VIEW --- */
+
     body {
       margin: 0;
-      padding: 5px; /* Small margin around edges */
+      padding: 5px;
       background-image: url('./assets/jans_reflexive.png');
       background-repeat: no-repeat;
       background-size: contain;
       background-attachment: fixed;
       background-position: right center;
-      font-family: monospace;       /* Terminal-style font */
-      font-size: 9px;               /* Compact font size */
-      line-height: 0.85;            /* 🔥 Tighter line height */
-      color: #ffffff;               /* White text */
+      font-family: monospace;
+      font-size: 9px;           /* ⬅️ Smaller text */
+      line-height: 0.85;        /* ⬅️ Tighter lines */
+      color: #ffffff;
     }
 
     h1 {
       font-size: 10px;
-      margin: 0 0 4px 0;            /* Tiny bottom margin */
+      margin: 0 0 4px 0;
       font-weight: normal;
     }
 
     pre {
       margin: 0;
       padding: 0;
-      white-space: pre-wrap;        /* Wrap long lines */
-      word-break: break-word;       /* Ensure no overflow */
-      font-size: 9px;               /* Match body font */
-      line-height: 0.85;            /* 🔥 Tight log lines */
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 9px;
+      line-height: 0.85;
     }
   </style>
 </head>
@@ -42,7 +42,7 @@
   <pre id="log-content">Loading log data...</pre>
 
   <script>
-    // ⚠️ TEST ONLY — dynamically loads 100 lines
+    // Dynamic test content (remove this if loading logs dynamically)
     document.getElementById('log-content').textContent =
       Array.from({ length: 100 }, (_, i) => `Log entry #${i + 1}`).join('\n');
   </script>
