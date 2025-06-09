@@ -127,7 +127,7 @@ function displayMessage(msg) {
   if (el) el.innerText = msg;
 }
 
-// Main render function
+
 function renderLog(log, title = "") {
   const container = document.getElementById(LOG_CONTENT_ELEMENT_ID);
   const titleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
@@ -135,67 +135,67 @@ function renderLog(log, title = "") {
 
   if (titleEl) titleEl.innerText = `Viewing Log: ${title}`;
 
-  const shorten = (s) => s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : s;
-  const formatTime = (iso) => new Date(iso).toLocaleString();
+  const shorten = (s) => s && s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : s;
+  const formatTime = (iso) => iso ? new Date(iso).toLocaleString() : 'N/A';
 
   const currentRound = log?.currentRoundDetails || {};
   const evaluatedRound = log?.evaluatedRoundInfo || {};
+  const generalState = log?.generalContractState || {};
 
   const html = `
     <h3>🧾 Log Metadata</h3>
-    <p><strong>Timestamp:</strong> ${log?.logTimestamp ? formatTime(log.logTimestamp) : 'N/A'}</p>
-    <p><strong>Contract:</strong> ${log?.contractAddress ? shorten(log.contractAddress) : 'N/A'}</p>
+    <p><strong>Timestamp:</strong> ${formatTime(log?.logTimestamp)}</p>
+    <p><strong>Contract:</strong> ${shorten(log?.contractAddress) ?? 'N/A'}</p>
     <p><strong>Block Number:</strong> ${log?.currentBlockNumber ?? 'N/A'}</p>
+    <p><strong>Chain Timestamp:</strong> ${formatTime(log?.currentChainTimestamp)}</p>
 
     <h3>📍 Current Round (${log?.currentRoundIdOnChain ?? 'N/A'})</h3>
     <ul>
-      <li>Start: ${currentRound.startTime ? formatTime(currentRound.startTime) : 'N/A'}</li>
+      <li>Start: ${formatTime(currentRound.startTime)}</li>
       <li>Start Snapshot: ${currentRound.startSnapshotSubmitted ?? 'N/A'}</li>
       <li>End Snapshot: ${currentRound.endSnapshotSubmitted ?? 'N/A'}</li>
       <li>Results Evaluated: ${currentRound.resultsEvaluated ?? 'N/A'}</li>
       <li>Prize Pool (JANS): ${currentRound.prizePoolJANS !== undefined ? Number(currentRound.prizePoolJANS).toFixed(2) : 'N/A'}</li>
       <li>Ticket Price (TARA): ${currentRound.calculatedTicketPriceTara ?? 'N/A'}</li>
+      <li>Ticket Price (USD Cents): ${currentRound.calculatedTicketPriceUsdCents ?? 'N/A'}</li>
       <li>Share Allocation: ${currentRound.calculatedShareAllocation ?? 'N/A'}</li>
     </ul>
 
     <h3>✅ Last Evaluated Round</h3>
     <ul>
       <li>Round ID: ${evaluatedRound.roundId ?? 'N/A'}</li>
-      <li>Start: ${evaluatedRound.startTime ? formatTime(evaluatedRound.startTime) : 'N/A'}</li>
+      <li>Start: ${formatTime(evaluatedRound.startTime)}</li>
       <li>Results Evaluated: ${evaluatedRound.resultsEvaluated ?? 'N/A'}</li>
+      <li>Transaction Hash: ${evaluatedRound.transactionHash ?? 'N/A'}</li>
+      <li>Block Number: ${evaluatedRound.blockNumber ?? 'N/A'}</li>
       <li>Outcomes: ${Array.isArray(evaluatedRound.actualOutcomes) ? evaluatedRound.actualOutcomes.map(o => o ? '↑' : '↓').join(' ') : 'N/A'}</li>
       <li>Winning Tickets: ${evaluatedRound.winningTicketCount ?? 'N/A'}</li>
       <li>Total Prize: ${evaluatedRound.totalPrizeJansDistributedThisRound ?? 'N/A'}</li>
+      <li>Note: ${evaluatedRound.note ?? ''}</li>
+    </ul>
+
+    <h3>🔗 General Contract State</h3>
+    <ul>
+      <li>Owner: ${shorten(generalState.owner) ?? 'N/A'}</li>
+      <li>TARA/UsdCent: ${generalState.currentTaraWeiPerUsdCent ?? 'N/A'}</li>
+      <li>Configured Start Price (USD Cents): ${generalState.configuredStartPriceUsdCents ?? 'N/A'}</li>
+      <li>Configured Mid Price (USD Cents): ${generalState.configuredMidPriceUsdCents ?? 'N/A'}</li>
+      <li>Configured End Price (USD Cents): ${generalState.configuredEndPriceUsdCents ?? 'N/A'}</li>
+      <li>Ticket Sales Duration (s): ${generalState.ticketSalesDurationSeconds ?? 'N/A'}</li>
+      <li>Total JANS Burned: ${generalState.totalJansBurnedInGame ?? 'N/A'}</li>
+      <li>Total Shares: ${generalState.currentTotalTrackedShares ?? 'N/A'}</li>
+      <li>Total TARA for LP: ${generalState.totalNativeTaraAccumulatedForLPSide ?? 'N/A'}</li>
+      <li>Total JANS for LP: ${generalState.totalJansAccumulatedForLPSide ?? 'N/A'}</li>
+      <li>Total TARA Reward for LP: ${generalState.totalNativeTaraRewardForLPFormers ?? 'N/A'}</li>
+      <li>LP Token Balance: ${generalState.contractGameLpTokenBalance ?? 'N/A'}</li>
+      <li>Current LP Distribution ID: ${generalState.currentLpDistributionId ?? 'N/A'}</li>
+      <li>LP Distribution Finalized: ${generalState.isCurrentLpDistributionFinalized ?? 'N/A'}</li>
+      <li>LP Distribution Triggerable: ${generalState.isLpDistributionTriggerable ?? 'N/A'}</li>
+      <li>LP Burn Target Divisor: ${generalState.lpDistributionBurnTargetDivisor ?? 'N/A'}</li>
     </ul>
   `;
 
   container.innerHTML = html;
-}
-
-async function loadAndDisplayLog() {
-  const logFileName = getLogFilenameFromUrl();
-  if (!logFileName) {
-    displayMessage("No log file specified in URL.");
-    return;
-  }
-
-  // Prevent double "dailylogs_v8/" if logFileName already includes it
-  let logUrl;
-  if (logFileName.startsWith('dailylogs_v8/')) {
-    logUrl = './data/' + logFileName;
-  } else {
-    logUrl = LOG_FILES_BASE_URL + logFileName;
-  }
-
-  try {
-    const response = await fetch(logUrl);
-    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
-    const log = await response.json();
-    renderLog(log, logFileName);
-  } catch (err) {
-    displayMessage("Error loading log file: " + err.message);
-    console.error(err);
-  }
 }
 
 
