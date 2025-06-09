@@ -412,14 +412,8 @@ async function fetchAndDisplaySimplifiedTransactions() {
             let blockRange = 5000; // Default for very new rounds
             if (secondsSinceRoundStart > 3600 * 6) blockRange = blocksPerDayApprox / 2; // 12 hours
             if (secondsSinceRoundStart > 3600 * 24) blockRange = blocksPerDayApprox * 2; // 2 days
-            
+
             fromBlockForQuery = (roundStartTimestamp > 0) ? Math.max(0, currentBlockNumber - blockRange) : Math.max(0, currentBlockNumber - 5000);
-        } else { // No new blocks since last fetch
-            if (localTicketTransactions.length > 0) renderMobileLastTransaction(); // Re-render in case it was cleared
-            else if (txListUl) txListUl.innerHTML = '<li>No new ticket purchases.</li>'; // Keep existing desktop list
-            return; 
-        }
-        fromBlockForQuery = Math.max(0, fromBlockForQuery); // Ensure not negative
 
         const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
         
