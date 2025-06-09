@@ -2,8 +2,10 @@
 // Handles fetching, displaying a specific daily log, and applying random readable colors.
 
 // --- Constants for this page ---
-// MODIFIED: Path to the parent 'data' directory. 
-// The 'logFile' URL parameter should now provide the rest of the path (e.g., "dailylogs_v8/your_log.json")
+// MODIFIED: Updated the path to the parent 'data' directory to reflect the new folder structure.
+// This change ensures compatibility with the updated organization of log files.
+// The 'logFile' URL parameter should now provide the rest of the path (e.g., "dailylogs_v8/your_log.json").
+// Implication: Any changes to the folder structure will require updating this constant accordingly.
 const LOG_FILES_BASE_URL = './data/dailylogs_v8/';
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
@@ -136,6 +138,9 @@ function renderLog(log, title = "") {
   const shorten = (s) => s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : s;
   const formatTime = (iso) => new Date(iso).toLocaleString();
 
+  const currentRound = log?.currentRoundDetails || {};
+  const evaluatedRound = log?.evaluatedRoundInfo || {};
+
   const html = `
     <h3>🧾 Log Metadata</h3>
     <p><strong>Timestamp:</strong> ${log?.logTimestamp ? formatTime(log.logTimestamp) : 'N/A'}</p>
@@ -144,23 +149,23 @@ function renderLog(log, title = "") {
 
     <h3>📍 Current Round (${log?.currentRoundIdOnChain ?? 'N/A'})</h3>
     <ul>
-      <li>Start: ${log?.currentRoundDetails?.startTime ? formatTime(log.currentRoundDetails.startTime) : 'N/A'}</li>
-      <li>Start Snapshot: ${log?.currentRoundDetails?.startSnapshotSubmitted ?? 'N/A'}</li>
-      <li>End Snapshot: ${log?.currentRoundDetails?.endSnapshotSubmitted ?? 'N/A'}</li>
-      <li>Results Evaluated: ${log?.currentRoundDetails?.resultsEvaluated ?? 'N/A'}</li>
-      <li>Prize Pool (JANS): ${log?.currentRoundDetails?.prizePoolJANS !== undefined ? Number(log.currentRoundDetails.prizePoolJANS).toFixed(2) : 'N/A'}</li>
-      <li>Ticket Price (TARA): ${log?.currentRoundDetails?.calculatedTicketPriceTara ?? 'N/A'}</li>
-      <li>Share Allocation: ${log?.currentRoundDetails?.calculatedShareAllocation ?? 'N/A'}</li>
+      <li>Start: ${currentRound.startTime ? formatTime(currentRound.startTime) : 'N/A'}</li>
+      <li>Start Snapshot: ${currentRound.startSnapshotSubmitted ?? 'N/A'}</li>
+      <li>End Snapshot: ${currentRound.endSnapshotSubmitted ?? 'N/A'}</li>
+      <li>Results Evaluated: ${currentRound.resultsEvaluated ?? 'N/A'}</li>
+      <li>Prize Pool (JANS): ${currentRound.prizePoolJANS !== undefined ? Number(currentRound.prizePoolJANS).toFixed(2) : 'N/A'}</li>
+      <li>Ticket Price (TARA): ${currentRound.calculatedTicketPriceTara ?? 'N/A'}</li>
+      <li>Share Allocation: ${currentRound.calculatedShareAllocation ?? 'N/A'}</li>
     </ul>
 
     <h3>✅ Last Evaluated Round</h3>
     <ul>
-      <li>Round ID: ${log?.evaluatedRoundInfo?.roundId ?? 'N/A'}</li>
-      <li>Start: ${log?.evaluatedRoundInfo?.startTime ? formatTime(log.evaluatedRoundInfo.startTime) : 'N/A'}</li>
-      <li>Results Evaluated: ${log?.evaluatedRoundInfo?.resultsEvaluated ?? 'N/A'}</li>
-      <li>Outcomes: ${Array.isArray(log?.evaluatedRoundInfo?.actualOutcomes) ? log.evaluatedRoundInfo.actualOutcomes.map(o => o ? '↑' : '↓').join(' ') : 'N/A'}</li>
-      <li>Winning Tickets: ${log?.evaluatedRoundInfo?.winningTicketCount ?? 'N/A'}</li>
-      <li>Total Prize: ${log?.evaluatedRoundInfo?.totalPrizeJansDistributedThisRound ?? 'N/A'}</li>
+      <li>Round ID: ${evaluatedRound.roundId ?? 'N/A'}</li>
+      <li>Start: ${evaluatedRound.startTime ? formatTime(evaluatedRound.startTime) : 'N/A'}</li>
+      <li>Results Evaluated: ${evaluatedRound.resultsEvaluated ?? 'N/A'}</li>
+      <li>Outcomes: ${Array.isArray(evaluatedRound.actualOutcomes) ? evaluatedRound.actualOutcomes.map(o => o ? '↑' : '↓').join(' ') : 'N/A'}</li>
+      <li>Winning Tickets: ${evaluatedRound.winningTicketCount ?? 'N/A'}</li>
+      <li>Total Prize: ${evaluatedRound.totalPrizeJansDistributedThisRound ?? 'N/A'}</li>
     </ul>
   `;
 
@@ -174,7 +179,13 @@ async function loadAndDisplayLog() {
     return;
   }
 
-  const logUrl = LOG_FILES_BASE_URL + logFileName;
+  // Prevent double "dailylogs_v8/" if logFileName already includes it
+  let logUrl;
+  if (logFileName.startsWith('dailylogs_v8/')) {
+    logUrl = './data/' + logFileName;
+  } else {
+    logUrl = LOG_FILES_BASE_URL + logFileName;
+  }
 
   try {
     const response = await fetch(logUrl);
