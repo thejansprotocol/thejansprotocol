@@ -109,6 +109,8 @@ function applyRandomColors() {
     }
 }
 
+const logUrl = LOG_FILES_BASE_URL + logFileName;
+
 
 // Helper to get ?logFile=... from URL
 function getLogFilenameFromUrl() {
