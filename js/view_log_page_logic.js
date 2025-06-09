@@ -28,11 +28,15 @@ function getRandomRgbColorParts() {
  * @returns {string} Hex color string (e.g., "#RRGGBB")
  */
 function rgbToHex(r, g, b) {
-    const toHex = (c) => {
-        const hex = c.toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-    };
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    return (
+        "#" +
+        [r, g, b]
+            .map((x) => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            })
+            .join("")
+    );
 }
 
 /**
@@ -112,16 +116,8 @@ function getLogFilenameFromUrl() {
   return params.get("logFile");
 }
 
-// Main logic
-async function loadAndDisplayLog() {
-  const logFileName = getLogFilenameFromUrl();
-  if (!logFileName) {
-    displayMessage("No log file specified in URL.");
-    return;
-  }
-
-
   try {
+    const logUrl = LOG_FILES_BASE_URL + logFileName;
     const response = await fetch(logUrl);
     if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
     const log = await response.json();
@@ -132,7 +128,16 @@ async function loadAndDisplayLog() {
     displayMessage("Error loading log file: " + err.message);
     console.error(err);
   }
-}
+    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
+    const log = await response.json();
+    console.log("========== JANS Prediction Game Log ==========");
+    console.log(log); // ✅ log is defined here
+    renderLog(log, logFileName);
+   catch (err) {
+    displayMessage("Error loading log file: " + err.message);
+    console.error(err);
+  }
+
 
 // Display message in fallback element
 function displayMessage(msg) {
