@@ -1,8 +1,8 @@
 {
-  "logTimestamp": "2025-06-09T22:32:55.947Z",
+  "logTimestamp": "2025-06-09T22:56:40.153Z",
   "contractAddress": "0x7964861254d0e3Dd30f732DB49052198A9b90eae",
-  "currentChainTimestamp": "2025-06-09T22:32:51.000Z",
-  "currentBlockNumber": "18916590",
+  "currentChainTimestamp": "2025-06-09T22:56:36.000Z",
+  "currentBlockNumber": "18916988",
   "currentRoundIdOnChain": "3",
   "currentRoundDetails": {
     "startTime": "2025-06-09T21:12:37.000Z",
@@ -12,7 +12,7 @@
     "prizePoolJANS": "8668875241.890689203596317309",
     "calculatedTicketPriceTara": "4.246338594546852363 TARA",
     "calculatedTicketPriceUsdCents": "1 USD Cents",
-    "calculatedShareAllocation": "0.007222222222222222x"
+    "calculatedShareAllocation": "0.007152777777777777x"
   },
   "evaluatedRoundInfo": {
     "roundId": "2",
@@ -86,6 +86,6 @@
   },
   "errorEncountered": {
     "message": "GitHub upload failed: Resource not accessible by personal access token",
-    "stack": "Error: GitHub upload failed: Resource not accessible by personal access token\n    at uploadToFrontendRepo (/home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:86:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async createDailyLog (/home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:438:1)"
+    "stack": "Error: GitHub upload failed: Resource not accessible by personal access token\n    at uploadToFrontendRepo (file:///home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:101:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async createDailyLog (file:///home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:455:1)"
   }
 }
