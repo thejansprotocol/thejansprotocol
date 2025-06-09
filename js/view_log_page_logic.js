@@ -109,8 +109,6 @@ function applyRandomColors() {
     }
 }
 
-const logUrl = LOG_FILES_BASE_URL + logFileName;
-
 
 // Helper to get ?logFile=... from URL
 function getLogFilenameFromUrl() {
@@ -188,6 +186,27 @@ function renderLog(log, title = "") {
 
   container.innerHTML = html;
 }
+
+async function loadAndDisplayLog() {
+  const logFileName = getLogFilenameFromUrl();
+  if (!logFileName) {
+    displayMessage("No log file specified in URL.");
+    return;
+  }
+
+  const logUrl = LOG_FILES_BASE_URL + logFileName;
+
+  try {
+    const response = await fetch(logUrl);
+    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
+    const log = await response.json();
+    renderLog(log, logFileName);
+  } catch (err) {
+    displayMessage("Error loading log file: " + err.message);
+    console.error(err);
+  }
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
   applyRandomColors();
