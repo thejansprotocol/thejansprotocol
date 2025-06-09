@@ -369,6 +369,7 @@ function renderLog(log, title = "") {
   container.innerHTML = html;
 }
 
-// Kick it off
-applyRandomColors();
-loadAndDisplayLog();
+document.addEventListener('DOMContentLoaded', () => {
+  applyRandomColors();
+  loadAndDisplayLog();
+});
