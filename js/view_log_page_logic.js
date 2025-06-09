@@ -154,152 +154,53 @@ function createKeyValueListItem(key, value, isHtmlValue = false) {
 }
 
 
-/**
- * Renders the log data into a more readable HTML format.
- * @param {object} logData The parsed JSON log data from snapshot_history_YYYY-MM-DD.json.
- * @returns {string} An HTML string representing the log data.
- */
-function renderLogDataAsHtml(logData) {
-    let html = '<div class="log-details-container">';
+// Helpers
+const formatTime = iso => new Date(iso).toLocaleString();
+const shorten = str => (str.length > 12 ? str.slice(0, 8) + '...' + str.slice(-4) : str);
 
-    const renderObjectAsList = (obj, sectionTitle = "") => {
-        if (obj === null || typeof obj !== 'object' || Object.keys(obj).length === 0) {
-            if (sectionTitle) return `<div class="log-section"><h2>${sectionTitle}</h2><p>N/A or empty.</p></div>`;
-            return 'N/A';
-        }
-        let listHtml = sectionTitle ? `<div class="log-section"><h2>${sectionTitle}</h2><ul class="log-key-values">` : '<ul class="log-key-values">';
-        for (const [key, value] of Object.entries(obj)) {
-            listHtml += createKeyValueListItem(key, value);
-        }
-        listHtml += '</ul>';
-        if (sectionTitle) listHtml += '</div>';
-        return listHtml;
-    };
+// Display summary
+console.log("========== JANS Prediction Game Log ==========");
+console.log(`🕒 Log Timestamp:        ${formatTime(log.logTimestamp)}`);
+console.log(`📦 Contract Address:     ${shorten(log.contractAddress)}`);
+console.log(`🔗 Block Number:         ${log.currentBlockNumber}`);
+console.log(`🔄 Chain Timestamp:      ${formatTime(log.currentChainTimestamp)}`);
+console.log(`📍 Current Round ID:     ${log.currentRoundIdOnChain}`);
+console.log("");
 
-    // Top-level info from the log file itself
-    html += `<div class="log-section"><h2>Log File Overview</h2><ul class="log-key-values">`;
-    html += createKeyValueListItem('Log Date', logData.date);
-    html += createKeyValueListItem('Processed At UTC', logData.processedAtUTC);
-    html += `</ul></div>`;
+// Current Round
+const round = log.currentRoundDetails;
+console.log("🔘 Current Round Details");
+console.log(`   • Start Time:             ${formatTime(round.startTime)}`);
+console.log(`   • Start Snapshot:         ${round.startSnapshotSubmitted}`);
+console.log(`   • End Snapshot:           ${round.endSnapshotSubmitted}`);
+console.log(`   • Results Evaluated:      ${round.resultsEvaluated}`);
+console.log(`   • Prize Pool (JANS):      ${Number(round.prizePoolJANS).toFixed(2)}`);
+console.log(`   • Ticket Price (TARA):    ${round.calculatedTicketPriceTara}`);
+console.log(`   • Ticket Price (USD):     ${round.calculatedTicketPriceUsdCents}¢`);
+console.log(`   • Share Allocation:       ${round.calculatedShareAllocation}`);
+console.log("");
 
-    // Display roundStartedInfo if it exists and has content
-    if (logData.roundStartedInfo && Object.keys(logData.roundStartedInfo).length > 0) {
-        html += renderObjectAsList(logData.roundStartedInfo, `Round Started Info (Attempted Next Round ID: ${logData.roundStartedInfo.roundId || 'N/A'})`);
-    } else {
-        html += `<div class="log-section"><h2>Round Started Info</h2><p>No new round start was attempted in this run.</p></div>`;
-    }
-    
-    // Display roundClosedInfo if it exists and has content
-    const evalInfo = logData.roundClosedInfo;
-    if (evalInfo && Object.keys(evalInfo).length > 0 && evalInfo.roundId && evalInfo.roundId !== "0") {
-        let title = `Round Closed/Processed Info (Round ID: ${evalInfo.roundId})`;
-        // Use the status field to determine if it was aborted or evaluated.
-        // This relies on your automator script setting a clear 'status' field.
-        let statusDisplay = evalInfo.status || 'Status Unknown';
-        if (evalInfo.status && evalInfo.status.toLowerCase().includes('aborted')) {
-             title = `Round ABORTED (Round ID: ${evalInfo.roundId})`;
-        } else if (evalInfo.status && evalInfo.status.toLowerCase().includes('evaluated')) {
-             title = `Round EVALUATED (Round ID: ${evalInfo.roundId})`;
-        }
+// Last Evaluated Round
+const evalInfo = log.evaluatedRoundInfo;
+console.log("✅ Last Evaluated Round");
+console.log(`   • Round ID:               ${evalInfo.roundId}`);
+console.log(`   • Start Time:             ${formatTime(evalInfo.startTime)}`);
+console.log(`   • Results Evaluated:      ${evalInfo.resultsEvaluated}`);
+console.log(`   • Snapshot Status:        start=${evalInfo.startSnapshotSubmitted}, end=${evalInfo.endSnapshotSubmitted}`);
+console.log(`   • Transaction Hash:       ${shorten(evalInfo.transactionHash)}`);
+console.log(`   • Actual Outcomes:        ${evalInfo.actualOutcomes.map(b => b ? '↑' : '↓').join(' ')}`);
+console.log(`   • Winning Tickets:        ${evalInfo.winningTicketCount}`);
+console.log(`   • Prize Distributed:      ${evalInfo.totalPrizeJansDistributedThisRound}`);
+console.log("");
 
-        html += `<div class="log-section"><h2>${title}</h2><ul class="log-key-values">`;
-        html += createKeyValueListItem('Recorded Status', statusDisplay);
-
-        // Iterate over other fields in evalInfo, excluding 'roundId' and 'status' if already handled
-        for (const [key, value] of Object.entries(evalInfo)) {
-            if (key !== 'roundId' && key !== 'status') {
-                html += createKeyValueListItem(key, value);
-            }
-        }
-        html += `</ul>`;
-
-        // If it was evaluated and has actualOutcomes (ensure your automator logs this for evaluated rounds)
-        if (evalInfo.status && evalInfo.status.toLowerCase().includes('evaluated') && Array.isArray(evalInfo.actualOutcomes)) {
-            html += `<h3>Token Outcomes for Evaluated Round</h3>`;
-            html += `<div class="table-responsive"><table class="log-data-table"><thead><tr><th>#</th><th>Outcome (Price Up?)</th></tr></thead><tbody>`;
-            for (let i = 0; i < 10; i++) { 
-                const outcomeVal = (evalInfo.actualOutcomes[i] !== undefined) ? evalInfo.actualOutcomes[i] : null;
-                const outcomeDisplay = outcomeVal === null ? 'N/A' : (outcomeVal ? '⬆️ Yes (Up)' : '⬇️ No (Down/Same)');
-                html += `<tr><td>${i + 1}</td><td>${outcomeDisplay}</td></tr>`;
-            }
-            html += `</tbody></table></div>`;
-        }
-        html += '</div>';
-
-    } else if (evalInfo && evalInfo.status === "NoPriorRound") {
-        html += `<div class="log-section"><h2>Round Closed/Processed Info</h2><p>No prior round to process (Round ID was 0).</p></div>`;
-    } else {
-        html += `<div class="log-section"><h2>Round Closed/Processed Info</h2><p>No specific round closing/evaluation information in this log.</p></div>`;
-    }
-
-    html += '</div>'; // Close log-details-container
-    return html;
-}
-
-
-
-function displayLogContent(logData) {
-    // Convert logData back to pretty JSON string to show raw JSON if needed
-    const rawJsonString = JSON.stringify(logData, null, 2);
-    
-    // Render your existing processed HTML log (using your renderLogDataAsHtml function)
-    const formattedHtml = renderLogDataAsHtml(logData);
-
-    const logContentEl = document.getElementById(LOG_CONTENT_ELEMENT_ID);
-    if (!logContentEl) return;
-
-    // Clear previous content
-    logContentEl.innerHTML = '';
-
-    // Create a container div to hold the button and JSON text
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-
-    // Create the "Copy JSON" button
-    const copyButton = document.createElement('button');
-    copyButton.textContent = 'Copy JSON to Clipboard';
-    copyButton.style.marginBottom = '10px';
-    copyButton.style.cursor = 'pointer';
-
-    // When button is clicked, copy raw JSON text
-    copyButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(rawJsonString)
-            .then(() => {
-                showLogPageViewMessage('JSON copied to clipboard!', 'success');
-            })
-            .catch(() => {
-                showLogPageViewMessage('Failed to copy JSON.', 'error');
-            });
-    });
-
-    // Create a <pre> element to show raw JSON (optional, if you want to display it)
-    const pre = document.createElement('pre');
-    pre.textContent = rawJsonString;
-    pre.style.whiteSpace = 'pre-wrap';
-    pre.style.maxHeight = '400px';
-    pre.style.overflow = 'auto';
-    pre.style.border = '1px solid #ccc';
-    pre.style.padding = '10px';
-    pre.style.borderRadius = '5px';
-    pre.style.backgroundColor = '#f5f5f5';
-    pre.style.color = '#333';
-
-    // Append the button and the JSON display inside container
-    container.appendChild(copyButton);
-    container.appendChild(pre);
-
-    // Append the formatted HTML log view below or above the raw JSON
-    const formattedDiv = document.createElement('div');
-    formattedDiv.innerHTML = formattedHtml;
-    formattedDiv.style.marginTop = '20px';
-
-    container.appendChild(formattedDiv);
-
-    // Finally add the container to the page
-    logContentEl.appendChild(container);
-}
-// --- Page Load Initialization ---
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Loaded for View Log Page. Initializing displayLogContent...");
-    displayLogContent();
-});
+// General Contract State
+const state = log.generalContractState;
+console.log("📊 General Contract State");
+console.log(`   • Owner:                  ${shorten(state.owner)}`);
+console.log(`   • TARA per USD cent:      ${state.currentTaraWeiPerUsdCent}`);
+console.log(`   • Total JANS Burned:      ${Number(state.totalJansBurnedInGame).toFixed(2)}`);
+console.log(`   • LP Accumulation (TARA): ${state.totalNativeTaraAccumulatedForLPSide}`);
+console.log(`   • LP Accumulation (JANS): ${Number(state.totalJansAccumulatedForLPSide).toFixed(2)}`);
+console.log(`   • LP Distribution ID:     ${state.currentLpDistributionId}`);
+console.log(`   • LP Distribution Ready:  ${state.isLpDistributionTriggerable}`);
+console.log("==============================================");
