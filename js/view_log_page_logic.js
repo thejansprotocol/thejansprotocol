@@ -105,102 +105,81 @@ function applyRandomColors() {
     }
 }
 
-/**
- * Helper function to create a key-value pair list item.
- * @param {string} key The label.
- * @param {string|number|boolean|object} value The value.
- * @param {boolean} isHtmlValue If true, value is treated as raw HTML.
- * @returns {string} HTML string for a list item.
- */
-function createKeyValueListItem(key, value, isHtmlValue = false) {
-    const displayKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-    let displayValue = (value === undefined || value === null || String(value).trim() === '') ? 'N/A' : value;
-    
-    if (typeof value === 'object' && value !== null && !isHtmlValue) {
-        if (Array.isArray(value)) {
-            // Smart display for arrays, especially actualOutcomes which are booleans
-            if (key.toLowerCase().includes('outcomes') && value.every(item => typeof item === 'boolean')) {
-                displayValue = value.map((val, idx) => `${idx+1}: ${val ? '⬆️ Up' : '⬇️ Down/Same'}`).join('<br>');
-                isHtmlValue = true; // Since we added <br>
-            } else {
-                 displayValue = `<pre class="nested-json">${JSON.stringify(value, null, 2)}</pre>`;
-            }
-        } else {
-             displayValue = `<pre class="nested-json">${JSON.stringify(value, null, 2)}</pre>`;
-        }
-    } else if ( (key.toLowerCase().includes('timestamp') || key.toLowerCase().includes('time') || key.toLowerCase().includes('utc')) && 
-                typeof value === 'string' && value !== 'N/A' && value !== 'Not Set' && 
-                !value.includes('GMT') && !value.includes('ART') && // Avoid re-formatting if already formatted
-                !value.toLowerCase().includes('closed') && !value.toLowerCase().includes('aborted')) {
-        
-        const date = new Date(value); // Handles ISO strings like "2025-06-02T00:01:33.384Z"
-        let unixTimestamp = value.length === 10 || value.length === 13 ? parseInt(value, 10) : NaN;
 
-        if (!isNaN(date.getTime())) { 
-             displayValue = `${value} <br><small>(${date.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
-             isHtmlValue = true;
-        } else if (!isNaN(unixTimestamp) && String(unixTimestamp).length === 10) { // Unix seconds
-            const dateFromUnix = new Date(unixTimestamp * 1000);
-             displayValue = `${value} <br><small>(${dateFromUnix.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
-             isHtmlValue = true;
-        } else if (!isNaN(unixTimestamp) && String(unixTimestamp).length === 13) { // Unix ms
-            const dateFromUnixMs = new Date(unixTimestamp);
-             displayValue = `${value} <br><small>(${dateFromUnixMs.toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', hour12: false, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })} ART)</small>`;
-             isHtmlValue = true;
-        }
-    }
-
-    return `<li><strong class="log-key">${displayKey}:</strong> <span class="log-value">${isHtmlValue ? displayValue : (displayValue === 'N/A' ? displayValue : String(displayValue).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))}</span></li>`;
+// Helper to get ?logFile=... from URL
+function getLogFilenameFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("logFile");
 }
 
+// Main logic
+async function loadAndDisplayLog() {
+  const logFileName = getLogFilenameFromUrl();
+  if (!logFileName) {
+    displayMessage("No log file specified in URL.");
+    return;
+  }
 
-// Helpers
-const formatTime = iso => new Date(iso).toLocaleString();
-const shorten = str => (str.length > 12 ? str.slice(0, 8) + '...' + str.slice(-4) : str);
+  const logUrl = LOG_FILES_BASE_URL + logFileName;
 
-// Display summary
-console.log("========== JANS Prediction Game Log ==========");
-console.log(`🕒 Log Timestamp:        ${formatTime(log.logTimestamp)}`);
-console.log(`📦 Contract Address:     ${shorten(log.contractAddress)}`);
-console.log(`🔗 Block Number:         ${log.currentBlockNumber}`);
-console.log(`🔄 Chain Timestamp:      ${formatTime(log.currentChainTimestamp)}`);
-console.log(`📍 Current Round ID:     ${log.currentRoundIdOnChain}`);
-console.log("");
+  try {
+    const response = await fetch(logUrl);
+    if (!response.ok) throw new Error(`Failed to fetch log: ${response.statusText}`);
+    const log = await response.json();
+    renderLog(log, logFileName);
+  } catch (err) {
+    displayMessage("Error loading log file: " + err.message);
+    console.error(err);
+  }
+}
 
-// Current Round
-const round = log.currentRoundDetails;
-console.log("🔘 Current Round Details");
-console.log(`   • Start Time:             ${formatTime(round.startTime)}`);
-console.log(`   • Start Snapshot:         ${round.startSnapshotSubmitted}`);
-console.log(`   • End Snapshot:           ${round.endSnapshotSubmitted}`);
-console.log(`   • Results Evaluated:      ${round.resultsEvaluated}`);
-console.log(`   • Prize Pool (JANS):      ${Number(round.prizePoolJANS).toFixed(2)}`);
-console.log(`   • Ticket Price (TARA):    ${round.calculatedTicketPriceTara}`);
-console.log(`   • Ticket Price (USD):     ${round.calculatedTicketPriceUsdCents}¢`);
-console.log(`   • Share Allocation:       ${round.calculatedShareAllocation}`);
-console.log("");
+// Display message in fallback element
+function displayMessage(msg) {
+  const el = document.getElementById(LOG_CONTENT_ELEMENT_ID);
+  if (el) el.innerText = msg;
+}
 
-// Last Evaluated Round
-const evalInfo = log.evaluatedRoundInfo;
-console.log("✅ Last Evaluated Round");
-console.log(`   • Round ID:               ${evalInfo.roundId}`);
-console.log(`   • Start Time:             ${formatTime(evalInfo.startTime)}`);
-console.log(`   • Results Evaluated:      ${evalInfo.resultsEvaluated}`);
-console.log(`   • Snapshot Status:        start=${evalInfo.startSnapshotSubmitted}, end=${evalInfo.endSnapshotSubmitted}`);
-console.log(`   • Transaction Hash:       ${shorten(evalInfo.transactionHash)}`);
-console.log(`   • Actual Outcomes:        ${evalInfo.actualOutcomes.map(b => b ? '↑' : '↓').join(' ')}`);
-console.log(`   • Winning Tickets:        ${evalInfo.winningTicketCount}`);
-console.log(`   • Prize Distributed:      ${evalInfo.totalPrizeJansDistributedThisRound}`);
-console.log("");
+// Main render function
+function renderLog(log, title = "") {
+  const container = document.getElementById(LOG_CONTENT_ELEMENT_ID);
+  const titleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
+  if (!container) return;
 
-// General Contract State
-const state = log.generalContractState;
-console.log("📊 General Contract State");
-console.log(`   • Owner:                  ${shorten(state.owner)}`);
-console.log(`   • TARA per USD cent:      ${state.currentTaraWeiPerUsdCent}`);
-console.log(`   • Total JANS Burned:      ${Number(state.totalJansBurnedInGame).toFixed(2)}`);
-console.log(`   • LP Accumulation (TARA): ${state.totalNativeTaraAccumulatedForLPSide}`);
-console.log(`   • LP Accumulation (JANS): ${Number(state.totalJansAccumulatedForLPSide).toFixed(2)}`);
-console.log(`   • LP Distribution ID:     ${state.currentLpDistributionId}`);
-console.log(`   • LP Distribution Ready:  ${state.isLpDistributionTriggerable}`);
-console.log("==============================================");
+  if (titleEl) titleEl.innerText = `Viewing Log: ${title}`;
+
+  const shorten = (s) => s.length > 12 ? s.slice(0, 8) + "..." + s.slice(-4) : s;
+  const formatTime = (iso) => new Date(iso).toLocaleString();
+
+  const html = `
+    <h3>🧾 Log Metadata</h3>
+    <p><strong>Timestamp:</strong> ${formatTime(log.logTimestamp)}</p>
+    <p><strong>Contract:</strong> ${shorten(log.contractAddress)}</p>
+    <p><strong>Block Number:</strong> ${log.currentBlockNumber}</p>
+
+    <h3>📍 Current Round (${log.currentRoundIdOnChain})</h3>
+    <ul>
+      <li>Start: ${formatTime(log.currentRoundDetails.startTime)}</li>
+      <li>Start Snapshot: ${log.currentRoundDetails.startSnapshotSubmitted}</li>
+      <li>End Snapshot: ${log.currentRoundDetails.endSnapshotSubmitted}</li>
+      <li>Results Evaluated: ${log.currentRoundDetails.resultsEvaluated}</li>
+      <li>Prize Pool (JANS): ${Number(log.currentRoundDetails.prizePoolJANS).toFixed(2)}</li>
+      <li>Ticket Price (TARA): ${log.currentRoundDetails.calculatedTicketPriceTara}</li>
+      <li>Share Allocation: ${log.currentRoundDetails.calculatedShareAllocation}</li>
+    </ul>
+
+    <h3>✅ Last Evaluated Round</h3>
+    <ul>
+      <li>Round ID: ${log.evaluatedRoundInfo.roundId}</li>
+      <li>Start: ${formatTime(log.evaluatedRoundInfo.startTime)}</li>
+      <li>Results Evaluated: ${log.evaluatedRoundInfo.resultsEvaluated}</li>
+      <li>Outcomes: ${log.evaluatedRoundInfo.actualOutcomes.map(o => o ? '↑' : '↓').join(' ')}</li>
+      <li>Winning Tickets: ${log.evaluatedRoundInfo.winningTicketCount}</li>
+      <li>Total Prize: ${log.evaluatedRoundInfo.totalPrizeJansDistributedThisRound}</li>
+    </ul>
+  `;
+
+  container.innerHTML = html;
+}
+
+// Kick it off
+loadAndDisplayLog();
