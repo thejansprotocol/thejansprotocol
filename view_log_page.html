@@ -1,96 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jans Protocol Log Viewer</title>
-    <style>
-        /* Basic page reset and font */
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            transition: background-color 0.5s, color 0.5s; /* Smooth color transition */
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jans Protocol Log Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      transition: background-color 0.5s, color 0.5s;
+      background-image: url('./assets/jans_reflexive.png');
+      background-position: right center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-attachment: fixed;
+      min-height: 100vh;
+      box-sizing: border-box;
+      line-height: 1.4;
+    }
 
-            /* --- BACKGROUND IMAGE STYLES START --- */
-            /* IMPORTANT: Adjust this path to your image if necessary.
-               If view_log_page.html is in 'frontend/pages/' and image is in 'frontend/assets/',
-               then '../assets/jans_reflexive.png' is likely correct.
-               If 'frontend' is your web root, it might be '/assets/jans_reflexive.png'. */
-            background-image: url('./assets/jans_reflexive.png'); 
-            background-position: right center; /* Image on the right, vertically centered */
-            background-repeat: no-repeat;      /* Don't tile the image */
-            background-size: contain;          /* Scale image to fit while maintaining aspect ratio */
-            background-attachment: fixed;      /* Image stays fixed when scrolling */
-            min-height: 100vh;               /* Ensure body covers full viewport height */
-            padding: 20px;                   /* Padding for content within the body */
-            box-sizing: border-box;          /* Include padding in width/height calculation */
-            /* --- BACKGROUND IMAGE STYLES END --- */
-        }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      background-color: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    }
 
-        .container { 
-            /* This container can hold your main content structure if needed, 
-               but with padding on body, it might not need its own padding unless for specific layout. */
-            border-radius: 8px; 
-            position: relative; /* For stacking context if needed */
-            z-index: 1; 
-        }
+    h1#log-title {
+      text-align: center;
+      font-size: 1.6rem;
+      margin: 12px 0 16px;
+    }
 
-        h1#log-title { /* Target by ID for specificity, or just h1 if only one */
-            text-align: center; 
-            margin-bottom: 20px;
-            /* Text color for h1 will be set by JavaScript for contrast */
-        }
+    pre#log-content {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 0.95rem;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.04);
+      margin: 0;
+    }
 
-        /* Styling for the <pre> tag to ensure readability */
-        pre#log-content { /* Target by ID */
-            white-space: pre-wrap;       /* CSS3 */
-            white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-            white-space: -pre-wrap;      /* Opera 4-6 */
-            white-space: -o-pre-wrap;    /* Opera 7 */
-            word-wrap: break-word;       /* Internet Explorer 5.5+ */
-            padding: 15px; 
-            border-radius: 5px; 
-            /* Initial border and background; JS will update these for dynamic contrast */
-            border: 1px solid rgba(0,0,0,0.1); 
-            background-color: rgba(255, 255, 255, 0.05); 
-            position: relative; 
-            z-index: 1;
-            /* Font color will be set by JS for contrast */
-        }
+    #global-message-log-view {
+      margin-bottom: 10px;
+      text-align: center;
+    }
 
-        /* Global message display for this page */
-        #global-message-log-view { 
-            /* Basic structure; specific appearance comes from message-type classes */
-            margin-bottom: 15px; 
-            text-align: center; 
-        }
-        
-        /* Message type classes (ensure these provide good contrast on their own) */
-        .message-container { /* Base for messages, used by #global-message-log-view */
-            padding: 10px; 
-            margin-top: 10px; 
-            margin-bottom: 10px; 
-            border-radius: 5px;
-            font-size: 0.9em; 
-            text-align: center; 
-            display: none; /* Managed by JS to show/hide */
-            border: 1px solid transparent;
-        }
-        .message-info { color: #00529B; background-color: #BDE5F8; border-color: #75c5f0; }
-        .message-success { color: #270; background-color: #DFF2BF; border-color: #b2d393; } /* Original: color: #4F8A10; */
-        .message-error { color: #D8000C; background-color: #FFD2D2; border-color: #ffb8b8; }
-        .message-warning { color: #9F6000; background-color: #FEEFB3; border-color: #f8de7e; }
-    </style>
+    .message-container {
+      padding: 8px 10px;
+      margin: 8px auto;
+      border-radius: 5px;
+      font-size: 0.88rem;
+      text-align: center;
+      display: none;
+      border: 1px solid transparent;
+      max-width: 800px;
+    }
+
+    .message-info    { color: #00529B; background-color: #BDE5F8; border-color: #75c5f0; }
+    .message-success { color: #270; background-color: #DFF2BF; border-color: #b2d393; }
+    .message-error   { color: #D8000C; background-color: #FFD2D2; border-color: #ffb8b8; }
+    .message-warning { color: #9F6000; background-color: #FEEFB3; border-color: #f8de7e; }
+
+    /* Responsive log styling */
+    @media (max-width: 768px) {
+      body { padding: 10px; }
+      .container { padding: 10px; }
+      pre#log-content { font-size: 0.85rem; padding: 10px; }
+      h1#log-title { font-size: 1.3rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 id="log-title"> Jans Protocol - Log Details</h1>
-        <div id="global-message-log-view" class="message-container"></div>
-        <div id="log-content-wrapper"> 
-            <pre id="log-content">Loading log data...</pre>
-        </div>
+  <div class="container">
+    <h1 id="log-title">Jans Protocol - Log Details</h1>
+    <div id="global-message-log-view" class="message-container"></div>
+    <div id="log-content-wrapper">
+      <pre id="log-content">Loading log data...</pre>
     </div>
+  </div>
 
-    <script type="module" src="./js/view_log_page_logic.js"></script>
+  <script type="module" src="./js/view_log_page_logic.js"></script>
 </body>
 </html>
