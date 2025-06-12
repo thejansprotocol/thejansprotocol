@@ -1,6 +1,7 @@
 {
   "date": "2025-06-12",
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "processedAtUTC": "2025-06-12T22:16:30.596Z",
   "jobDurationSeconds": "3.25",
 =======
@@ -8,12 +9,68 @@
   "jobDurationSeconds": "3.86",
 >>>>>>> Stashed changes
   "finalChainRoundIdFromScriptEnd": "5",
+=======
+  "processedAtUTC": "2025-06-12T23:47:01.826Z",
+  "jobDurationSeconds": "118.92",
+  "finalChainRoundIdFromScriptEnd": "6",
+>>>>>>> Stashed changes
   "roundClosedInfo": {
     "roundId": "5",
-    "status": "DurationNotMetForEnd",
-    "expectedEndTime": "2025-06-12T23:32:24.000Z"
+    "status": "EndSnapshotSubmittedThisRun",
+    "txHash": "0xad1d9fc667fcf9bc9636aa6197e2969c6d2af87e0234713ae9b0d3021a8d1a1f",
+    "endPrices": [
+      "8296650167551770",
+      "3696207596360700",
+      "149041815600",
+      "2770859843069420000000",
+      "912175903323173000",
+      "8162588046000000",
+      "49242767066",
+      "93877512611436000000",
+      "492038595066707",
+      "16092051103941700"
+    ],
+    "endChecksum": "0xd2ace38db10028271d6c580c001da790ce3be689080397385b5e325d1536f6f5",
+    "statusEvaluation": "EvaluatedThisRun",
+    "evaluationTxHash": "0x7abbcbf05449c5afb5e6e44731288ea62481098d581526587e2463be20830462",
+    "blockNumberOfEval": "18989614",
+    "actualOutcomes": [
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false
+    ],
+    "highestScore": "0"
   },
-  "roundStartedInfo": null,
+  "roundStartedInfo": {
+    "roundId": "6",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0xd0e967bc2dfe472220d3814c5e819a9c996aa3dc264a4901a849f13079529198",
+    "blockNumberOfStart": "18989630",
+    "isFirstRound": false,
+    "selectedPoolsActualCount": 10,
+    "paddedTo": 10,
+    "startTimeOnChain": "1749772134",
+    "startPrices": [
+      "16092051103941700",
+      "492038595066707",
+      "149041815600",
+      "8296650167551770",
+      "49242767066",
+      "93877512611436000000",
+      "2770859843069420000000",
+      "921501654621212000",
+      "3696207596360700",
+      "45197960923205"
+    ],
+    "startChecksum": "0xdad5264f58a305dba7dd11a4cd7705fc6a42e7f5e54f9edde77b2fc97854e7d2"
+  },
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
 }
