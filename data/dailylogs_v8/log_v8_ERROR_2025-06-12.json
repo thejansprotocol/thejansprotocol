@@ -1,0 +1,91 @@
+{
+  "logTimestamp": "2025-06-12T21:30:44.854Z",
+  "contractAddress": "0x7964861254d0e3Dd30f732DB49052198A9b90eae",
+  "currentChainTimestamp": "2025-06-12T21:30:41.000Z",
+  "currentBlockNumber": "18987372",
+  "currentRoundIdOnChain": "5",
+  "currentRoundDetails": {
+    "startTime": "2025-06-11T23:32:24.000Z",
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": false,
+    "resultsEvaluated": false,
+    "prizePoolJANS": "10140701243.855382244594616444",
+    "calculatedTicketPriceTara": "37.699019406617436441 TARA",
+    "calculatedTicketPriceUsdCents": "9 USD Cents",
+    "calculatedShareAllocation": "0.03384375x"
+  },
+  "evaluatedRoundInfo": {
+    "roundId": "4",
+    "startTime": "2025-06-10T22:02:32.000Z",
+    "isAborted": false,
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": true,
+    "resultsEvaluated": true,
+    "evaluatedThisLogRun": true,
+    "transactionHash": "0x8e8b5a1746cf9df17ed86111ca9db304e4376f0f843cb627486f9617323a8c49",
+    "blockNumber": "18965647",
+    "startPrices": [
+      "2578850509234930000000",
+      "149041815600",
+      "59416870686485500000",
+      "507679048283820",
+      "44883466261",
+      "1015012671545590000",
+      "18807673710428800",
+      "8162588046000000",
+      "3990368380954600",
+      "45114905878447"
+    ],
+    "endPrices": [
+      "2705948395587480000000",
+      "149041815600",
+      "61333763048884800000",
+      "486758921337434",
+      "49242767066",
+      "991449411227339000",
+      "18807673710428800",
+      "8162588046000000",
+      "4157722269424890",
+      "45114905878447"
+    ],
+    "actualOutcomes": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false
+    ],
+    "highestScoreAchieved": "0",
+    "winningTicketCount": 0,
+    "totalPrizeJansDistributedThisRound": "0.0",
+    "winningPlayers": [],
+    "note": "Details for normally evaluated Round 4."
+  },
+  "generalContractState": {
+    "owner": "0xfB8aED...DeeCe0",
+    "currentTaraWeiPerUsdCent": "4188779934068604049",
+    "configuredStartPriceUsdCents": "1",
+    "configuredMidPriceUsdCents": "2",
+    "configuredEndPriceUsdCents": "10",
+    "ticketSalesDurationSeconds": "79200",
+    "totalJansBurnedInGame": "993788721.897827459970272409",
+    "currentTotalTrackedShares": "0.036684027777777777",
+    "totalNativeTaraAccumulatedForLPSide": "0.82803602593663621",
+    "totalJansAccumulatedForLPSide": "574012140.766230285989336661",
+    "totalNativeTaraRewardForLPFormers": "0.042463385945468523",
+    "contractGameLpTokenBalance": "125748.708599898572282802",
+    "currentLpDistributionId": "0",
+    "isCurrentLpDistributionFinalized": false,
+    "isLpDistributionTriggerable": false,
+    "lpDistributionBurnTargetDivisor": "200000"
+  },
+  "errorEncountered": {
+    "message": "GitHub upload failed: Resource not accessible by personal access token",
+    "stack": "Error: GitHub upload failed: Resource not accessible by personal access token\n    at uploadToFrontendRepo (file:///home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:101:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async createDailyLog (file:///home/runner/work/jansgame_backend-/jansgame_backend-/backend_scripts/log_generator/create_daily_log.js:455:1)"
+  }
+}
