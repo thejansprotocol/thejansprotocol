@@ -1,7 +1,12 @@
 {
   "date": "2025-06-12",
+<<<<<<< Updated upstream
   "processedAtUTC": "2025-06-12T22:16:30.596Z",
   "jobDurationSeconds": "3.25",
+=======
+  "processedAtUTC": "2025-06-12T22:44:13.860Z",
+  "jobDurationSeconds": "3.86",
+>>>>>>> Stashed changes
   "finalChainRoundIdFromScriptEnd": "5",
   "roundClosedInfo": {
     "roundId": "5",
