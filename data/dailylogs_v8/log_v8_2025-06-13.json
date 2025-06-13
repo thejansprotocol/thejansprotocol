@@ -1,18 +1,18 @@
 {
-  "logTimestamp": "2025-06-13T00:21:49.358Z",
+  "logTimestamp": "2025-06-13T21:37:36.212Z",
   "contractAddress": "0x7964861254d0e3Dd30f732DB49052198A9b90eae",
-  "currentChainTimestamp": "2025-06-13T00:21:46.000Z",
-  "currentBlockNumber": "18990163",
+  "currentChainTimestamp": "2025-06-13T21:37:32.000Z",
+  "currentBlockNumber": "19011464",
   "currentRoundIdOnChain": "6",
   "currentRoundDetails": {
     "startTime": "2025-06-12T23:48:54.000Z",
     "startSnapshotSubmitted": true,
     "endSnapshotSubmitted": false,
     "resultsEvaluated": false,
-    "prizePoolJANS": "10140701243.855382244594616444",
-    "calculatedTicketPriceTara": "4.188779934068604049 TARA",
-    "calculatedTicketPriceUsdCents": "1 USD Cents",
-    "calculatedShareAllocation": "0.007395833333333333x"
+    "prizePoolJANS": "N/A",
+    "calculatedTicketPriceTara": "42.44121891180715167 TARA",
+    "calculatedTicketPriceUsdCents": "9 USD Cents",
+    "calculatedShareAllocation": "0.03403125x"
   },
   "evaluatedRoundInfo": {
     "roundId": "5",
@@ -68,7 +68,7 @@
   },
   "generalContractState": {
     "owner": "0xfB8aED...DeeCe0",
-    "currentTaraWeiPerUsdCent": "4188779934068604049",
+    "currentTaraWeiPerUsdCent": "4715690990200794630",
     "configuredStartPriceUsdCents": "1",
     "configuredMidPriceUsdCents": "2",
     "configuredEndPriceUsdCents": "10",
