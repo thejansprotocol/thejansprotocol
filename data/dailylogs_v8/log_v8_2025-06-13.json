@@ -1,8 +1,8 @@
 {
-  "logTimestamp": "2025-06-13T00:05:28.923Z",
+  "logTimestamp": "2025-06-13T00:21:49.358Z",
   "contractAddress": "0x7964861254d0e3Dd30f732DB49052198A9b90eae",
-  "currentChainTimestamp": "2025-06-13T00:05:22.000Z",
-  "currentBlockNumber": "18989895",
+  "currentChainTimestamp": "2025-06-13T00:21:46.000Z",
+  "currentBlockNumber": "18990163",
   "currentRoundIdOnChain": "6",
   "currentRoundDetails": {
     "startTime": "2025-06-12T23:48:54.000Z",
@@ -12,7 +12,7 @@
     "prizePoolJANS": "10140701243.855382244594616444",
     "calculatedTicketPriceTara": "4.188779934068604049 TARA",
     "calculatedTicketPriceUsdCents": "1 USD Cents",
-    "calculatedShareAllocation": "0.007447916666666666x"
+    "calculatedShareAllocation": "0.007395833333333333x"
   },
   "evaluatedRoundInfo": {
     "roundId": "5",
