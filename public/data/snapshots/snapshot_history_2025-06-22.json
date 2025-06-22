@@ -1,65 +1,14 @@
 {
   "date": "2025-06-22",
-  "processedAtUTC": "2025-06-22T20:52:02.913Z",
-  "jobDurationSeconds": "97.90",
+  "processedAtUTC": "2025-06-22T21:10:40.534Z",
+  "jobDurationSeconds": "3.02",
   "finalChainRoundIdFromScriptEnd": "9",
   "roundClosedInfo": {
-    "roundId": "8",
-    "status": "EndSnapshotSubmittedThisRun",
-    "txHash": "0xe18d6bd84c7e0a88937d1b3db5d30303a262a6ce102932807e383682618f0f46",
-    "endPrices": [
-      "239230500471671",
-      "2444042544986160000000",
-      "25596013989408",
-      "18912849288",
-      "1726159534000000",
-      "570894737843572000",
-      "13267794993311500",
-      "13267794993311500",
-      "13267794993311500",
-      "13267794993311500"
-    ],
-    "endChecksum": "0xbca1dba0abb5c3d96064642ba875ff1a56b80d021ae6ac550faf105ec92e7957",
-    "statusEvaluation": "EvaluatedThisRun",
-    "evaluationTxHash": "0x428b0f2ee3755bfd31df28cfa01b944d0b7d71b0b73353f9b22a8d97d257beb4",
-    "blockNumberOfEval": "19227405",
-    "actualOutcomes": [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    ],
-    "highestScore": "0"
-  },
-  "roundStartedInfo": {
     "roundId": "9",
-    "status": "StartSnapshotSubmittedThisRun",
-    "txHash": "0xc00bcccf5f1093378da5a45b242affd00aaaee6fb28dffe75015a6ff301538a8",
-    "blockNumberOfStart": "19227422",
-    "isFirstRound": false,
-    "selectedPoolsActualCount": 7,
-    "paddedTo": 10,
-    "startTimeOnChain": "1750625614",
-    "startPrices": [
-      "2444042544986160000000",
-      "239230500471671",
-      "25595206383610",
-      "18912849288",
-      "570894737843572000",
-      "1802612320454890",
-      "13267794993311500",
-      "13267794993311500",
-      "13267794993311500",
-      "13267794993311500"
-    ],
-    "startChecksum": "0x7afdb9c686cca55fc512933a7c294e724c6c4212019f64d6e7fb050d97f9dce7"
+    "status": "DurationNotMetForEnd",
+    "expectedEndTime": "2025-06-23T19:53:34.000Z"
   },
+  "roundStartedInfo": null,
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
 }
