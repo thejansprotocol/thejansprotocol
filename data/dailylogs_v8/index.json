@@ -1,14 +1,14 @@
 [
   {
+    "date": "2025-06-28",
+    "file": "log_v8_2025-06-28.json",
+    "timestamp": "2025-06-28T15:04:30.486Z",
+    "roundLogged": "13"
+  },
+  {
     "date": "2025-06-27",
     "file": "log_v8_2025-06-27.json",
     "timestamp": "2025-06-27T14:48:40.049Z",
     "roundLogged": "12"
-  },
-  {
-    "date": "2025-06-28",
-    "file": "log_v8_2025-06-28.json",
-    "timestamp": "2025-06-28T14:48:40.049Z",
-    "roundLogged": "13"
   }
 ]
