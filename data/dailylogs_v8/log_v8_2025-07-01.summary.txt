@@ -1,0 +1,63 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 17
+
+[Status]
+  Aborted: false
+  Results Evaluated: true
+  Start Snapshot Submitted: true
+  End Snapshot Submitted: true
+  Start Checksum: 0x54e563de9a8866bf8c858e1c74499f4887a2e0edd5839648540a3f8ba31c2d0b
+  End Checksum:   0x161792f06b6289a253cc85ffeb4e4da0a90dae62abcc8c6c22828323a6fc18b7
+
+[Timing]
+  Start Time (Unix): 1751316878
+  Start Time (Local): 30/6/2025, 05:54:38
+  Duration: N/A min
+
+[Prices & Outcomes]
+  | # | Token Name              | Start Price              | End Price                | Outcome |
+  |---|-------------------------|--------------------------|--------------------------|---------|
+  | 1  | Token 1                | 2,393,117,469,149,640,000,000 | 2,393,117,469,149,640,000,000 | DOWN   |
+  | 2  | Token 2                | 44,149,199,885           | 39,425,848,069           | DOWN   |
+  | 3  | Token 3                | 270,141,038,134,964      | 271,417,690,084,677      | UP     |
+  | 4  | Token 4                | 1,735,579,836,112,630    | 1,735,579,836,112,630    | DOWN   |
+  | 5  | Token 5                | 610,111,315,367,618,000  | 610,111,315,367,618,000  | DOWN   |
+  | 6  | Token 6                | 15,732,984,819,533,600   | 15,732,984,819,533,600   | DOWN   |
+  | 7  | Token 7                | 96,729,446,330           | 96,729,446,330           | DOWN   |
+  | 8  | Token 8                | 28,184,234,809,308       | 28,184,234,809,308       | DOWN   |
+  | 9  | Token 9                | 28,184,234,809,308       | 28,184,234,809,308       | DOWN   |
+  | 10 | Token 10               | 28,184,234,809,308       | 28,184,234,809,308       | DOWN   |
+
+[Winners]
+  Number of Winning Players: 0
+  Highest Score: 0
+  Winning Players: []
+
+[Tickets Summary]
+  Total Tickets Sold: undefined
+  Unique Players: undefined
+  Max Tickets Per Player: undefined
+
+[Prize & Distribution]
+  Prize Pool JANS: undefined
+  JANS Distributed: undefined
+  JANS Burned: undefined
+  Remaining Prize: undefined
+  LP Accumulation This Round:
+    - Native TARA: undefined
+    - JANS: undefined
+
+[Distribution Transactions]
+  RoundWinnersEvaluated Event:
+    Tx Hash: undefined
+    Block: undefined
+    Total Prize Paid: undefined
+  Other Payout Txs:
+
+
+[Consistency Checks]
+  ✔️ Outcomes match event? No
+  ✔️ Prize sums match?     No
+
+===================================================
