@@ -75,8 +75,8 @@ async function getLatestSummaryTxtFile() {
     const res = await fetch(LOGS_BASE_URL, { mode: 'cors' });
     if (!res.ok) throw new Error('Cannot list log directory');
     const text = await res.text();
-    // Try to parse as HTML directory listing
-    const matches = Array.from(text.matchAll(/href="([^"]+\.summary\.txt)"/g));
+    // Try to parse as HTML directory listing (support both single and double quotes)
+    const matches = Array.from(text.matchAll(/href=['"]([^'"]+\.summary\.txt)['"]/g));
     if (!matches.length) throw new Error('No summary.txt files found');
     // Extract filenames and sort descending (latest first)
     const files = matches.map(m => m[1]);
