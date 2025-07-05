@@ -1,19 +1,17 @@
 // --- view_log_page_logic.js ---
-// Carga el log de la fecha pasada por ?date=YYYY-MM-DD
-// y aplica colores de fondo random con contraste.
+// Visualiza un log .txt con colores random y título dinámico.
 
 const LOGS_BASE_URL = '/thejansprotocol/data/dailylogs_v8/';
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 
-// --- Random color logic ---
+// Funciones para colores random:
 function getRandomRgbColorParts() {
   const r = Math.floor(Math.random() * 256);
   const g = Math.floor(Math.random() * 256);
   const b = Math.floor(Math.random() * 256);
   return { r, g, b };
 }
-
 function rgbToHex(r, g, b) {
   return (
     "#" +
@@ -25,7 +23,6 @@ function rgbToHex(r, g, b) {
       .join("")
   );
 }
-
 function getContrastTextColor(hexBgColor) {
   const hex = hexBgColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
@@ -37,7 +34,7 @@ function getContrastTextColor(hexBgColor) {
 
 function applyRandomColors() {
   const { r, g, b } = getRandomRgbColorParts();
-  const alpha = 0.80; 
+  const alpha = 0.80;
   const randomBgColorRgba = `rgba(${r}, ${g}, ${b}, ${alpha})`;
   const opaqueHexColorForContrast = rgbToHex(r, g, b);
   const contrastTextColor = getContrastTextColor(opaqueHexColorForContrast);
@@ -46,12 +43,10 @@ function applyRandomColors() {
     document.body.style.backgroundColor = randomBgColorRgba;
     document.body.style.color = contrastTextColor;
   }
-
   const logTitleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
   if (logTitleEl) {
     logTitleEl.style.color = contrastTextColor;
   }
-
   const logContentEl = document.getElementById(LOG_CONTENT_ELEMENT_ID);
   if (logContentEl) {
     logContentEl.style.color = contrastTextColor;
@@ -69,42 +64,40 @@ function applyRandomColors() {
   }
 }
 
-// --- Helper: Get date param ---
-function getDateFromURL() {
+// Obtiene el parámetro "logFile" de la URL
+function getLogFileFromURL() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('date');
+  return params.get('logFile');
 }
 
-// --- Load log for that date ---
-async function loadAndDisplayLog(dateStr) {
-  const logFileName = `log_v8_${dateStr}.summary.txt`;
+// Carga y muestra el contenido del archivo
+async function loadAndDisplayLog(logFileName) {
+  if (!logFileName) {
+    const el = document.getElementById(LOG_CONTENT_ELEMENT_ID);
+    if (el) el.innerText = 'No logFile specified in URL.';
+    return;
+  }
   const logFileURL = LOGS_BASE_URL + logFileName;
 
   try {
     const res = await fetch(logFileURL, { mode: 'cors' });
-    if (!res.ok) throw new Error(`Cannot fetch log for ${dateStr}`);
+    if (!res.ok) throw new Error(`Cannot fetch log file: ${logFileName}`);
     const content = await res.text();
 
     const titleEl = document.getElementById(LOG_TITLE_ELEMENT_ID);
-    if (titleEl) titleEl.innerText = `Log for ${dateStr}`;
+    if (titleEl) titleEl.innerText = `Log: ${logFileName}`;
 
     const contentEl = document.getElementById(LOG_CONTENT_ELEMENT_ID);
     if (contentEl) contentEl.innerText = content;
-
   } catch (err) {
     const contentEl = document.getElementById(LOG_CONTENT_ELEMENT_ID);
     if (contentEl) contentEl.innerText = `Error: ${err.message}`;
   }
 }
 
-// --- Init ---
+// Al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
   applyRandomColors();
-  const dateStr = getDateFromURL();
-  if (!dateStr) {
-    const el = document.getElementById(LOG_CONTENT_ELEMENT_ID);
-    if (el) el.innerText = 'No date specified in URL.';
-    return;
-  }
-  loadAndDisplayLog(dateStr);
+  const logFileName = getLogFileFromURL();
+  loadAndDisplayLog(logFileName);
 });
