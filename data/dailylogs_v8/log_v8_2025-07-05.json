@@ -1,9 +1,9 @@
 {
-  "logTimestamp": "2025-07-05T13:11:56.822Z",
+  "logTimestamp": "2025-07-05T13:44:14.672Z",
   "contractAddress": "0x4c9C1Af59B879898069f2FE8a832f50Aa5D00d64",
   "errorEncountered": null,
-  "currentChainTimestamp": "2025-07-05T13:11:51.000Z",
-  "currentBlockNumber": "19530945",
+  "currentChainTimestamp": "2025-07-05T13:44:11.000Z",
+  "currentBlockNumber": "19531484",
   "currentRoundIdOnChain": "21",
   "currentRoundDetails": {
     "roundId": "N/A",
@@ -87,6 +87,8 @@
     "highestScoreAchieved": "0",
     "winningPlayers": [],
     "aborted": false,
+    "eventTxHash": "0x51070b70f34c559d9c8083866f04223b64bcc0180a2dee4ad0fce4379009ac90",
+    "eventBlock": 19514637,
     "otherPayoutTxs": [],
     "outcomesMatchEvent": false,
     "prizeSumsMatch": false,
