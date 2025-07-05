@@ -18,16 +18,16 @@ ROUND SUMMARY
 [Prices & Outcomes]
   | # | Token Name              | Start Price              | End Price                | Outcome |
   |---|-------------------------|--------------------------|--------------------------|---------|
-  | 1  | Token 1                | 0.000302                 | 0.000302                 | DOWN   |
-  | 2  | Token 2                | 2,536.204373             | 2,536.204373             | DOWN   |
-  | 3  | Token 3                | 0.000033                 | 0.000033                 | UP     |
-  | 4  | Token 4                | 0.644326                 | 0.644326                 | DOWN   |
-  | 5  | Token 5                | 0.007871                 | 0.007871                 | DOWN   |
-  | 6  | Token 6                | 0                        | 0                        | DOWN   |
-  | 7  | Token 7                | 0.001579                 | 0.001579                 | DOWN   |
-  | 8  | Token 8                | 0.015733                 | 0.015733                 | DOWN   |
-  | 9  | Token 9                | 0                        | 0                        | DOWN   |
-  | 10 | Token 10               | 0                        | 0                        | DOWN   |
+  | 1  | FARTAX / WTARA         | 0.000302                 | 0.000302                 | DOWN   |
+  | 2  | TSWAP / WTARA 1%       | 2,536.204373             | 2,536.204373             | DOWN   |
+  | 3  | TXTR / WTARA 1%        | 0.000033                 | 0.000033                 | UP     |
+  | 4  | FOMOG / WTARA          | 0.644326                 | 0.644326                 | DOWN   |
+  | 5  | CHDPU / WTARA          | 0.007871                 | 0.007871                 | DOWN   |
+  | 6  | SMASH / WTARA          | 0                        | 0                        | DOWN   |
+  | 7  | BTR / WTARA            | 0.001579                 | 0.001579                 | DOWN   |
+  | 8  | LARA / WTARA 1%        | 0.015733                 | 0.015733                 | DOWN   |
+  | 9  | ETH / WTARA 1%         | 0                        | 0                        | DOWN   |
+  | 10 | GRUMPY / WTARA         | 0                        | 0                        | DOWN   |
 
 [Winners]
   Number of Winning Players: 0
@@ -50,8 +50,8 @@ ROUND SUMMARY
 
 [Distribution Transactions]
   RoundWinnersEvaluated Event:
-    Tx Hash: undefined
-    Block: undefined
+    Tx Hash: 0x51070b70f34c559d9c8083866f04223b64bcc0180a2dee4ad0fce4379009ac90
+    Block: 19514637
     Total Prize Paid: undefined
   Other Payout Txs:
 
