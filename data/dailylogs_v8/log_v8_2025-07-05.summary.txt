@@ -1,33 +1,33 @@
 ===================================================
 ROUND SUMMARY
-  Round ID: 20
+  Round ID: 21
 
 [Status]
   Aborted: false
-  Results Evaluated: true
+  Results Evaluated: false
   Start Snapshot Submitted: true
-  End Snapshot Submitted: true
-  Start Checksum: 0xb786de397fd66d70012d8d7db12c46d4580ed2ebfb0bc26748a2ba155f03ba44
-  End Checksum:   0x6658bdc6840d3139057063a977a077e47e87feb30d4276c1cfd91a5319f13c92
+  End Snapshot Submitted: false
+  Start Checksum: 0xe219d5f07c0fcd98a9d5d67e3489cf6c92de4db6d893bc937d037ac1c7722eb9
+  End Checksum:   0x0000000000000000000000000000000000000000000000000000000000000000
 
 [Timing]
-  Start Time (Unix): 1751576183
-  Start Time (Local): 3/7/2025, 05:56:23
+  Start Time (Unix): 1751662459
+  Start Time (Local): 4/7/2025, 05:54:19
   Duration: N/A min
 
 [Prices & Outcomes]
   | # | Token Name              | Start Price              | End Price                | Outcome |
   |---|-------------------------|--------------------------|--------------------------|---------|
-  | 1  | FARTAX / WTARA         | 0.000302                 | 0.000302                 | DOWN   |
-  | 2  | TSWAP / WTARA 1%       | 2,536.204373             | 2,536.204373             | DOWN   |
-  | 3  | TXTR / WTARA 1%        | 0.000033                 | 0.000033                 | UP     |
-  | 4  | FOMOG / WTARA          | 0.644326                 | 0.644326                 | DOWN   |
-  | 5  | CHDPU / WTARA          | 0.007871                 | 0.007871                 | DOWN   |
-  | 6  | SMASH / WTARA          | 0                        | 0                        | DOWN   |
-  | 7  | BTR / WTARA            | 0.001579                 | 0.001579                 | DOWN   |
-  | 8  | LARA / WTARA 1%        | 0.015733                 | 0.015733                 | DOWN   |
-  | 9  | ETH / WTARA 1%         | 0                        | 0                        | DOWN   |
-  | 10 | GRUMPY / WTARA         | 0                        | 0                        | DOWN   |
+  | 1  | FARTAX / WTARA         | 0.000033                 | 0                        | DOWN   |
+  | 2  | TSWAP / WTARA 1%       | 0                        | 0                        | DOWN   |
+  | 3  | TXTR / WTARA 1%        | 0.001736                 | 0                        | DOWN   |
+  | 4  | FOMOG / WTARA          | 0.007871                 | 0                        | DOWN   |
+  | 5  | CHDPU / WTARA          | 2,536.204373             | 0                        | DOWN   |
+  | 6  | SMASH / WTARA          | 0.000302                 | 0                        | DOWN   |
+  | 7  | BTR / WTARA            | 0.015733                 | 0                        | DOWN   |
+  | 8  | LARA / WTARA 1%        | 0                        | 0                        | DOWN   |
+  | 9  | ETH / WTARA 1%         | 0.644326                 | 0                        | DOWN   |
+  | 10 | GRUMPY / WTARA         | 0.644326                 | 0                        | DOWN   |
 
 [Winners]
   Number of Winning Players: 0
@@ -50,8 +50,8 @@ ROUND SUMMARY
 
 [Distribution Transactions]
   RoundWinnersEvaluated Event:
-    Tx Hash: 0x51070b70f34c559d9c8083866f04223b64bcc0180a2dee4ad0fce4379009ac90
-    Block: 19514637
+    Tx Hash: undefined
+    Block: undefined
     Total Prize Paid: undefined
   Other Payout Txs:
 
