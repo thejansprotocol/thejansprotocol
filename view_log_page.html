@@ -16,8 +16,8 @@
       background-attachment: fixed;
       background-position: right center;
       font-family: monospace;
-      font-size: 9px;           /* ⬅️ Smaller text */
-      line-height: 0.85;        /* ⬅️ Tighter lines */
+      font-size: 9px;           /* Smaller text */
+      line-height: 0.85;        /* Tighter lines */
       color: #ffffff;
     }
 
@@ -38,14 +38,18 @@
   </style>
 </head>
 <body>
-  <h1>Jans Protocol - Log Details</h1>
+  <h1 id="log-title">Jans Protocol - Log Details</h1>
   <pre id="log-content">Loading log data...</pre>
 
+  <!-- ❌ Este script de test ya no es necesario, así que comentalo o bórralo -->
+  <!--
   <script>
-    // Dynamic test content (remove this if loading logs dynamically)
     document.getElementById('log-content').textContent =
       Array.from({ length: 100 }, (_, i) => `Log entry #${i + 1}`).join('\n');
   </script>
+  -->
+
+  <!-- ✅ Solo este: tu lógica real -->
   <script type="module" src="./js/view_log_page_logic.js"></script>
 </body>
 </html>
