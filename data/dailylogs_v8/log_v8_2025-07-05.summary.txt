@@ -1,33 +1,33 @@
 ===================================================
 ROUND SUMMARY
-  Round ID: 21
+  Round ID: 22
 
 [Status]
   Aborted: false
   Results Evaluated: false
   Start Snapshot Submitted: true
   End Snapshot Submitted: false
-  Start Checksum: 0xe219d5f07c0fcd98a9d5d67e3489cf6c92de4db6d893bc937d037ac1c7722eb9
+  Start Checksum: 0x1ef75a4c3b13410cc935fffe5f19f609d4bd7240ed42a7fc74ab247a18b3c816
   End Checksum:   0x0000000000000000000000000000000000000000000000000000000000000000
 
 [Timing]
-  Start Time (Unix): 1751662459
-  Start Time (Local): 4/7/2025, 05:54:19
+  Start Time (Unix): 1751748830
+  Start Time (Local): 5/7/2025, 05:53:50
   Duration: N/A min
 
 [Prices & Outcomes]
   | # | Token Name              | Start Price              | End Price                | Outcome |
   |---|-------------------------|--------------------------|--------------------------|---------|
-  | 1  | CHDPU / WTARA          | 0.000033                 | 0                        | DOWN   |
-  | 2  | GRUMPY / WTARA         | 0                        | 0                        | DOWN   |
-  | 3  | TSWAP / WTARA 0.05%    | 0.001736                 | 0                        | DOWN   |
-  | 4  | SMASH / WTARA          | 0.007871                 | 0                        | DOWN   |
-  | 5  | ETH / WTARA 1%         | 2,536.204373             | 0                        | DOWN   |
-  | 6  | LARA / WTARA 1%        | 0.000302                 | 0                        | DOWN   |
+  | 1  | ETH / WTARA 1%         | 2,426.234396             | 0                        | DOWN   |
+  | 2  | LARA / WTARA 0.3%      | 0.000277                 | 0                        | DOWN   |
+  | 3  | GRUMPY / WTARA         | 0                        | 0                        | DOWN   |
+  | 4  | TSWAP / WTARA 0.05%    | 0.001736                 | 0                        | DOWN   |
+  | 5  | FOMOG / WTARA 1%       | 0.644326                 | 0                        | DOWN   |
+  | 6  | SMASH / WTARA          | 0.007871                 | 0                        | DOWN   |
   | 7  | TXTR / WTARA 1%        | 0.015733                 | 0                        | DOWN   |
   | 8  | FARTAX / WTARA         | 0                        | 0                        | DOWN   |
-  | 9  | FOMOG / WTARA 1%       | 0.644326                 | 0                        | DOWN   |
-  | 10 | Placeholder Pool 10    | 0.644326                 | 0                        | DOWN   |
+  | 9  | CHDPU / WTARA 1%       | 0.000033                 | 0                        | DOWN   |
+  | 10 | Placeholder Pool 10    | 0.000033                 | 0                        | DOWN   |
 
 [Winners]
   Number of Winning Players: 0
