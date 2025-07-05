@@ -1,0 +1,63 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 20
+
+[Status]
+  Aborted: false
+  Results Evaluated: true
+  Start Snapshot Submitted: true
+  End Snapshot Submitted: true
+  Start Checksum: 0xb786de397fd66d70012d8d7db12c46d4580ed2ebfb0bc26748a2ba155f03ba44
+  End Checksum:   0x6658bdc6840d3139057063a977a077e47e87feb30d4276c1cfd91a5319f13c92
+
+[Timing]
+  Start Time (Unix): 1751576183
+  Start Time (Local): 3/7/2025, 05:56:23
+  Duration: N/A min
+
+[Prices & Outcomes]
+  | # | Token Name              | Start Price              | End Price                | Outcome |
+  |---|-------------------------|--------------------------|--------------------------|---------|
+  | 1  | Token 1                | 0.000302                 | 0.000302                 | DOWN   |
+  | 2  | Token 2                | 2,536.204373             | 2,536.204373             | DOWN   |
+  | 3  | Token 3                | 0.000033                 | 0.000033                 | UP     |
+  | 4  | Token 4                | 0.644326                 | 0.644326                 | DOWN   |
+  | 5  | Token 5                | 0.007871                 | 0.007871                 | DOWN   |
+  | 6  | Token 6                | 0                        | 0                        | DOWN   |
+  | 7  | Token 7                | 0.001579                 | 0.001579                 | DOWN   |
+  | 8  | Token 8                | 0.015733                 | 0.015733                 | DOWN   |
+  | 9  | Token 9                | 0                        | 0                        | DOWN   |
+  | 10 | Token 10               | 0                        | 0                        | DOWN   |
+
+[Winners]
+  Number of Winning Players: 0
+  Highest Score: 0
+  Winning Players: []
+
+[Tickets Summary]
+  Total Tickets Sold: undefined
+  Unique Players: undefined
+  Max Tickets Per Player: undefined
+
+[Prize & Distribution]
+  Prize Pool JANS: undefined
+  JANS Distributed: undefined
+  JANS Burned: undefined
+  Remaining Prize: undefined
+  LP Accumulation This Round:
+    - Native TARA: undefined
+    - JANS: undefined
+
+[Distribution Transactions]
+  RoundWinnersEvaluated Event:
+    Tx Hash: undefined
+    Block: undefined
+    Total Prize Paid: undefined
+  Other Payout Txs:
+
+
+[Consistency Checks]
+  ✔️ Outcomes match event? No
+  ✔️ Prize sums match?     No
+
+===================================================
