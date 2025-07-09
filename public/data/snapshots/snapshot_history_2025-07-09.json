@@ -1,65 +1,14 @@
 {
   "date": "2025-07-09",
-  "processedAtUTC": "2025-07-09T20:54:00.394Z",
-  "jobDurationSeconds": "99.17",
+  "processedAtUTC": "2025-07-09T21:11:54.687Z",
+  "jobDurationSeconds": "1.31",
   "finalChainRoundIdFromScriptEnd": "26",
   "roundClosedInfo": {
-    "roundId": "25",
-    "status": "EndSnapshotSubmittedThisRun",
-    "txHash": "0x13ee1496f0789c940ac9ea5cbed44fbcd66a08eeee9ccc21db74fb09d50fd085",
-    "endPrices": [
-      "74108321323",
-      "38252914457964",
-      "1875465857615660",
-      "15732984820000000",
-      "96729446330",
-      "740236905655621000",
-      "11036152096412700",
-      "2541044604379210000000",
-      "304251759285469",
-      "304251759285469"
-    ],
-    "endChecksum": "0xa50cd41caf2f75f8f025962fdf17945b3cf64043f0bc439f609615b7f729c1d5",
-    "statusEvaluation": "EvaluatedThisRun",
-    "evaluationTxHash": "0x7eeb5ec186616d8e32c0874330544e51a7d6db5690655b3ce1acf63fe5a42a5d",
-    "blockNumberOfEval": "19634460",
-    "actualOutcomes": [
-      true,
-      true,
-      false,
-      false,
-      false,
-      true,
-      true,
-      false,
-      false,
-      false
-    ],
-    "highestScore": "0"
-  },
-  "roundStartedInfo": {
     "roundId": "26",
-    "status": "StartSnapshotSubmittedThisRun",
-    "txHash": "0x45e97031e02c0ddead2589667e9d47f16e3a9ef9a8b23661a7c5d624db602c02",
-    "blockNumberOfStart": "19634478",
-    "isFirstRound": false,
-    "selectedPoolsActualCount": 8,
-    "paddedTo": 10,
-    "startTimeOnChain": "1752094533",
-    "startPrices": [
-      "38252914457964",
-      "1875465857615660",
-      "740236905655621000",
-      "74108321323",
-      "11036152096412700",
-      "96729446330",
-      "2541044604379210000000",
-      "304251759285469",
-      "304251759285469",
-      "304251759285469"
-    ],
-    "startChecksum": "0x73f1d7bf30063e635986233685a647cbc1be83dbd2e0fc2b2a40f653c35c17de"
+    "status": "DurationNotMetForEnd",
+    "expectedEndTime": "2025-07-10T19:55:33.000Z"
   },
+  "roundStartedInfo": null,
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
 }
