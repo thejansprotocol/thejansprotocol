@@ -1,0 +1,63 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 25
+
+[Status]
+  Aborted: false
+  Results Evaluated: true
+  Start Snapshot Submitted: true
+  End Snapshot Submitted: true
+  Start Checksum: 0xc4d026d23255b7382b99aca173e7457ff82deb8e4ba20cdee2fdd8b1c61de808
+  End Checksum:   0xa50cd41caf2f75f8f025962fdf17945b3cf64043f0bc439f609615b7f729c1d5
+
+[Timing]
+  Start Time (Unix): 1752008137
+  Start Time (Local): 8/7/2025, 05:55:37
+  Duration: N/A min
+
+[Prices & Outcomes]
+  | # | Token Name              | Start Price              | End Price                | Outcome |
+  |---|-------------------------|--------------------------|--------------------------|---------|
+  | 1  | FARTAX / WTARA         | 0                        | 0                        | UP     |
+  | 2  | TSWAP / WTARA 1%       | 0.000033                 | 0.000038                 | UP     |
+  | 3  | TXTR / WTARA 1%        | 0.001934                 | 0.001875                 | DOWN   |
+  | 4  | FOMOG / WTARA          | 0.015733                 | 0.015733                 | DOWN   |
+  | 5  | CHDPU / WTARA          | 0                        | 0                        | DOWN   |
+  | 6  | SMASH / WTARA          | 0.662988                 | 0.740237                 | UP     |
+  | 7  | BTR / WTARA            | 0.009513                 | 0.011036                 | UP     |
+  | 8  | LARA / WTARA 1%        | 2,541.044604             | 2,541.044604             | DOWN   |
+  | 9  | ETH / WTARA 1%         | 0.000304                 | 0.000304                 | DOWN   |
+  | 10 | GRUMPY / WTARA         | 0.000304                 | 0.000304                 | DOWN   |
+
+[Winners]
+  Number of Winning Players: 0
+  Highest Score: 0
+  Winning Players: []
+
+[Tickets Summary]
+  Total Tickets Sold: undefined
+  Unique Players: undefined
+  Max Tickets Per Player: undefined
+
+[Prize & Distribution]
+  Prize Pool JANS: undefined
+  JANS Distributed: undefined
+  JANS Burned: undefined
+  Remaining Prize: undefined
+  LP Accumulation This Round:
+    - Native TARA: undefined
+    - JANS: undefined
+
+[Distribution Transactions]
+  RoundWinnersEvaluated Event:
+    Tx Hash: 0x7eeb5ec186616d8e32c0874330544e51a7d6db5690655b3ce1acf63fe5a42a5d
+    Block: 19634460
+    Total Prize Paid: undefined
+  Other Payout Txs:
+
+
+[Consistency Checks]
+  ✔️ Outcomes match event? No
+  ✔️ Prize sums match?     No
+
+===================================================
