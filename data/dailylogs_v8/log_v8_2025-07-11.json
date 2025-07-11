@@ -1,0 +1,63 @@
+{
+  "roundId": "26",
+  "startTime": "1752094533",
+  "startTimeLocal": "9/7/2025, 05:55:33",
+  "startPrices": [
+    "38252914457964",
+    "1875465857615660",
+    "740236905655621000",
+    "74108321323",
+    "11036152096412700",
+    "96729446330",
+    "2541044604379210000000",
+    "304251759285469",
+    "304251759285469",
+    "304251759285469"
+  ],
+  "endPrices": [
+    "81375300574599",
+    "1875465857615660",
+    "801719906291806000",
+    "88280364927",
+    "14519590952225000",
+    "96729446330",
+    "2541044604379210000000",
+    "304251759285469",
+    "304251759285469",
+    "304251759285469"
+  ],
+  "startSnapshotSubmitted": true,
+  "endSnapshotSubmitted": true,
+  "startChecksum": "0x73f1d7bf30063e635986233685a647cbc1be83dbd2e0fc2b2a40f653c35c17de",
+  "endChecksum": "0x5fb8e3f23e0da5b59505bdc499b435dbb34567c2f47f89d6a428db040db87752",
+  "actualOutcomes": [
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "resultsEvaluated": true,
+  "highestScoreAchieved": "0",
+  "winningPlayers": [],
+  "tokenNames": [
+    "CHDPU / WTARA",
+    "TSWAP / WTARA 1%",
+    "FOMOG / WTARA 1%",
+    "GRUMPY / WTARA",
+    "SMASH / WTARA",
+    "FARTAX / WTARA",
+    "ETH / WTARA 1%",
+    "LARA / WTARA 0.3%",
+    "Placeholder Pool 9",
+    "Placeholder Pool 10"
+  ],
+  "eventTxHash": "0x82c71d22bfc045313f1aea66f3c9033cb3d9712a0cab5e097479f53ada1a95df",
+  "eventBlock": 19658335,
+  "eventPrizePaid": "0.0"
+}
