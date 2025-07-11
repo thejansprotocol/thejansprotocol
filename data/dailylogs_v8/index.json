@@ -1,5 +1,11 @@
 [
   {
+    "date": "2025-07-11",
+    "file": "log_v8_2025-07-11.summary.txt",
+    "timestamp": "2025-07-11T12:19:06.537Z",
+    "roundLogged": "26"
+  },
+  {
     "date": "2025-07-10",
     "file": "log_v8_2025-07-10.summary.txt",
     "timestamp": "2025-07-10T21:28:08.138Z",
