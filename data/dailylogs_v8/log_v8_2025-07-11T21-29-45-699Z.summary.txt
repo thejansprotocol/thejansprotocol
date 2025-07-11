@@ -1,0 +1,42 @@
+===================================================
+ROUND SUMMARY
+  Round ID: N/A
+
+[Status]
+  Aborted: undefined
+  Results Evaluated: true
+  Start Snapshot Submitted: true
+  End Snapshot Submitted: true
+  Start Checksum: 0x183bba70d334057a5f05af6b7cea08dd306a3848f11a139928e12c6532d5d084
+  End Checksum:   0x4bf725f5bffbfc312e30e46f3fe274d2d55e0e01820f71979c53e13bb0392b21
+
+[Timing]
+  Start Time (Unix): 1752180946
+  Start Time (Local): 10/7/2025, 05:55:46
+
+[Prices & Outcomes]
+  | # | Start Price              | End Price                | Outcome |
+  |---|--------------------------|--------------------------|---------|
+  | 1  | 278.555250               | 542.371387               | UP     |
+  | 2  | 0.000081                 | 0.000082                 | UP     |
+  | 3  | 0.000000                 | 0.000000                 | UP     |
+  | 4  | 0.014520                 | 0.014520                 | DOWN   |
+  | 5  | 0.802603                 | 1.099730                 | UP     |
+  | 6  | 0.014502                 | 0.014502                 | DOWN   |
+  | 7  | 0.000304                 | 0.000397                 | UP     |
+  | 8  | 2541.044604              | 3702.166390              | UP     |
+  | 9  | 0.001915                 | 0.001915                 | DOWN   |
+  | 10 | 0.001915                 | 0.001915                 | DOWN   |
+
+[Winners]
+  Number of Winning Players: 0
+  Highest Score: 0
+  Winning Players: []
+
+[Distribution Transactions]
+  RoundWinnersEvaluated Event:
+    Tx Hash: 0x65bc67ad855c7be8adf20debe9bbbb443232e64bbf25877adaa6f7ebed989ce4
+    Block: 
+    Total Prize Paid: 0.0
+
+===================================================
