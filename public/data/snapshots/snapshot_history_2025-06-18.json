@@ -1,0 +1,71 @@
+{
+  "date": "2025-06-18",
+<<<<<<< Updated upstream
+  "processedAtUTC": "2025-06-18T21:11:36.646Z",
+  "jobDurationSeconds": "2.64",
+  "finalChainRoundIdFromScriptEnd": "4",
+=======
+  "processedAtUTC": "2025-06-18T21:25:59.666Z",
+  "jobDurationSeconds": "90.71",
+  "finalChainRoundIdFromScriptEnd": "5",
+>>>>>>> Stashed changes
+  "roundClosedInfo": {
+    "roundId": "4",
+    "status": "EndSnapshotSubmittedThisRun",
+    "txHash": "0x8b1b645d12f2b80b52fac5250863b09373af38b49a2307e385ee85de1f627113",
+    "endPrices": [
+      "2734872126512490000000",
+      "216860378530950",
+      "19584456657298",
+      "1802612320454890",
+      "21130218521",
+      "721147633227749000",
+      "14713857882415600",
+      "149041815600",
+      "6496040231726420",
+      "8296650167551770"
+    ],
+    "endChecksum": "0xa7d0f35b4223b52b4a2ab4802381b1e5f5661db62c3eee6588167f7c5437f54d",
+    "statusEvaluation": "EvaluatedThisRun",
+    "evaluationTxHash": "0x1eaa9e3ad43bad0c3d755b6c2e7d04bfd0496ae395459ab047e6a5d7ee5122de",
+    "blockNumberOfEval": "19131888",
+    "actualOutcomes": [
+      true,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ],
+    "highestScore": "0"
+  },
+  "roundStartedInfo": {
+    "roundId": "5",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0xe2ca7d1a28af830b47390c9be9fef3cfcf3d3125924812181b252920b5ce66db",
+    "blockNumberOfStart": "19131905",
+    "isFirstRound": false,
+    "selectedPoolsActualCount": 8,
+    "paddedTo": 10,
+    "startTimeOnChain": "1750282045",
+    "startPrices": [
+      "2734872126512490000000",
+      "318448120573160",
+      "21069774958872",
+      "1802612320454890",
+      "721147633227749000",
+      "14713857882415600",
+      "21130218521",
+      "149041815600",
+      "149041815600",
+      "149041815600"
+    ],
+    "startChecksum": "0xb0f95bb9860c9e0b375447b55140155d586a6fec69d00b8d232f7d703123c33c"
+  },
+  "overallSuccess": true,
+  "scriptVersion": "V9_With_1h_6h_24h_Percentages"
+}

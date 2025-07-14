@@ -1,0 +1,14 @@
+{
+  "date": "2025-06-21",
+  "processedAtUTC": "2025-06-21T21:10:11.263Z",
+  "jobDurationSeconds": "1.76",
+  "finalChainRoundIdFromScriptEnd": "8",
+  "roundClosedInfo": {
+    "roundId": "8",
+    "status": "DurationNotMetForEnd",
+    "expectedEndTime": "2025-06-22T19:53:49.000Z"
+  },
+  "roundStartedInfo": null,
+  "overallSuccess": true,
+  "scriptVersion": "V9_With_1h_6h_24h_Percentages"
+}
