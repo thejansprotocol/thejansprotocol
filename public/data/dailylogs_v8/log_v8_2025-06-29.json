@@ -1,0 +1,63 @@
+{
+  "logTimestamp": "2025-06-29T14:30:14.005Z",
+  "contractAddress": "0x4c9C1Af59B879898069f2FE8a832f50Aa5D00d64",
+  "errorEncountered": null,
+  "currentChainTimestamp": "2025-06-29T14:30:07.000Z",
+  "currentBlockNumber": "19388601",
+  "currentRoundIdOnChain": "15",
+  "currentRoundDetails": {},
+  "evaluatedRoundInfo": {
+    "roundId": "14",
+    "startTime": "1751058858",
+    "startTimeLocal": "27/6/2025, 06:14:18",
+    "startPrices": [
+      "271463605836904",
+      "2323340595550890000000",
+      "647963752179678000",
+      "23275356029",
+      "2106200389943580",
+      "29809985080000",
+      "15732984819533600",
+      "96729446330",
+      "96729446330",
+      "96729446330"
+    ],
+    "endPrices": [
+      "250558256339640",
+      "2369536297328710000000",
+      "647963752179678000",
+      "23275356029",
+      "2106200389943580",
+      "29809985080000",
+      "15732984819533600",
+      "96729446330",
+      "96729446330",
+      "96729446330"
+    ],
+    "startSnapshotSubmitted": true,
+    "endSnapshotSubmitted": true,
+    "startChecksum": "0x09a8665a31e39e8bc06b4f2c95bb44e44d635e3caf39e895dc338542af513f1f",
+    "endChecksum": "0x4693dfd2bc4b8aab22c8757a94e3852def6c11efd9761d60c2d8c6e1842ef98e",
+    "actualOutcomes": [
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "resultsEvaluated": true,
+    "highestScoreAchieved": "0",
+    "winningPlayers": [],
+    "aborted": false,
+    "otherPayoutTxs": [],
+    "outcomesMatchEvent": false,
+    "prizeSumsMatch": false
+  },
+  "generalContractState": {},
+  "poolNames": []
+}

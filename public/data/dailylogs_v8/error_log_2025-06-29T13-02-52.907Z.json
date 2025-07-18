@@ -1,0 +1,13 @@
+{
+  "logTimestamp": "2025-06-29T13:02:52.907Z",
+  "contractAddress": "0x4c9C1Af59B879898069f2FE8a832f50Aa5D00d64",
+  "errorEncountered": "Cannot access 'filename' before initialization",
+  "currentChainTimestamp": "2025-06-29T13:02:51.000Z",
+  "currentBlockNumber": "19387154",
+  "currentRoundIdOnChain": "15",
+  "currentRoundDetails": {},
+  "evaluatedRoundInfo": {
+    "roundId": "14"
+  },
+  "generalContractState": {}
+}
