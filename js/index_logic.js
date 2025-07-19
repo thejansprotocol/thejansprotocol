@@ -24,7 +24,8 @@ import {
     NATIVE_TARA_DECIMALS,
     JANS_DECIMALS,
     LP_TOKEN_DECIMALS,
-    
+    cachedJansGameABI, 
+    cachedJansTokenABI, 
     shortenAddress,
     showGlobalMessage, 
     clearGlobalMessage,
