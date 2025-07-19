@@ -53,6 +53,7 @@ const GLOBAL_MESSAGE_ID_INDEX = "global-error-display"; // Or your chosen ID
 // --- Module State (managed by this script) ---
 let isIndexAppInitialized = false; // Flag to indicate if the app's logic is ready
 let currentTaraPriceUSD = null; // Price of 1 TARA in USD (fetched from CoinGecko)
+let localIsAppInitialized = false;
 let currentJansPerTaraRate = null; // How many JANS for 1 TARA (fetched from DEX)
 let gameLpTokenAddress = null; // Address of the JANS/TARA LP token (fetched from contract)
 
