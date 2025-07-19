@@ -2,7 +2,7 @@
 // Manages constants, ABI loading, Ethers.js core setup, shared utilities, and data fetching services.
 
 // --- Core Contract and Network Configuration ---
-export const JANS_GAME_CONTRACT_ADDRESS = "0x6Eb73584CeC8c33B7F748c112EDE36cd28c741B8"; // Replace with your new contract address after deploying
+export const JANS_GAME_CONTRACT_ADDRESS = "0x6Eb73584CeC8c33B7F748c112EDE36cd28c741B8"; // 👈 RECUERDA ACTUALIZAR ESTA DIRECCIÓN DESPUÉS DE DESPLEGAR EL CONTRATO NUEVO
 export const TARGET_CHAIN_ID = 841n; // Taraxa Mainnet Chain ID
 export const TARGET_NETWORK_NAME = "Taraxa Mainnet";
 export const TARAXA_RPC_URL = "https://841.rpc.thirdweb.com";
@@ -105,14 +105,13 @@ export function getReadOnlyJansGameContract() {
 export async function connectWalletAndGetSignerInstances() {
     if (!ethersInstance) {
         if (window.ethers) {
-            console.log("Wallet.js: Ethers not globally initialized for connectWallet, attempting now.");
             await initializeEthersCore(window.ethers);
         } else {
             throw new Error("Ethers.js not available. Wallet connection failed.");
         }
     }
     if (typeof window.ethereum === "undefined") {
-        throw new Error("Wallet (e.g., MetaMask) not found. Please install a compatible wallet extension.");
+        throw new Error("Wallet (e.g., MetaMask) not found.");
     }
 
     try {
@@ -122,7 +121,7 @@ export async function connectWalletAndGetSignerInstances() {
             await browserProvider.send("eth_requestAccounts", []);
         } catch (accError) {
             if (accError.code === 4001) throw new Error("Wallet connection rejected by user.");
-            throw new Error(`Wallet account access failed: ${accError.message || 'Unknown error'}`);
+            throw new Error(`Wallet account access failed: ${accError.message}`);
         }
 
         const signer = await browserProvider.getSigner();
@@ -130,7 +129,7 @@ export async function connectWalletAndGetSignerInstances() {
         const network = await browserProvider.getNetwork();
 
         if (network.chainId !== TARGET_CHAIN_ID) {
-            const message = `Please switch your wallet to ${TARGET_NETWORK_NAME} (Chain ID: ${TARGET_CHAIN_ID}). You are on ${network.name} (${network.chainId}).`;
+            const message = `Please switch your wallet to ${TARGET_NETWORK_NAME}.`;
             showGlobalMessage(message, "warning", 10000, "global-message-main");
             
             try {
@@ -138,15 +137,9 @@ export async function connectWalletAndGetSignerInstances() {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: ethersInstance.toBeHex(TARGET_CHAIN_ID) }],
                 });
-                // After switch, re-create instances for safety
                 const newProviderAfterSwitch = new ethersInstance.BrowserProvider(window.ethereum);
                 const newSigner = await newProviderAfterSwitch.getSigner();
-                const newNetwork = await newProviderAfterSwitch.getNetwork();
                 const newUserAddress = await newSigner.getAddress();
-
-                if (newNetwork.chainId !== TARGET_CHAIN_ID) {
-                    throw new Error(`Still on incorrect network after switch attempt. Expected ${TARGET_NETWORK_NAME}.`);
-                }
                 
                 if (!cachedJansGameABI) {
                     throw new Error("JansGame ABI not cached after network switch.");
@@ -154,17 +147,15 @@ export async function connectWalletAndGetSignerInstances() {
                 const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, newSigner);
                 
                 console.log("Wallet.js: Network switched. New signer and contract instance created.");
-                // This return is correct, it exits the function after a successful network switch
                 return { signer: newSigner, provider: newProviderAfterSwitch, gameContractWithSigner, userAddress: newUserAddress };
 
             } catch (switchError) {
-                if (switchError.code === 4902) throw new Error(`${TARGET_NETWORK_NAME} network configuration not found. Please add it to your wallet.`);
-                if (switchError.code === 4001) throw new Error("Network switch request rejected by user.");
-                throw new Error(`Failed to switch network: ${switchError.message || 'Unknown error during network switch'}`);
+                if (switchError.code === 4902) throw new Error(`${TARGET_NETWORK_NAME} not found. Please add it to your wallet.`);
+                if (switchError.code === 4001) throw new Error("Network switch rejected by user.");
+                throw new Error(`Failed to switch network: ${switchError.message}`);
             }
         }
 
-        // This code block now only runs if the network was correct from the beginning.
         if (!cachedJansGameABI) {
             throw new Error("JansGame ABI not cached. Ensure initializeEthersCore has run successfully.");
         }
@@ -228,8 +219,7 @@ export async function getJansTokenABI() {
     }
 }
 
-// --- Helper & Data Fetching Functions (No changes needed below this line) ---
-
+// --- Helper & Data Fetching Functions ---
 export function formatPriceWithZeroCount(priceStr, opts = {}) {
     const { additionalZeroThreshold = 3, significantDigits = 3, defaultDisplayDecimals = 6, minNormalDecimals = 2 } = opts;
     if (priceStr === undefined || priceStr === null || String(priceStr).trim() === '') return 'N/A';
@@ -342,4 +332,89 @@ export async function getJansPerTaraFromDEX(providerOrSignerInstance) {
     return null;
 }
 
-// ... (resto de funciones de data-fetching como getTokenTotalSupply, getLpTokenPriceUsd, etc., que no necesitan cambios) ...
+export async function getTokenTotalSupply(providerOrSignerInstance, tokenAddr, tokenAbi, tokenDecimals) {
+    if (!providerOrSignerInstance || !tokenAddr || !tokenAbi || tokenDecimals === undefined || !ethersInstance) {
+        return { raw: 0n, formatted: "N/A" };
+    }
+    try {
+        const contract = new ethersInstance.Contract(tokenAddr, tokenAbi, providerOrSignerInstance);
+        const raw = await contract.totalSupply();
+        return { raw, formatted: ethersInstance.formatUnits(raw, tokenDecimals) };
+    } catch (e) {
+        console.error(`Wallet.js: Error fetching TotalSupply for ${tokenAddr}:`, e.message);
+        return { raw: 0n, formatted: "Error" };
+    }
+}
+
+export async function getLpTokenPriceUsd(
+    lpTokenAddr,
+    lpTokenDecimals,
+    providerOrSignerInstance,
+    currentTaraUsdPriceExt,
+    currentJansPerTaraRateExt
+) {
+    const zeroAddr = "0x0000000000000000000000000000000000000000";
+    if (!lpTokenAddr || lpTokenAddr === zeroAddr || !providerOrSignerInstance || !ethersInstance ||
+        currentTaraUsdPriceExt === null || currentTaraUsdPriceExt <= 0 ||
+        currentJansPerTaraRateExt === null || currentJansPerTaraRateExt < 0) {
+        return null;
+    }
+
+    try {
+        const lpPairContract = new ethersInstance.Contract(lpTokenAddr, LP_PAIR_ABI, providerOrSignerInstance);
+        const [reserves, token0Address, token1Address, lpTotalSupplyRaw] = await Promise.all([
+            lpPairContract.getReserves(),
+            lpPairContract.token0(),
+            lpPairContract.token1(),
+            lpPairContract.totalSupply()
+        ]);
+
+        if (lpTotalSupplyRaw === 0n) return 0;
+
+        const reserve0 = reserves._reserve0;
+        const reserve1 = reserves._reserve1;
+        
+        let jansPriceInUsd = 0;
+        if (currentJansPerTaraRateExt > 0) {
+            jansPriceInUsd = currentTaraUsdPriceExt / currentJansPerTaraRateExt;
+        }
+
+        let totalPoolValueUsd = 0;
+        const t0AddrNormalized = ethersInstance.getAddress(token0Address);
+        const wTaraAddrNormalized = ethersInstance.getAddress(TARA_WETH_ADDRESS);
+        const jansAddrNormalized = ethersInstance.getAddress(JANS_TOKEN_ADDRESS);
+
+        if (t0AddrNormalized === wTaraAddrNormalized) {
+            totalPoolValueUsd += parseFloat(ethersInstance.formatUnits(reserve0, NATIVE_TARA_DECIMALS)) * currentTaraUsdPriceExt;
+            totalPoolValueUsd += parseFloat(ethersInstance.formatUnits(reserve1, JANS_DECIMALS)) * jansPriceInUsd;
+        } else if (t0AddrNormalized === jansAddrNormalized) {
+            totalPoolValueUsd += parseFloat(ethersInstance.formatUnits(reserve0, JANS_DECIMALS)) * jansPriceInUsd;
+            totalPoolValueUsd += parseFloat(ethersInstance.formatUnits(reserve1, NATIVE_TARA_DECIMALS)) * currentTaraUsdPriceExt;
+        }
+
+        if (totalPoolValueUsd <= 0) return 0;
+        
+        const lpTotalSupplyFormatted = parseFloat(ethersInstance.formatUnits(lpTotalSupplyRaw, lpTokenDecimals));
+        if (lpTotalSupplyFormatted > 0) {
+            return totalPoolValueUsd / lpTotalSupplyFormatted;
+        }
+        return 0;
+    } catch (error) {
+        console.error(`Wallet.js: Error calculating LP token USD price for ${lpTokenAddr}:`, error.message);
+        return null;
+    }
+}
+
+export async function fetchJsonFile(filePath) {
+    try {
+        const response = await fetch(`${filePath}?v=${Date.now()}`);
+        if (!response.ok) {
+            console.error(`Wallet.js: Failed to fetch JSON file at ${filePath}. Status: ${response.status}`);
+            return null;
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Wallet.js: Error fetching or parsing JSON from ${filePath}:`, error);
+        return null;
+    }
+}
