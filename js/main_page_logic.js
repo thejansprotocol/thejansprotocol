@@ -55,7 +55,7 @@ let localGameLpTokenAddress = null;
 let localIsAppInitialized = false;
 let localRoundStartTime = null;
 let localRoundDurationSeconds = null;
-let localTicketSalesDuration = null; // Variable for the sales window duration
+let localTicketSalesDuration = null;
 
 // --- DOM Element ID Constants ---
 const DOM_IDS = {
@@ -295,9 +295,59 @@ async function updateCurrentRoundDisplay() {
 async function updateGlobalStatsDisplay() {
     const roContract = getReadOnlyJansGameContract();
     if (!roContract) return;
-    const statElements = { /* ... your statElements object ... */ };
+    const statElements = {
+        prizePool: document.getElementById(DOM_IDS.statsPrizePool),
+        prizePoolUsd: document.getElementById(DOM_IDS.statsPrizePoolUsd),
+        jansBurned: document.getElementById(DOM_IDS.statsJansBurned),
+        jansBurnedUsd: document.getElementById(DOM_IDS.statsJansBurnedUsd),
+        jansBurnedPercentage: document.getElementById(DOM_IDS.statsJansBurnedPercentage),
+        lpBalance: document.getElementById(DOM_IDS.statsLpBalance),
+        lpBalanceUsd: document.getElementById(DOM_IDS.statsLpBalanceUsd),
+    };
     try {
-        // ... (this function's code remains the same)
+        const prizePoolRaw = await roContract.prizePoolJANS();
+        const prizePoolNum = parseFloat(ethersInstance.formatUnits(prizePoolRaw, JANS_DECIMALS));
+        if (statElements.prizePool) statElements.prizePool.textContent = `${prizePoolNum.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} JANS`;
+
+        const burnedRaw = await roContract.totalJansBurnedInGame();
+        const burnedNum = parseFloat(ethersInstance.formatUnits(burnedRaw, JANS_DECIMALS));
+        if (statElements.jansBurned) statElements.jansBurned.textContent = `${burnedNum.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} JANS`;
+
+        let jansUsdPrice = null;
+        if (localTaraUsdPrice && localJansPerTaraRate !== null && localJansPerTaraRate > 0) {
+            jansUsdPrice = localTaraUsdPrice / localJansPerTaraRate;
+        } else if (localJansPerTaraRate === 0) jansUsdPrice = 0;
+
+        if (statElements.prizePoolUsd) statElements.prizePoolUsd.textContent = (jansUsdPrice !== null && prizePoolNum > 0) ? `(${(prizePoolNum * jansUsdPrice).toLocaleString(undefined, { style: 'currency', currency: 'USD' })})` : (prizePoolNum === 0 ? "($0.00 USD)" : "(USD N/A)");
+        if (statElements.jansBurnedUsd) statElements.jansBurnedUsd.textContent = (jansUsdPrice !== null && burnedNum > 0) ? `(${(burnedNum * jansUsdPrice).toLocaleString(undefined, { style: 'currency', currency: 'USD' })})` : (burnedNum === 0 ? "($0.00 USD)" : "(USD N/A)");
+
+        if (statElements.jansBurnedPercentage) {
+            const roProvider = getReadOnlyProvider();
+            const jansAbi = await getJansTokenABI();
+            const supplyData = await getTokenTotalSupply(roProvider, JANS_TOKEN_ADDRESS, jansAbi, JANS_DECIMALS);
+            if (supplyData && supplyData.raw > 0n) {
+                const totalNum = parseFloat(supplyData.formatted);
+                if (totalNum > 0 && burnedNum >= 0) statElements.jansBurnedPercentage.textContent = `(${(burnedNum / totalNum * 100).toFixed(4)}% of Total)`;
+                else statElements.jansBurnedPercentage.textContent = "(Supply 0)";
+            } else statElements.jansBurnedPercentage.textContent = "(Supply N/A)";
+        }
+
+        if (!localGameLpTokenAddress) {
+            try { localGameLpTokenAddress = await roContract.GAME_LP_TOKEN(); } 
+            catch(e){ console.warn("MainPageLogic: Could not get game LP token address from contract.", e.message);}
+        }
+        const lpBalRaw = await roContract.getContractLpTokenBalance();
+        const lpBalNum = parseFloat(ethersInstance.formatUnits(lpBalRaw, LP_TOKEN_DECIMALS));
+        if (statElements.lpBalance) statElements.lpBalance.textContent = `${lpBalNum.toFixed(4)} Game LP`;
+
+        if (statElements.lpBalanceUsd && localGameLpTokenAddress && localGameLpTokenAddress !== ethersInstance.ZeroAddress) {
+            if (lpBalNum > 0) {
+                const roProvider = getReadOnlyProvider();
+                const lpTokenPrice = await getLpTokenPriceUsd(localGameLpTokenAddress, LP_TOKEN_DECIMALS, roProvider, localTaraUsdPrice, localJansPerTaraRate);
+                if (lpTokenPrice !== null && lpTokenPrice >= 0) statElements.lpBalanceUsd.textContent = `(${(lpBalNum * lpTokenPrice).toLocaleString(undefined, { style: 'currency', currency: 'USD' })})`;
+                else statElements.lpBalanceUsd.textContent = "(USD Value N/A)";
+            } else statElements.lpBalanceUsd.textContent = "($0.00 USD)";
+        } else if (statElements.lpBalanceUsd) statElements.lpBalanceUsd.textContent = "(LP Address N/A)";
     } catch (error) {
         console.error("MainPageLogic: Error fetching global stats:", error);
         Object.values(statElements).forEach(el => { if(el) el.textContent = "Error"; });
@@ -321,7 +371,7 @@ async function fetchAndDisplaySimplifiedTransactions() {
     } catch (error) {
         console.warn(`⚠️ ${error.message}`);
         console.log("...Attempting to fetch recent transactions directly from RPC.");
-        await fetchTransactionsFromRPC();
+        await fetchTransactionsFromRPC(); 
     }
 }
 
@@ -345,7 +395,10 @@ function renderTransactionLists() {
             const timeText = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             li.innerHTML = `<span class="math-inline">${timeText}</span> - Wallet: <span title="${tx.player}">${shortenAddress(tx.player, 4)}</span>`;
             li.style.color = getRandomHexColor();
-            // ... (rest of styling)
+            li.style.padding = "3px 5px";
+            li.style.fontSize = "0.8em";
+            li.style.marginBottom = "2px";
+            li.style.borderRadius = "3px";
             txListUl.appendChild(li);
         });
     }
@@ -366,7 +419,7 @@ async function fetchTransactionsFromRPC() {
 
     try {
         const currentBlockNumber = await roProvider.getBlockNumber();
-        let fromBlockForQuery = localLastFetchedTxBlock ? localLastFetchedTxBlock + 1 : Math.max(0, currentBlockNumber - 15000); // Increased range
+        let fromBlockForQuery = localLastFetchedTxBlock ? localLastFetchedTxBlock + 1 : Math.max(0, currentBlockNumber - 15000);
 
         if (fromBlockForQuery > currentBlockNumber) {
             renderTransactionLists();
@@ -380,11 +433,11 @@ async function fetchTransactionsFromRPC() {
         for (const event of events) {
             if (!localTicketTransactions.some(tx => tx.txHash === event.transactionHash && tx.ticketId.toString() === event.args.ticketId.toString())) {
                 const block = await event.getBlock();
-                localTicketTransactions.push({
-                    player: event.args.player,
-                    timestamp: Number(block.timestamp) * 1000,
-                    txHash: event.transactionHash,
-                    ticketId: event.args.ticketId
+                localTicketTransactions.push({ 
+                    player: event.args.player, 
+                    timestamp: Number(block.timestamp) * 1000, 
+                    txHash: event.transactionHash, 
+                    ticketId: event.args.ticketId 
                 });
                 newTxFound = true;
             }
@@ -403,29 +456,59 @@ async function fetchTransactionsFromRPC() {
 }
 
 // --- Daily Log List Display ---
-async function displayDailyLogLinks() {
-    // ... (This function's code remains the same)
+async function displayDailyLogLinks() { 
+    const logLinksContainer = document.getElementById(DOM_IDS.dailyLogLinksContainer);
+    if (!logLinksContainer) { console.warn("Daily log links container not found."); return; }
+    logLinksContainer.innerHTML = '<li>Loading log list...</li>';
+
+    try {
+        const logIndex = await fetchJsonFile(DAILY_LOG_INDEX_FILE + `?v=${Date.now()}`);
+        if (logIndex && Array.isArray(logIndex) && logIndex.length > 0) {
+            logLinksContainer.innerHTML = '';
+            logIndex.sort((a,b) => b.date.localeCompare(a.date));
+            logIndex.forEach(logEntry => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
+                let textContent = `Log: ${logEntry.date}`;
+                if(logEntry.roundStartedId || logEntry.roundClosedId) {
+                    textContent += ` (R${logEntry.roundStartedId || '_'}S / R${logEntry.roundClosedId || '_'}E)`;
+                }
+                link.textContent = textContent;
+                link.target = "_blank";
+                link.style.color = getRandomHexColor(); 
+                li.appendChild(link);
+                li.style.marginBottom = "3px";
+                logLinksContainer.appendChild(li);
+            });
+        } else { 
+            logLinksContainer.innerHTML = '<li>No daily logs found.</li>'; 
+        }
+    } catch (error) {
+        console.error("Error loading daily log links:", error);
+        logLinksContainer.innerHTML = '<li style="color:red;">Error loading log list.</li>';
+    }
 }
 
 // --- UI Timers ---
 function initializeUiTimers() {
     const updateAllTimes = () => {
         updateSnapshotTimeDisplay();
-        updateCountdownTimerDisplay(); // Call the corrected function
+        updateCountdownTimerDisplay();
     };
     updateAllTimes();
     setInterval(updateAllTimes, 1000);
 }
 
-function updateSnapshotTimeDisplay() {
+function updateSnapshotTimeDisplay() { 
     const span = document.getElementById(DOM_IDS.snapshotTimestamp);
     if (!span) return;
 
     if (localRoundStartTime) {
         const snapshotDate = new Date(localRoundStartTime * 1000);
-        span.textContent = "Latest Snapshot From: " + snapshotDate.toLocaleString('en-GB', {
-            day: '2-digit', month: 'short', year: 'numeric',
-            hour: '2-digit', minute: '2-digit', timeZone: 'UTC'
+        span.textContent = "Latest Snapshot From: " + snapshotDate.toLocaleString('en-GB', { 
+            day: '2-digit', month: 'short', year: 'numeric', 
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
         }) + " UTC";
     } else {
         span.textContent = "Latest Snapshot From: Loading...";
@@ -445,7 +528,6 @@ function updateCountdownTimerDisplay() {
         let salesText = '';
         let evaluationText = '';
 
-        // Part 1: Calculate Sales Countdown
         if (nowEpoch < salesEndTimeEpoch) {
             const salesDiff = salesEndTimeEpoch - nowEpoch;
             const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
@@ -456,7 +538,6 @@ function updateCountdownTimerDisplay() {
             salesText = `Sales CLOSED`;
         }
 
-        // Part 2: Calculate Evaluation Countdown
         if (nowEpoch < roundEndTimeEpoch) {
             const roundDiff = roundEndTimeEpoch - nowEpoch;
             const h = String(Math.floor(roundDiff / 3600)).padStart(2, '0');
@@ -476,8 +557,32 @@ function updateCountdownTimerDisplay() {
 }
 
 // --- Fallback Error Display ---
-function updateAllDisplaysOnError(message = "Error") {
-    // ... (This function's code remains the same)
+function updateAllDisplaysOnError(message = "Error") { 
+    const idsToUpdate = [
+        DOM_IDS.currentRound, DOM_IDS.ticketPrice, DOM_IDS.salesStatus,
+        DOM_IDS.statsPrizePool, DOM_IDS.statsJansBurned, DOM_IDS.statsLpBalance,
+        DOM_IDS.snapshotTimestamp, DOM_IDS.countdownTimer
+    ];
+    idsToUpdate.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = message; });
+    const secondarySpans = [
+        DOM_IDS.statsPrizePoolUsd, DOM_IDS.statsJansBurnedUsd, DOM_IDS.statsLpBalanceUsd,
+        DOM_IDS.statsJansBurnedPercentage
+    ];
+    secondarySpans.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ""; });
+    const txList = document.getElementById(DOM_IDS.transactionList);
+    if(txList) txList.innerHTML = `<li>${message} (transactions).</li>`;
+    const mobileTx = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
+    if(mobileTx) mobileTx.textContent = `${message} (latest transaction).`;
+    const desktopTable = document.getElementById(DOM_IDS.snapshotTableBody);
+    if(desktopTable) desktopTable.innerHTML = `<tr><td colspan="6" style="text-align:center;">${message} (snapshot).</td></tr>`;
+    const mobileTable = document.getElementById(DOM_IDS_MOBILE.mobileTokenTableBody);
+    if(mobileTable) mobileTable.innerHTML = `<tr><td colspan="3" style="text-align:center;">${message} (snapshot).</td></tr>`;
+    const logLinks = document.getElementById(DOM_IDS.dailyLogLinksContainer);
+    if(logLinks) logLinks.innerHTML = `<li>${message} (logs).</li>`;
+    const buyBtnDesktop = document.getElementById(DOM_IDS.buyTicketButton);
+    if (buyBtnDesktop) buyBtnDesktop.disabled = true;
+    const buyBtnMobile = document.getElementById(DOM_IDS_MOBILE.mobileBuyTicketButton);
+    if (buyBtnMobile) buyBtnMobile.disabled = true;
 }
 
 // --- Initialization ---
@@ -490,11 +595,11 @@ async function initializeMainPageOnceEthersReady() {
         const roContract = getReadOnlyJansGameContract();
         if (roContract && localRoundDurationSeconds === null) {
             try {
-                const durationFromContract = await roContract.currentRoundResultDurationSeconds();
+                const durationFromContract = await roContract.currentRoundResultDurationSeconds(); 
                 localRoundDurationSeconds = Number(durationFromContract.toString());
                 console.log(`MainPageLogic: Fetched currentRoundResultDurationSeconds: ${localRoundDurationSeconds}`);
-            } catch (e) {
-                console.error("MainPageLogic: Error fetching currentRoundResultDurationSeconds from contract:", e);
+            } catch (e) { 
+                console.error("MainPageLogic: Error fetching currentRoundResultDurationSeconds from contract:", e); 
                 localRoundDurationSeconds = 86400; // Default
                 showGlobalMessage("Could not fetch round duration, using default (24h).", "warning", 5000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
             }
@@ -538,10 +643,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function attemptEthersInitAndRun() {
         if (window.ethers && typeof initializeEthersCore === 'function') {
-            initializeEthersCore(window.ethers)
+            initializeEthersCore(window.ethers) 
                 .then(() => {
                     console.log("Ethers Core initialized from DOMContentLoaded. Proceeding to main page logic.");
-                    initializeMainPageOnceEthersReady().catch(err => {
+                    initializeMainPageOnceEthersReady().catch(err => { 
                         console.error("MainPageLogic: Init sequence error after Ethers ready:", err);
                         showGlobalMessage(`Initialization failed: ${err.message}`, "error", 0, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
                         updateAllDisplaysOnError("Init Error");
