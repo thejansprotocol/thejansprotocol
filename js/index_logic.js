@@ -221,16 +221,15 @@ async function getJansPerTaraFromDEX() {
 
 /**
  * Gets the total supply of JANS token.
+ */**
+ * Gets the total supply of JANS token.
  * @returns {Promise<{raw: bigint, formatted: string}>} Total supply in raw BigInt and formatted string.
  */
 async function getJansTotalSupply() { 
     const provider = getReadOnlyProvider();
-    let currentJansTokenAbi = null;
-    try {
-        currentJansTokenAbi = getJansTokenABI(); 
-    } catch (e) {
-        console.warn("Failed to get full JANS ABI from wallet.js:", e.message);
-    }
+    
+    // Use the directly imported ABI variable, not a function call
+    let currentJansTokenAbi = cachedJansTokenABI; // <--- Use the variable here
     
     if (!currentJansTokenAbi || currentJansTokenAbi.length <= MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY.length) {
         currentJansTokenAbi = MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY; 
