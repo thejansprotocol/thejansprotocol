@@ -111,7 +111,7 @@ async function initializeIndexPageLogic() {
 async function fetchTaraUsdPriceFromCoinGecko() {
     if (!ethersInstance) { console.warn("Ethers instance not ready for CoinGecko fetch."); return null; }
     try {
-        const response = await fetch(COINGECKO_TARA_PRICE_URL, { signal: AbortSignal.timeout(10000) });
+        const response = await fetch(COINGECKO_TARA_PRICE_URL, { signal: AbortSignal.timeout(10000) }); // 10s timeout
         if (!response.ok) { 
             console.error(`CoinGecko API Error: ${response.status} - ${response.statusText}`); 
             return null; 
@@ -143,13 +143,13 @@ async function getJansPerTaraFromDEX() {
     try {
         const routerAbi = ["function getAmountsOut(uint amountIn, address[] path) view returns (uint[] amounts)"];
         const routerContract = new ethersInstance.Contract(DEX_ROUTER_ADDRESS, routerAbi, provider);
-        const oneTaraWei = ethersInstance.parseUnits("1", NATIVE_TARA_DECIMALS); 
-        const path = [TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS]; 
+        const oneTaraWei = ethersInstance.parseUnits("1", NATIVE_TARA_DECIMALS); // 1 TARA in its smallest unit
+        const path = [TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS]; // Path to swap TARA (wrapped) for JANS
         const amountsOut = await routerContract.getAmountsOut(oneTaraWei, path);
         if (amountsOut && amountsOut.length >= 2) {
-            const jansForOneTaraWei = amountsOut[amountsOut.length - 1]; 
-            if (jansForOneTaraWei >= 0n) { 
-                return parseFloat(ethersInstance.formatUnits(jansForOneTaraWei, JANS_DECIMALS)); 
+            const jansForOneTaraWei = amountsOut[amountsOut.length - 1]; // The last amount is the target token amount
+            if (jansForOneTaraWei >= 0n) { // Check if it's a valid non-negative BigInt
+                return parseFloat(ethersInstance.formatUnits(jansForOneTaraWei, JANS_DECIMALS)); // Convert to readable float
             }
         }
     } catch (error) { 
@@ -199,8 +199,14 @@ async function getLpTokenPriceUsd(lpTokenAddr) {
     const provider = getReadOnlyProvider();
     const lpDecimals = LP_TOKEN_DECIMALS; // Use imported constant
 
-    if (!lpTokenAddr || lpTokenAddr === ethersInstance.ZeroAddress || !provider || !ethersInstance || currentTaraPriceUSD === null || currentJansPerTaraRate === null || currentTaraPriceUSD <= 0 || JANS_TOKEN_ADDRESS === undefined || NATIVE_TARA_DECIMALS === undefined || JANS_DECIMALS === undefined) {
-        console.warn("LP Token Price: Missing critical data for calculation. ", {lpTokenAddr, hasProvider: !!provider, currentTaraPriceUSD, currentJansPerTaraRate});
+    // Check critical external price data BEFORE attempting contract calls
+    if (currentTaraPriceUSD === null || currentTaraPriceUSD <= 0 || currentJansPerTaraRate === null || currentJansPerTaraRate < 0) {
+        console.warn("LP Token Price: TARA USD price or JANS/TARA rate is missing/zero. Cannot calculate LP price.");
+        return 0; // Return 0 to allow UI to display $0.00 instead of N/A or crashing
+    }
+
+    if (!lpTokenAddr || lpTokenAddr === ethersInstance.ZeroAddress || !provider || !ethersInstance || JANS_TOKEN_ADDRESS === undefined || NATIVE_TARA_DECIMALS === undefined || JANS_DECIMALS === undefined) {
+        console.warn("LP Token Price: Missing fundamental dependencies or LP address.");
         return null;
     }
 
@@ -215,13 +221,7 @@ async function getLpTokenPriceUsd(lpTokenAddr) {
         const reserve0 = reserves._reserve0; 
         const reserve1 = reserves._reserve1;
         
-        let jansPriceInUsd = 0;
-        if (currentJansPerTaraRate > 0 && currentTaraPriceUSD > 0) {
-            jansPriceInUsd = currentTaraPriceUSD / currentJansPerTaraRate;
-        } else {
-            console.warn("LP Token Price: Cannot determine JANS USD price for reserves calculation (JANS/TARA rate or TARA USD price is zero)."); 
-            return 0; 
-        }
+        let jansPriceInUsd = currentTaraPriceUSD / currentJansPerTaraRate; // JANS USD price calculated based on fetched rates
 
         let token0ValueUsd = 0; 
         let token1ValueUsd = 0;
@@ -298,14 +298,12 @@ async function fetchAllStatsAndUpdateDisplay() {
  * @param {string} message The error message to display.
  */
 function updateDisplayOnErrorState(message = "Error") {
-    // Example of how you might update a central status div and disable buttons
     const createLpButton = document.getElementById("create-lp-button");
     const claimButton = document.getElementById("claim-lp-rewards-button");
 
     if (createLpButton) { createLpButton.disabled = true; createLpButton.title = message; }
     if (claimButton) { claimButton.disabled = true; claimButton.title = message; }
     showGlobalMessage(message, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
-    // You might also update specific stat spans to "N/A" or "Error"
 }
 
 /**
@@ -325,12 +323,10 @@ async function fetchAndDisplayAccumulatedLPFunds() {
 
     try {
         const funds = await localReadOnlyContract.getAccumulatedLpFormingFunds();
-        // `funds` object will have properties: taraForLPSide_, jansForLPSide_, taraForReward_
         const taraForLPNum = parseFloat(ethersInstance.formatUnits(funds.taraForLPSide_, NATIVE_TARA_DECIMALS));
         const jansForLPNum = parseFloat(ethersInstance.formatUnits(funds.jansForLPSide_, JANS_DECIMALS));
         const rewardNum = parseFloat(ethersInstance.formatUnits(funds.taraForReward_, NATIVE_TARA_DECIMALS));
 
-        // Update UI spans
         if (accumulatedTaraSpan) accumulatedTaraSpan.textContent = `${taraForLPNum.toFixed(4)} TARA`;
         if (accumulatedJansSpan) accumulatedJansSpan.textContent = `${jansForLPNum.toFixed(4)} JANS`;
         if (rewardTaraSpan) rewardTaraSpan.textContent = `${rewardNum.toFixed(4)} TARA`;
@@ -345,7 +341,6 @@ async function fetchAndDisplayAccumulatedLPFunds() {
     } catch (e) {
         console.error("Error fetching accumulated LP funds:", e.message);
         if (createLpButton) { createLpButton.disabled = true; createLpButton.title = "Error fetching LP funds info."; }
-        // Update UI spans to error state
         if (accumulatedTaraSpan) accumulatedTaraSpan.textContent = "Error";
         if (accumulatedJansSpan) accumulatedJansSpan.textContent = "Error";
         if (rewardTaraSpan) rewardTaraSpan.textContent = "Error";
@@ -389,17 +384,23 @@ async function fetchAndDisplayOtherIndexStats() {
             jansPriceInUsdForDisplay = currentTaraPriceUSD / currentJansPerTaraRate;
         }
 
-        // Prize Pool USD Value
+        // Prize Pool USD Value - Added null/NaN checks
         if (dailyPoolUsdSpan) {
-            dailyPoolUsdSpan.textContent = (jansPriceInUsdForDisplay !== null && prizePoolJansNum > 0)
-                ? `(${formatPriceWithZeroCount((prizePoolJansNum * jansPriceInUsdForDisplay).toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)` 
-                : (prizePoolJansNum === 0 ? "($0.00 USD)" : "(USD Value N/A)");
+            let usdValue = prizePoolJansNum * jansPriceInUsdForDisplay;
+            if (jansPriceInUsdForDisplay !== null && jansPriceInUsdForDisplay >= 0 && !isNaN(usdValue) && prizePoolJansNum > 0) {
+                dailyPoolUsdSpan.textContent = `(${formatPriceWithZeroCount(usdValue.toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)`;
+            } else { 
+                dailyPoolUsdSpan.textContent = (prizePoolJansNum === 0) ? "($0.00 USD)" : "(USD Value N/A)";
+            }
         }
-        // Burned USD Value
+        // Burned USD Value - Added null/NaN checks
         if (burnedUsdSpan) {
-            burnedUsdSpan.textContent = (jansPriceInUsdForDisplay !== null && burnedJansNum > 0)
-                ? `(${formatPriceWithZeroCount((burnedJansNum * jansPriceInUsdForDisplay).toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)` 
-                : (burnedJansNum === 0 ? "($0.00 USD)" : "(USD Value N/A)");
+            let usdValue = burnedJansNum * jansPriceInUsdForDisplay;
+            if (jansPriceInUsdForDisplay !== null && jansPriceInUsdForDisplay >= 0 && !isNaN(usdValue) && burnedJansNum > 0) {
+                burnedUsdSpan.textContent = `(${formatPriceWithZeroCount(usdValue.toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)`;
+            } else { 
+                burnedUsdSpan.textContent = (burnedJansNum === 0) ? "($0.00 USD)" : "(USD Value N/A)";
+            }
         }
         
         // LP Balance
@@ -407,16 +408,17 @@ async function fetchAndDisplayOtherIndexStats() {
         const lpBalNum = parseFloat(ethersInstance.formatUnits(lpBalRaw, LP_TOKEN_DECIMALS));
         if (lpPoolSpan) lpPoolSpan.textContent = `${lpBalNum.toFixed(4)} Game LP Tokens`;
 
-        // LP Pool USD Value
+        // LP Pool USD Value - Added null/NaN checks
         if (lpPoolUsdSpan && gameLpTokenAddress && gameLpTokenAddress !== ethersInstance.ZeroAddress) {
             if (lpBalNum > 0) {
                 const lpTokenPrice = await getLpTokenPriceUsd(gameLpTokenAddress); 
-                if (lpTokenPrice !== null && lpTokenPrice >= 0) {
-                    lpPoolUsdSpan.textContent = `(${formatPriceWithZeroCount((lpBalNum * lpTokenPrice).toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)`;
+                let usdValue = lpBalNum * lpTokenPrice;
+                if (lpTokenPrice !== null && lpTokenPrice >= 0 && !isNaN(usdValue)) {
+                    lpPoolUsdSpan.textContent = `(${formatPriceWithZeroCount(usdValue.toString(), {minNormalDecimals:2, defaultDisplayDecimals:2})} USD)`;
                 } else { lpPoolUsdSpan.textContent = "(USD Value N/A)"; }
             } else { lpPoolUsdSpan.textContent = "($0.00 USD)"; }
         } else if (lpPoolUsdSpan) {
-            lpPoolUsdSpan.textContent = gameLpTokenAddress === ethersInstance.ZeroAddress ? "(LP Invalid Address)" :"(LP Address N/A)";
+            lpPoolUsdSpan.textContent = (gameLpTokenAddress === null || gameLpTokenAddress === ethersInstance.ZeroAddress) ? "(LP Invalid Address)" :"(LP Address N/A)";
         }
 
         // Burned Percentage
@@ -434,7 +436,6 @@ async function fetchAndDisplayOtherIndexStats() {
     } catch (e) { 
         console.error("Error fetching other stats:", e.message, e.stack); 
         updateDisplayOnErrorState("Stats Fetch Err"); 
-        // Set all related spans to "Error" or "N/A"
         if (dailyPoolSpan) dailyPoolSpan.textContent = "Error";
         if (dailyPoolUsdSpan) dailyPoolUsdSpan.textContent = "Error";
         if (burnedSpan) burnedSpan.textContent = "Error";
@@ -462,13 +463,10 @@ async function handleCreateLP() {
         console.log(`Raw accumulated TARA Reward (Wei) from contract: ${taraForReward_.toString()}`);
 
         if (taraForLPSide_ <= 0n || jansForLPSide_ <= 0n) {
-            // This error string is checked in the contract (JansGame__NoAccumulatedFundsForLP)
             throw new Error("NoAccumulatedFundsForLP: No accumulated TARA or JANS in the contract to form LP.");
         }
 
-        // --- MODIFICATION: INCREASE SLIPPAGE TOLERANCE AND ADD MIN_AMOUNT CHECK ---
-        // 0.5% is VERY strict for addLiquidity. 5% is a more common and robust starting point.
-        const SLIPPAGE_PERCENT = 5; // Recommended starting point for LP creation, adjust if needed (e.g., 1% to 10%)
+        const SLIPPAGE_PERCENT = 5; 
         const slippageBps = BigInt(SLIPPAGE_PERCENT * 100); 
         const HUNDRED_PERCENT_BPS = 10000n;
 
@@ -480,7 +478,6 @@ async function handleCreateLP() {
         console.log(`Calculated _amountNativeTaraMinForLP (Wei): ${amountNativeTaraMinForLP.toString()}`);
         console.log(`Calculated _amountJansMinForLP (smallest unit): ${amountJansMinForLP.toString()}`);
 
-        // CRITICAL CHECK: Ensure calculated minimums are not zero due to very small accumulated funds or high slippage.
         if (amountNativeTaraMinForLP === 0n || amountJansMinForLP === 0n) {
             let errorMessage = "LPSlippageParamsRequiredIfFormingLP: Calculated minimum amount for LP is zero. ";
             if (taraForLPSide_ > 0n && amountNativeTaraMinForLP === 0n) {
@@ -492,18 +489,16 @@ async function handleCreateLP() {
             errorMessage += "Increase accumulated funds or decrease slippage tolerance (not recommended).";
             throw new Error(errorMessage);
         }
-        // --- END MODIFICATION ---
 
         const { signer, gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
         console.log(`LP Creation transaction initiated by: ${userAddress}`);
         
         showGlobalMessage("Sending LP creation transaction... Please confirm in your wallet.", "info", 0, GLOBAL_MESSAGE_ID_INDEX);
 
-        // Fixed gasLimit, as estimation on Taraxa might be problematic.
         const tx = await gameContractWithSigner.formAndDepositLPFromAccumulated(
             amountJansMinForLP,
             amountNativeTaraMinForLP,
-            { gasLimit: 1200000 } // Generous fixed gas limit for this operation.
+            { gasLimit: 1200000 } 
         );
 
         showGlobalMessage(`Transaction sent: ${shortenAddress(tx.hash)}. Waiting for confirmation...`, "info", 0, GLOBAL_MESSAGE_ID_INDEX);
@@ -511,9 +506,8 @@ async function handleCreateLP() {
 
         if (receipt && receipt.status === 1) {
             showGlobalMessage("LP successfully created and deposited!", "success", 7000, GLOBAL_MESSAGE_ID_INDEX);
-            fetchAllStatsAndUpdateDisplay(); // Refresh UI stats
+            fetchAllStatsAndUpdateDisplay(); 
         } else {
-            // Transaction failed on-chain (status 0). Try to provide more context.
             let revertReason = "unknown";
             if (receipt && receipt.reason) revertReason = receipt.reason;
             else if (receipt && receipt.data && typeof receipt.data === 'string' && receipt.data.startsWith('0x')) {
@@ -536,7 +530,6 @@ async function handleCreateLP() {
             // Use the more descriptive error message generated by our custom throws.
         } else if (error.data && typeof error.data === 'string' && error.data.startsWith('0x')) {
             // Attempt to decode custom Solidity errors if `error.reason` is not descriptive.
-            // Example for `JansGame__NoAccumulatedFundsForLP()`: You would need to know its selector (first 4 bytes of hash)
         }
         
         showGlobalMessage(`LP Creation Failed: ${detailedMessage.substring(0,200)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
@@ -671,8 +664,6 @@ async function updateClaimLpButtonStatus() {
             const provider = getReadOnlyProvider();
             if (provider) {
                 try {
-                    // provider.listAccounts() requires MetaMask to be connected to the site.
-                    // It will usually trigger a prompt if not already connected.
                     const accounts = await provider.listAccounts(); 
                     if (accounts && accounts.length > 0) {
                         playerAddress = accounts[0].address; 
