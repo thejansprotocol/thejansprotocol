@@ -498,53 +498,88 @@ function initializeUiTimers() {
     setInterval(updateAllTimes, 1000);
 }
 
+// --- Replace this entire function ---
+
 function updateSnapshotTimeDisplay() { 
     const span = document.getElementById(DOM_IDS.snapshotTimestamp);
     if (!span) return;
-    const now = new Date();
-    let snapshotForDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 21, 0, 0, 0));
-    if (now.getUTCHours() < 21) {
-        snapshotForDate.setUTCDate(snapshotForDate.getUTCDate() - 1);
-    }
-    span.textContent = snapshotForDate.toLocaleString('en-GB', { 
-        day: '2-digit', month: 'short', year: 'numeric', 
-        hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
-    }) + " UTC";
-}
 
-function updateCountdownTimerDisplay() {
+    // We check if the snapshot data has been loaded.
+    // The 'processedAtUTC' field should be added by your automator to the snapshot_history_...json file.
+    // For the latest_snapshot.json, we can infer it from the round start time.
+    if (localRoundStartTime) {
+        const snapshotDate = new Date(localRoundStartTime * 1000);
+        span.textContent = snapshotDate.toLocaleString('en-GB', { 
+            day: '2-digit', month: 'short', year: 'numeric', 
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
+        }) + " UTC";
+    } else {
+        // Fallback text if the round start time isn't loaded yet
+        span.textContent = "Loading timestamp...";
+    }
+}
+// --- Replace this entire function ---
+
+async function updateCountdownTimerDisplay() {
     const span = document.getElementById(DOM_IDS.countdownTimer);
     if (!span) return;
+
     const nowUTC = new Date();
+    const nowEpoch = Math.floor(nowUTC.getTime() / 1000);
+
+    // This part for the weekend break remains the same
     const dayUTC = nowUTC.getUTCDay();
     const hourUTC = nowUTC.getUTCHours();
     const minuteUTC = nowUTC.getMinutes();
-
-    let inBreakPeriod = false;
-    if ( (dayUTC === 6 && hourUTC >= 21) || (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45))) ) {
-        inBreakPeriod = true;
-    }
-
-    if (inBreakPeriod) {
-        let targetTimeForBreakCountdown = new Date(Date.UTC(nowUTC.getUTCFullYear(), nowUTC.getUTCMonth(), nowUTC.getUTCDate()));
-        targetTimeForBreakCountdown.setUTCDate(nowUTC.getUTCDate() + (7 - dayUTC) % 7);
-        if (dayUTC === 0 && (hourUTC > 20 || (hourUTC === 20 && minuteUTC >= 45))) {
-             targetTimeForBreakCountdown.setUTCDate(targetTimeForBreakCountdown.getUTCDate() + 7);
-        }
-        targetTimeForBreakCountdown.setUTCHours(20, 45, 0, 0);
-
-        const diff = targetTimeForBreakCountdown.getTime() - nowUTC.getTime();
-        if (diff > 0) {
-            const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-            const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-            const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-            span.textContent = `Next round (Sun 20:45 UTC) in: ${h}h ${m}m ${s}s`;
-        } else {
-            span.textContent = "New round window opening soon...";
-        }
+    if ((dayUTC === 6 && hourUTC >= 21) || (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45)))) {
+        // ... (Your existing weekend break logic can stay here if you want it)
+        span.textContent = "Game Paused until Sunday 20:45 UTC";
         return; 
     }
     
+    if (localCurrentRoundId > 0n && localRoundStartTime && localIsAppInitialized) {
+        try {
+            const roContract = getReadOnlyJansGameContract();
+            // Fetch durations directly from the contract
+            const salesDurationSec = await roContract.ticketSalesDurationSeconds();
+            const roundDurationSec = await roContract.currentRoundResultDurationSeconds();
+
+            const salesEndTimeEpoch = localRoundStartTime + Number(salesDurationSec.toString());
+            const roundEndTimeEpoch = localRoundStartTime + Number(roundDurationSec.toString());
+
+            let text = '';
+            
+            // Countdown for Sales Window
+            if (nowEpoch < salesEndTimeEpoch) {
+                const salesDiff = salesEndTimeEpoch - nowEpoch;
+                const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
+                const m = String(Math.floor((salesDiff % 3600) / 60)).padStart(2, '0');
+                const s = String(Math.floor(salesDiff % 60)).padStart(2, '0');
+                text += `Sales close in: ${h}h ${m}m ${s}s`;
+            } else {
+                text += `Sales CLOSED`;
+            }
+
+            // Countdown for Round Evaluation
+            const roundDiff = roundEndTimeEpoch - nowEpoch;
+            if (roundDiff > 0) {
+                const h = String(Math.floor(roundDiff / 3600)).padStart(2, '0');
+                const m = String(Math.floor((roundDiff % 3600) / 60)).padStart(2, '0');
+                text += ` - Round evaluation in: ${h}h ${m}m`; // Seconds are not very relevant here
+            } else {
+                text += " - Round ended, awaiting evaluation...";
+            }
+            
+            span.textContent = text;
+
+        } catch (error) {
+            console.warn("Could not update countdown timer, contract data missing.", error.message);
+            span.textContent = "Loading timer...";
+        }
+    } else {
+        span.textContent = "Awaiting new round start";
+    }
+}    
     if (localCurrentRoundId > 0n && localRoundStartTime && localRoundDurationSeconds !== null && localRoundDurationSeconds > 0) {
         const roundEndTimeEpoch = localRoundStartTime + localRoundDurationSeconds;
         const nowEpoch = Math.floor(nowUTC.getTime() / 1000);
