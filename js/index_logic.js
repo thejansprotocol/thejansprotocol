@@ -94,8 +94,9 @@ async function initializeIndexPageLogic() {
         console.log("Index page logic initialization complete.");
         isIndexAppInitialized = true; // Set flag only after successful initialization
 
-    } catch (error) {
+    } catch (error) { // ESTE ES EL BLOQUE CATCH
         console.error("CRITICAL: Index page logic initialization failed:", error.stack);
+        console.error("ACTUAL ERROR MESSAGE CAUGHT:", error.message);
         showGlobalMessage(`Initialization Error: ${error.message.substring(0, 150)}. Check console.`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
         updateDisplayOnErrorState("Init Error");
         isIndexAppInitialized = false; // Ensure it's false on error
