@@ -86,6 +86,7 @@ function getRandomHexColor() {
     return color;
 }
 
+// --- Data Fetching Orchestration ---
 async function refreshAllPageData() { 
     const roContract = getReadOnlyJansGameContract();
     if (!roContract) { console.warn("MainPageLogic: Read-only contract not available for data refresh."); return; }
@@ -354,41 +355,32 @@ async function updateGlobalStatsDisplay() {
     }
 }
 
-// --- Transaction Log Display (MODIFIED WITH FALLBACK) ---
+// --- Transaction Log Display (with Fallback) ---
 async function fetchAndDisplaySimplifiedTransactions() {
     const txListUl = document.getElementById(DOM_IDS.transactionList);
     const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
     if (!txListUl && !mobileLastTxDiv) return;
 
     try {
-        // Attempt 1: Fetch the pre-processed JSON index
         const historyData = await fetchJsonFile(TICKET_HISTORY_FILE_PATH);
-        
         if (!Array.isArray(historyData)) {
             throw new Error("History file not found or invalid, falling back to RPC.");
         }
-
         console.log("✅ Transaction history loaded from JSON index.");
         localTicketTransactions = historyData;
         renderTransactionLists();
-
     } catch (error) {
-        // Attempt 2 (Fallback): If JSON fails, query the blockchain directly
         console.warn(`⚠️ ${error.message}`);
         console.log("...Attempting to fetch recent transactions directly from RPC.");
-        
         await fetchTransactionsFromRPC(); 
     }
 }
 
-/**
- * Helper function to render transaction lists from the localTicketTransactions state.
- */
 function renderTransactionLists() {
     const txListUl = document.getElementById(DOM_IDS.transactionList);
     const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
 
-    if (localTicketTransactions.length === 0) {
+    if (!localTicketTransactions || localTicketTransactions.length === 0) {
         const noTxMsg = 'No ticket purchases yet for this round.';
         if(txListUl) txListUl.innerHTML = `<li>${noTxMsg}</li>`;
         if(mobileLastTxDiv) mobileLastTxDiv.textContent = noTxMsg;
@@ -421,9 +413,6 @@ function renderTransactionLists() {
     }
 }
 
-/**
- * The original RPC-fetching logic, now used as a fallback.
- */
 async function fetchTransactionsFromRPC() {
     const roContract = getReadOnlyJansGameContract();
     const roProvider = getReadOnlyProvider();
