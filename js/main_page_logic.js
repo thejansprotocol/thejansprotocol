@@ -54,7 +54,8 @@ let localJansPerTaraRate = null;
 let localGameLpTokenAddress = null;
 let localIsAppInitialized = false;
 let localRoundStartTime = null; 
-let localRoundDurationSeconds = null; 
+let localRoundDurationSeconds = null;
+let localTicketSalesDuration = null;
 
 // --- DOM Element ID Constants ---
 const DOM_IDS = {
@@ -256,6 +257,7 @@ async function updateCurrentRoundDisplay() {
                 if (salesStatusSpan) { salesStatusSpan.textContent = `Round ${localCurrentRoundId} Aborted`; salesStatusSpan.className = "status-error"; }
             } else if (roundData.startSnapshotSubmitted) {
                 const salesDurationSec = await roContract.ticketSalesDurationSeconds();
+                localTicketSalesDuration = Number(salesDurationSec.toString());
                 const provider = getReadOnlyProvider();
                 const latestBlock = await provider.getBlock("latest");
                 const currentBlockTimestamp = Number(latestBlock.timestamp);
@@ -500,87 +502,71 @@ function initializeUiTimers() {
 
 // --- Replace this entire function ---
 
+// --- Replace this function ---
+
 function updateSnapshotTimeDisplay() { 
     const span = document.getElementById(DOM_IDS.snapshotTimestamp);
     if (!span) return;
 
-    // We check if the snapshot data has been loaded.
-    // The 'processedAtUTC' field should be added by your automator to the snapshot_history_...json file.
-    // For the latest_snapshot.json, we can infer it from the round start time.
+    // Check if the round start time has been loaded from the contract
     if (localRoundStartTime) {
-        const snapshotDate = new Date(localRoundStartTime * 1000);
+        const snapshotDate = new Date(localRoundStartTime * 1000); // Convert epoch seconds to milliseconds
         span.textContent = snapshotDate.toLocaleString('en-GB', { 
             day: '2-digit', month: 'short', year: 'numeric', 
             hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
         }) + " UTC";
     } else {
-        // Fallback text if the round start time isn't loaded yet
+        // Default text while data is loading
         span.textContent = "Loading timestamp...";
     }
-}
+}// --- Replace this entire function ---
+
 // --- Replace this entire function ---
 
-async function updateCountdownTimerDisplay() {
+function updateCountdownTimerDisplay() {
     const span = document.getElementById(DOM_IDS.countdownTimer);
     if (!span) return;
 
-    const nowUTC = new Date();
-    const nowEpoch = Math.floor(nowUTC.getTime() / 1000);
+    const nowEpoch = Math.floor(Date.now() / 1000);
 
-    // This part for the weekend break remains the same
-    const dayUTC = nowUTC.getUTCDay();
-    const hourUTC = nowUTC.getUTCHours();
-    const minuteUTC = nowUTC.getMinutes();
-    if ((dayUTC === 6 && hourUTC >= 21) || (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45)))) {
-        // ... (Your existing weekend break logic can stay here if you want it)
-        span.textContent = "Game Paused until Sunday 20:45 UTC";
-        return; 
-    }
-    
-    if (localCurrentRoundId > 0n && localRoundStartTime && localIsAppInitialized) {
-        try {
-            const roContract = getReadOnlyJansGameContract();
-            // Fetch durations directly from the contract
-            const salesDurationSec = await roContract.ticketSalesDurationSeconds();
-            const roundDurationSec = await roContract.currentRoundResultDurationSeconds();
+    // This checks if we are in an active round with all necessary data loaded
+    if (localCurrentRoundId > 0n && localRoundStartTime && localTicketSalesDuration && localRoundDurationSeconds) {
+        const salesEndTimeEpoch = localRoundStartTime + localTicketSalesDuration;
+        const roundEndTimeEpoch = localRoundStartTime + localRoundDurationSeconds;
 
-            const salesEndTimeEpoch = localRoundStartTime + Number(salesDurationSec.toString());
-            const roundEndTimeEpoch = localRoundStartTime + Number(roundDurationSec.toString());
+        let salesText = '';
+        let evaluationText = '';
 
-            let text = '';
-            
-            // Countdown for Sales Window
-            if (nowEpoch < salesEndTimeEpoch) {
-                const salesDiff = salesEndTimeEpoch - nowEpoch;
-                const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
-                const m = String(Math.floor((salesDiff % 3600) / 60)).padStart(2, '0');
-                const s = String(Math.floor(salesDiff % 60)).padStart(2, '0');
-                text += `Sales close in: ${h}h ${m}m ${s}s`;
-            } else {
-                text += `Sales CLOSED`;
-            }
-
-            // Countdown for Round Evaluation
-            const roundDiff = roundEndTimeEpoch - nowEpoch;
-            if (roundDiff > 0) {
-                const h = String(Math.floor(roundDiff / 3600)).padStart(2, '0');
-                const m = String(Math.floor((roundDiff % 3600) / 60)).padStart(2, '0');
-                text += ` - Round evaluation in: ${h}h ${m}m`; // Seconds are not very relevant here
-            } else {
-                text += " - Round ended, awaiting evaluation...";
-            }
-            
-            span.textContent = text;
-
-        } catch (error) {
-            console.warn("Could not update countdown timer, contract data missing.", error.message);
-            span.textContent = "Loading timer...";
+        // Part 1: Calculate Sales Countdown
+        if (nowEpoch < salesEndTimeEpoch) {
+            const salesDiff = salesEndTimeEpoch - nowEpoch;
+            const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
+            const m = String(Math.floor((salesDiff % 3600) / 60)).padStart(2, '0');
+            const s = String(Math.floor(salesDiff % 60)).padStart(2, '0');
+            salesText = `Sales close in: ${h}h ${m}m ${s}s`;
+        } else {
+            salesText = `Sales CLOSED`;
         }
-    } else {
+
+        // Part 2: Calculate Evaluation Countdown
+        if (nowEpoch < roundEndTimeEpoch) {
+            const roundDiff = roundEndTimeEpoch - nowEpoch;
+            const h = String(Math.floor(roundDiff / 3600)).padStart(2, '0');
+            const m = String(Math.floor((roundDiff % 3600) / 60)).padStart(2, '0');
+            evaluationText = `Round evaluation in: ${h}h ${m}m`;
+        } else {
+            evaluationText = "awaiting evaluation...";
+        }
+        
+        // Combine the two parts
+        span.textContent = `${salesText} - ${evaluationText}`;
+
+    } else if (localCurrentRoundId === 0n) { 
         span.textContent = "Awaiting new round start";
+    } else {
+        span.textContent = "Loading timer data...";
     }
-}    
-    if (localCurrentRoundId > 0n && localRoundStartTime && localRoundDurationSeconds !== null && localRoundDurationSeconds > 0) {
+}    if (localCurrentRoundId > 0n && localRoundStartTime && localRoundDurationSeconds !== null && localRoundDurationSeconds > 0) {
         const roundEndTimeEpoch = localRoundStartTime + localRoundDurationSeconds;
         const nowEpoch = Math.floor(nowUTC.getTime() / 1000);
         const diff = roundEndTimeEpoch - nowEpoch;
