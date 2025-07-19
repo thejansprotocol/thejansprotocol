@@ -219,9 +219,8 @@ async function getJansPerTaraFromDEX() {
     return null;
 }
 
-/**
- * Gets the total supply of JANS token.
- */**
+
+ /**
  * Gets the total supply of JANS token.
  * @returns {Promise<{raw: bigint, formatted: string}>} Total supply in raw BigInt and formatted string.
  */
