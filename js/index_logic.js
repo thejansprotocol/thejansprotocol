@@ -390,7 +390,7 @@ async function handleCreateLP() {
         // --- MODIFICATION: INCREASE SLIPPAGE TOLERANCE ---
         // Try a higher slippage percentage, e.g., 1%, 2%, or even 5% if necessary,
         // especially if the accumulated amounts are often imbalanced or small.
-        const SLIPPAGE_PERCENT = 2; // Example: 2% slippage (was 0.5%) - TWEAK THIS VALUE
+        const SLIPPAGE_PERCENT = 20; // Example: 2% slippage (was 0.5%) - TWEAK THIS VALUE
         // For very imbalanced or small amounts, you might need higher, but be aware of the implications.
         // --- END MODIFICATION ---
 
