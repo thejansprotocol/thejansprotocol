@@ -6,7 +6,6 @@ import {
     initializeEthersCore,
     getReadOnlyProvider,
     getReadOnlyJansGameContract,
-    // connectWalletAndGetSignerInstances, // Not directly used in this script's functions
     ethersInstance,
 
     // Constants from wallet.js
@@ -14,7 +13,7 @@ import {
     NATIVE_TARA_DECIMALS,
     JANS_DECIMALS,
     LP_TOKEN_DECIMALS,
-    formatPriceWithZeroCount, // Used for formatting token prices
+    formatPriceWithZeroCount,
 
     // ABI Getters from wallet.js
     getJansTokenABI,
@@ -35,13 +34,12 @@ import {
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 
 // --- Configuration ---
-// REVIEW THESE PATHS based on your deployed site structure
 const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json'; 
 const DAILY_LOG_INDEX_FILE = './data/dailylogs_v8/index.json'; 
-// const SNAPSHOT_FILE_PATH = '/data/snapshots/latest_snapshot.json'; 
-// const DAILY_LOG_INDEX_FILE = '/data/dailylogs_v8/index.json';
+// --- NUEVA RUTA PARA EL ÍNDICE DE TRANSACCIONES ---
+const TICKET_HISTORY_FILE_PATH = './frontend/data/block_index/ticket_history.json';
 
-const POOLS_TO_SELECT = 10; // Should match contract snapshot size
+const POOLS_TO_SELECT = 10;
 const DATA_REFRESH_INTERVAL_MS = 60000; // 1 minute
 const GLOBAL_MESSAGE_DISPLAY_ID_MAIN = "global-message-main";
 
@@ -50,8 +48,6 @@ let localSnapshotTokens = [];
 let localCurrentRoundId = null;
 let localTicketPriceNativeWei = null;
 let localIsSalesOpen = false;
-let localTicketTransactions = [];
-let localLastFetchedTxBlock = null;
 let localTaraUsdPrice = null;
 let localJansPerTaraRate = null;
 let localGameLpTokenAddress = null;
@@ -89,18 +85,15 @@ function getRandomHexColor() {
     return color;
 }
 
-// --- Data Fetching Orchestration ---
 async function refreshAllPageData() { 
     const roContract = getReadOnlyJansGameContract();
     if (!roContract) { console.warn("MainPageLogic: Read-only contract not available for data refresh."); return; }
     try {
-        // Fetch external prices first as they might be needed by other contract data interpretations
+        // Fetch de precios externos primero
         localTaraUsdPrice = await fetchTaraUsdPriceFromCoinGecko();
         const roProvider = getReadOnlyProvider();
         if (roProvider) {
             localJansPerTaraRate = await getJansPerTaraFromDEX(roProvider);
-        } else {
-            console.warn("MainPageLogic: ReadOnlyProvider not available for JANS/TARA rate fetch during refresh.");
         }
 
         // Update game status display (round, ticket price, sales status)
@@ -109,7 +102,7 @@ async function refreshAllPageData() {
         // Update stats and transaction list concurrently
         await Promise.all([
             updateGlobalStatsDisplay(), 
-            fetchAndDisplaySimplifiedTransactions()
+            fetchAndDisplaySimplifiedTransactions() 
         ]);
     } catch (error) {
         console.error("MainPageLogic: Error during data refresh cycle:", error);
@@ -363,99 +356,52 @@ async function updateGlobalStatsDisplay() {
         } else if (statElements.lpBalanceUsd) statElements.lpBalanceUsd.textContent = "(LP Address N/A)";
     } catch (error) {
         console.error("MainPageLogic: Error fetching global stats:", error);
-        // Set all stat elements to "Error" or similar to indicate failure
         Object.values(statElements).forEach(el => { if(el) el.textContent = "Error"; });
     }
 }
 
-// --- Transaction Log Display (UPDATED) ---
 async function fetchAndDisplaySimplifiedTransactions() { 
-    const txListUl = document.getElementById(DOM_IDS.transactionList);
-    const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
-    const roContract = getReadOnlyJansGameContract();
-    const roProvider = getReadOnlyProvider();
+    const txListUl = document.getElementById("transaction-list");
+    const mobileLastTxDiv = document.getElementById("mobile-last-transaction");
 
-    if (!roContract || !roProvider || (!txListUl && !mobileLastTxDiv)) return;
+    if (!txListUl && !mobileLastTxDiv) return;
 
-    const nowUTC = new Date();
-    const dayUTC = nowUTC.getUTCDay();
-    const hourUTC = nowUTC.getUTCHours();
-    const minuteUTC = nowUTC.getMinutes();
-    let inBreakPeriod = (dayUTC === 6 && hourUTC >= 21) || (dayUTC === 0 && (hourUTC < 20 || (hourUTC === 20 && minuteUTC < 45)));
-
-    if (inBreakPeriod) {
-        const msg = "Game Paused";
-        if (txListUl) txListUl.innerHTML = `<li>${msg}</li>`;
-        if (mobileLastTxDiv) mobileLastTxDiv.textContent = msg;
-        if (localTicketTransactions.length > 0) { localTicketTransactions = []; localLastFetchedTxBlock = null;}
-        return;
-    }
-    if (!localCurrentRoundId || localCurrentRoundId === 0n) {
-        const msg = "Awaiting new round";
-        if (txListUl) txListUl.innerHTML = `<li>${msg}</li>`;
-        if (mobileLastTxDiv) mobileLastTxDiv.textContent = msg;
-        if (localTicketTransactions.length > 0) { localTicketTransactions = []; localLastFetchedTxBlock = null;}
-        return;
-    }
-    
     try {
-        let fromBlockForQuery;
-        const currentBlockNumber = await roProvider.getBlockNumber();
-        if (localLastFetchedTxBlock !== null && localLastFetchedTxBlock < currentBlockNumber) {
-            fromBlockForQuery = localLastFetchedTxBlock + 1;
-        } else if (localLastFetchedTxBlock === null) {
-            // Initial fetch: try to get recent blocks, or further back if round has been active
-            const roundData = await roContract.roundsData(localCurrentRoundId);
-            const roundStartTimestamp = roundData.startTime ? Number(roundData.startTime.toString()) : 0;
-            const secondsSinceRoundStart = Math.floor(Date.now()/1000) - roundStartTimestamp;
-            const blocksPerDayApprox = 70000; // Rough estimate for Taraxa, adjust if known
-            let blockRange = 5000; // Default for very new rounds
-            if (secondsSinceRoundStart > 3600 * 6) blockRange = blocksPerDayApprox / 2; // 12 hours
-            if (secondsSinceRoundStart > 3600 * 24) blockRange = blocksPerDayApprox * 2; // 2 days
+        const historyData = await fetchJsonFile(TICKET_HISTORY_FILE_PATH);
 
-            fromBlockForQuery = (roundStartTimestamp > 0) ? Math.max(0, currentBlockNumber - blockRange) : Math.max(0, currentBlockNumber - 5000);
-        } // <-- MISSING CLOSING BRACE ADDED HERE FOR else if (localLastFetchedTxBlock === null) -->
-        
-        // The closing brace above fixes the block structure
-
-        const eventFilter = roContract.filters.TicketPurchased(localCurrentRoundId);
-        
-        // ===========================================================================
-        //                      *** THIS IS THE ONLY LINE WE CHANGED ***
-        const events = await getPastEventsInBatches(roContract, eventFilter, fromBlockForQuery, currentBlockNumber);
-        // ===========================================================================
-        
-        let newTxFound = false;
-        for (const event of events) {
-            if (!localTicketTransactions.some(tx => tx.txHash === event.transactionHash && tx.ticketId.toString() === event.args.ticketId.toString())) {
-                try {
-                    const block = await event.getBlock();
-                    localTicketTransactions.push({ 
-                        player: event.args.player, timestamp: Number(block.timestamp), 
-                        txHash: event.transactionHash, ticketId: event.args.ticketId 
-                    });
-                    newTxFound = true;
-                } catch (blockError) { console.error("TX_LOG: Error fetching block for event:", blockError); }
-            }
-        }
-        
-        if (newTxFound) {
-            localTicketTransactions.sort((a, b) => b.timestamp - a.timestamp); // Sort by newest first
-            if (txListUl) renderDesktopTransactionList();
-            renderMobileLastTransaction(); // Always update mobile with the latest
-        } else if (localTicketTransactions.length === 0 && events.length === 0) { // No Txs at all for this round yet
+        if (!historyData || !Array.isArray(historyData) || historyData.length === 0) {
             const noTxMsg = 'No ticket purchases yet for this round.';
             if(txListUl) txListUl.innerHTML = `<li>${noTxMsg}</li>`;
-            if (mobileLastTxDiv) mobileLastTxDiv.textContent = noTxMsg;
-        } else if (localTicketTransactions.length > 0 && !newTxFound) { // No new txs, but some exist
-             renderMobileLastTransaction(); // Ensure mobile is up-to-date
-             // Desktop list remains unchanged if no new txs
+            if(mobileLastTxDiv) mobileLastTxDiv.textContent = noTxMsg;
+            return;
         }
-        localLastFetchedTxBlock = currentBlockNumber;
+        
+
+        if (txListUl) {
+            txListUl.innerHTML = ''; 
+            historyData.forEach(tx => {
+                const li = document.createElement('li');
+                const date = new Date(tx.timestamp);
+                const timeText = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                li.innerHTML = `<span class="math-inline">${timeText}</span> - Wallet: <span title="${tx.player}">${tx.player}</span>`;
+                li.style.color = getRandomHexColor();
+                ulElement.appendChild(li);
+            });
+        }
+        
+
+        if (mobileLastTxDiv) {
+            const lastTx = historyData[0]; 
+            const date = new Date(lastTx.timestamp);
+            const timeText = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            mobileLastTxDiv.innerHTML = `Latest: <span class="math-inline">${timeText}</span> - Wallet: <span title="${lastTx.player}">${lastTx.player}</span>`;
+            mobileLastTxDiv.style.color = getRandomHexColor();
+        }
+
     } catch (error) { 
-        console.error("TX_LOG: Failed to fetch/process transactions:", error);
-        if(txListUl && localTicketTransactions.length === 0) txListUl.innerHTML = '<li>Error loading transaction history.</li>';
-        if (mobileLastTxDiv && localTicketTransactions.length === 0) mobileLastTxDiv.textContent = 'Error loading latest transaction.';
+        console.error("TX_LOG: Failed to fetch/process transaction history file:", error);
+        if(txListUl) txListUl.innerHTML = '<li>Error loading transaction history.</li>';
+        if (mobileLastTxDiv) mobileLastTxDiv.textContent = 'Error loading latest transaction.';
     }
 }
 
