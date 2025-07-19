@@ -66,40 +66,57 @@ async function initializeIndexPageLogic() {
     }
     console.log("Initializing index_logic.js...");
 
-    try {
-        const localReadOnlyProvider = getReadOnlyProvider();
-        const localReadOnlyContract = getReadOnlyJansGameContract();
+    const localReadOnlyProvider = getReadOnlyProvider();
+    const localReadOnlyContract = getReadOnlyJansGameContract();
 
-        if (!localReadOnlyProvider || !localReadOnlyContract) {
-            throw new Error("Read-only provider or contract not available after Ethers core initialization.");
+    if (!localReadOnlyProvider || !localReadOnlyContract) {
+        // This check already throws and should be caught by the outer attemptEthersCoreSetup catch.
+        throw new Error("Read-only provider or contract not available after Ethers core initialization.");
+    }
+
+    try { // Outer try-catch to log general initialization errors
+        let networkName = 'unknown';
+        try { // Individual try-catch for network fetch
+            const network = await localReadOnlyProvider.getNetwork();
+            networkName = network.name;
+            console.log(`Index Provider connected: ${networkName} (ID: ${network.chainId.toString()})`);
+        } catch (e) {
+            console.error("ERROR during localReadOnlyProvider.getNetwork():", e);
+            throw new Error(`Failed to get network details: ${e.message}`); // Re-throw to main catch
         }
-
-        const network = await localReadOnlyProvider.getNetwork();
-        console.log(`Index Provider connected: ${network.name} (ID: ${network.chainId.toString()})`);
+        
         console.log("Read-only JansGame contract instance obtained.");
 
         // Fetch LP token address from the game contract (it's immutable)
-        try {
-            gameLpTokenAddress = await localReadOnlyContract.GAME_LP_TOKEN();
+        try { // Individual try-catch for LP token address fetch
+            gameLpTokenAddress = await localReadOnlyContract.GAME_LP_TOKEN(); // This is line 84 in your trace
             console.log("Game LP Token Address (from contract):", gameLpTokenAddress);
+            if (!gameLpTokenAddress || gameLpTokenAddress === ethersInstance.ZeroAddress) {
+                throw new Error("GAME_LP_TOKEN address is invalid or zero.");
+            }
         } catch (e) {
-            console.error("Failed to fetch GAME_LP_TOKEN address from contract:", e);
-            showGlobalMessage("Error: Could not get LP token address from game contract.", "error", 0, GLOBAL_MESSAGE_ID_INDEX);
+            console.error("ERROR fetching GAME_LP_TOKEN address from contract:", e);
+            throw new Error(`Failed to fetch LP token address from game contract: ${e.message}`); // Re-throw to main catch
         }
 
-        setupEventListeners(); // Set up button click handlers once
-        await fetchAllStatsAndUpdateDisplay(); // Initial fetch and display of all stats
-        setInterval(fetchAllStatsAndUpdateDisplay, 60000); // Refresh stats every 60 seconds
+        // --- Original line 90 in your trace, now the start of fetchAllStatsAndUpdateDisplay() ---
+        try { // Individual try-catch for main stats update
+            await fetchAllStatsAndUpdateDisplay(); 
+            setInterval(fetchAllStatsAndUpdateDisplay, 60000); // Refresh stats every 60 seconds
+        } catch (e) {
+            console.error("ERROR during fetchAllStatsAndUpdateDisplay():", e);
+            throw new Error(`Failed to fetch all stats and update display: ${e.message}`); // Re-throw to main catch
+        }
 
         console.log("Index page logic initialization complete.");
         isIndexAppInitialized = true; // Set flag only after successful initialization
 
-    } catch (error) { // ESTE ES EL BLOQUE CATCH
+    } catch (error) { // The main catch block for initializeIndexPageLogic
         console.error("CRITICAL: Index page logic initialization failed:", error.stack);
-        console.error("ACTUAL ERROR MESSAGE CAUGHT:", error.message);
+        console.error("ACTUAL ERROR MESSAGE CAUGHT IN initializeIndexPageLogic:", error.message); 
         showGlobalMessage(`Initialization Error: ${error.message.substring(0, 150)}. Check console.`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
         updateDisplayOnErrorState("Init Error");
-        isIndexAppInitialized = false; // Ensure it's false on error
+        isIndexAppInitialized = false; 
     }
 }
 
