@@ -171,17 +171,16 @@ export async function connectWalletAndGetSignerInstances() {
                 const newNetwork = await newProviderAfterSwitch.getNetwork();
                 const newUserAddress = await newSigner.getAddress();
 
-                if (newNetwork.chainId !== TARGET_CHAIN_ID) { // Double check
+                 if (newNetwork.chainId !== TARGET_CHAIN_ID) { // Double check
                     throw new Error(`Still on incorrect network after switch attempt. Expected ${TARGET_NETWORK_NAME}.`);
                 }
-                import { cachedJansGameABI } from './wallet.js'; 
-                if (!cachedJansGameABI) {
-                    throw new Error("JansGame ABI not cached. Ensure initializeEthersCore has run successfully.");
+                if (!cachedJansGameABI) { // <-- Hacemos la misma verificación aquí
+                    throw new Error("JansGame ABI not cached after network switch.");
                 }
-                const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, signer);
+                const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, newSigner); // <-- Usamos la variable de la caché
                 console.log("Wallet.js: Network switched. New signer and contract instance created.");
                 return { signer: newSigner, provider: newProviderAfterSwitch, gameContractWithSigner, userAddress: newUserAddress };
-            } catch (switchError) {
+// ...        } catch (switchError) {
                 if (switchError.code === 4902) throw new Error(`${TARGET_NETWORK_NAME} network configuration not found. Please add it to your wallet.`);
                 if (switchError.code === 4001) throw new Error("Network switch request rejected by user.");
                 throw new Error(`Failed to switch network: ${switchError.message || 'Unknown error during network switch'}`);
