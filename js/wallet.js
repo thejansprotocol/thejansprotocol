@@ -174,8 +174,11 @@ export async function connectWalletAndGetSignerInstances() {
                 if (newNetwork.chainId !== TARGET_CHAIN_ID) { // Double check
                     throw new Error(`Still on incorrect network after switch attempt. Expected ${TARGET_NETWORK_NAME}.`);
                 }
-                const gameABI = await getJansGameABI();
-                const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, gameABI, newSigner);
+                import { cachedJansGameABI } from './wallet.js'; 
+                if (!cachedJansGameABI) {
+                    throw new Error("JansGame ABI not cached. Ensure initializeEthersCore has run successfully.");
+                }
+                const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, signer);
                 console.log("Wallet.js: Network switched. New signer and contract instance created.");
                 return { signer: newSigner, provider: newProviderAfterSwitch, gameContractWithSigner, userAddress: newUserAddress };
             } catch (switchError) {
