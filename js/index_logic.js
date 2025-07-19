@@ -651,62 +651,48 @@ async function handleClaimLpRewards() {
 /**
  * Updates the visual status of the LP claim button, including a blinking effect.
  */
+// --- Replace your entire updateClaimLpButtonStatus function with this one ---
+
 async function updateClaimLpButtonStatus() {
     const claimButton = document.getElementById("claim-lp-rewards-button");
+    if (!claimButton) return;
+
     const localReadOnlyContract = getReadOnlyJansGameContract();
 
-    claimButton?.classList.remove('claim-available', 'claim-blink');
+    // Reset styles and state before checks
+    claimButton.disabled = true;
+    claimButton.classList.remove('claim-available', 'claim-blink');
+    claimButton.style.backgroundColor = ''; // Let CSS handle the disabled style
 
-    if (!claimButton || !localReadOnlyContract || !isIndexAppInitialized || !ethersInstance) {
-        if(claimButton) {
-            claimButton.disabled = true; 
-            claimButton.title = "Status cannot be determined yet (app not ready).";
-            claimButton.style.backgroundColor = ''; 
-        }
+    if (!localIsAppInitialized || !ethersInstance || !localReadOnlyContract) {
+        claimButton.title = "Status cannot be determined yet (app not ready).";
         return;
     }
 
     try {
-        claimButton.disabled = true; 
-        claimButton.style.backgroundColor = ''; 
         claimButton.title = "Checking LP claim status...";
 
         const currentDistroId = await localReadOnlyContract.currentLpDistributionId();
-
         if (currentDistroId === 0n) {
             claimButton.title = "No active LP distribution period.";
-            claimButton.style.backgroundColor = '#6c757d'; // Grey/muted
             return;
         }
 
         const snapshot = await localReadOnlyContract.distributionSnapshots(currentDistroId);
         if (!snapshot.finalized) {
             claimButton.title = `Distribution period ${currentDistroId.toString()} is not finalized yet.`;
-            claimButton.style.backgroundColor = '#6c757d'; // Grey/muted
             return;
         }
 
         let playerAddress = null;
         if (window.ethereum && window.ethereum.selectedAddress) {
             playerAddress = ethersInstance.getAddress(window.ethereum.selectedAddress);
-        } else {
-            const provider = getReadOnlyProvider();
-            if (provider) {
-                try {
-                    const accounts = await provider.listAccounts(); 
-                    if (accounts && accounts.length > 0) {
-                        playerAddress = accounts[0].address; 
-                    }
-                } catch (e) {
-                    console.warn("Could not list accounts from read-only provider for claim button status (likely not connected yet):", e.message);
-                }
-            }
         }
-        
+
         if (playerAddress) {
             const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(currentDistroId, playerAddress);
             if (hasClaimed) {
-                claimButton.title = `Already claimed for distribution ${currentDistroId.toString()}.`;    
+                claimButton.title = `Already claimed for distribution ${currentDistroId.toString()}.`;
                 claimButton.style.backgroundColor = '#28a745'; // Green (claimed)
                 return;
             }
@@ -714,28 +700,24 @@ async function updateClaimLpButtonStatus() {
             const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
             if (userJansPoolShares === 0n) {
                 claimButton.title = `No JANS Pool Shares to claim LP rewards for distribution ${currentDistroId.toString()}.`;
-                claimButton.style.backgroundColor = '#3498db'; // Blue (no shares)
                 return;
             }
 
-            claimButton.disabled = false; // Enable the button
+            // --- SUCCESS CASE ---
+            // If all checks pass, enable the button and make it blink
+            claimButton.disabled = false;
             claimButton.title = `CLAIM LP REWARDS NOW for distribution period ${currentDistroId.toString()}!`;
-            claimButton.style.backgroundColor = '#dc3545'; // Red (active/claimable)
-            claimButton.classList.add('claim-available', 'claim-blink'); // Add classes for blinking effect
+            claimButton.classList.add('claim-available', 'claim-blink');
 
         } else {
             claimButton.title = `Connect wallet to check LP claim status for distribution ${currentDistroId.toString()}.`;
-            claimButton.style.backgroundColor = '#6c757d'; // Grey/muted (wallet not connected)
         }
 
     } catch (error) {
         console.warn("Could not update claim button status:", error.message);
-        claimButton.disabled = true;
         claimButton.title = "Error determining claim status. See console.";
-        claimButton.style.backgroundColor = '#6c757d'; // Grey/muted on error
     }
 }
-
 
 // --- Page Load Initialization (Entry Point) ---
 document.addEventListener('DOMContentLoaded', () => {
