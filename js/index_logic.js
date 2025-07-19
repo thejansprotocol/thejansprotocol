@@ -370,32 +370,28 @@ async function fetchAndDisplayOtherIndexStats() {
     } catch (e) { console.error("Error fetching other stats:", e.message, e.stack); updateDisplayOnErrorState("Stats Fetch Err"); }
 }
 
-// --- LP Creation & Claim Logic (using connectWalletAndGetSignerInstances from wallet.js) ---
+
 async function handleCreateLP() {
     console.log("Attempting to create LP...");
-    showGlobalMessage("Processing LP creation...", "info", 0, GLOBAL_MESSAGE_ID_INDEX); 
+    showGlobalMessage("Processing LP creation...", "info", 0, GLOBAL_MESSAGE_ID_INDEX);    
 
     try {
         const localReadOnlyContract = getReadOnlyJansGameContract();
         if (!localReadOnlyContract) throw new Error("Read-only contract instance not available for LP creation.");
 
-        const { taraForLPSide_, jansForLPSide_ } = await localReadOnlyContract.getAccumulatedLpFormingFunds();
+        const { taraForLPSide_, jansForLPSide_, taraForReward_ } = await localReadOnlyContract.getAccumulatedLpFormingFunds();
         console.log(`Raw accumulated TARA (Wei) from contract: ${taraForLPSide_.toString()}`);
         console.log(`Raw accumulated JANS (smallest unit) from contract: ${jansForLPSide_.toString()}`);
+        console.log(`Raw accumulated TARA Reward (Wei) from contract: ${taraForReward_.toString()}`);
+
 
         if (taraForLPSide_ <= 0n || jansForLPSide_ <= 0n) {
-            throw new Error("No accumulated TARA or JANS in the contract to form LP.");
+            throw new Error("JansGame__NoAccumulatedFundsForLP: No accumulated TARA or JANS in the contract to form LP.");
         }
 
-        // --- MODIFICATION: INCREASE SLIPPAGE TOLERANCE ---
-        // Try a higher slippage percentage, e.g., 1%, 2%, or even 5% if necessary,
-        // especially if the accumulated amounts are often imbalanced or small.
-        const SLIPPAGE_PERCENT = 2; // Example: 2% slippage (was 0.5%) - TWEAK THIS VALUE
-        // For very imbalanced or small amounts, you might need higher, but be aware of the implications.
-        // --- END MODIFICATION ---
-
-        const slippageBps = BigInt(Math.floor(SLIPPAGE_PERCENT * 100)); 
-        const HUNDRED_PERCENT_BPS = 10000n;
+        const SLIPPAGE_PERCENT = 5; // Aumentado a 5% (antes 0.5% implicado por contexto) - AJUSTAR SI ES NECESARIO
+        const slippageBps = BigInt(SLIPPAGE_PERCENT * 100); // Convertir porcentaje a puntos base (ej. 5% -> 500)
+        const HUNDRED_PERCENT_BPS = 10000n; // 100% en puntos base
 
         console.log(`Using slippage tolerance: ${SLIPPAGE_PERCENT}% (${slippageBps.toString()} BPS)`);
 
@@ -405,15 +401,28 @@ async function handleCreateLP() {
         console.log(`Calculated _amountNativeTaraMinForLP (Wei): ${amountNativeTaraMinForLP.toString()}`);
         console.log(`Calculated _amountJansMinForLP (smallest unit): ${amountJansMinForLP.toString()}`);
 
+        // Verificar explícitamente si alguno de los montos mínimos se redondeó a cero
+        if (amountNativeTaraMinForLP === 0n || amountJansMinForLP === 0n) {
+            let errorMessage = "JansGame__LPSlippageParamsRequiredIfFormingLP: Calculated minimum amount for LP is zero. ";
+            if (taraForLPSide_ > 0n && amountNativeTaraMinForLP === 0n) {
+                errorMessage += `(TARA amount ${taraForLPSide_.toString()} too small for ${SLIPPAGE_PERCENT}% slippage)`;
+            }
+            if (jansForLPSide_ > 0n && amountJansMinForLP === 0n) {
+                errorMessage += `(JANS amount ${jansForLPSide_.toString()} too small for ${SLIPPAGE_PERCENT}% slippage)`;
+            }
+            throw new Error(errorMessage);
+        }
+
         const { signer, gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
         console.log(`LP Creation transaction initiated by: ${userAddress}`);
         
         showGlobalMessage("Sending LP creation transaction... Please confirm in your wallet.", "info", 0, GLOBAL_MESSAGE_ID_INDEX);
 
+        // Se mantiene gasLimit fijo, ya que en Taraxa la estimación puede ser un problema.
         const tx = await gameContractWithSigner.formAndDepositLPFromAccumulated(
             amountJansMinForLP,
             amountNativeTaraMinForLP,
-            { gasLimit: 1200000 } 
+            { gasLimit: 1200000 } // Un gasLimit generoso para esta operación.
         );
 
         showGlobalMessage(`Transaction sent: ${shortenAddress(tx.hash)}. Waiting for confirmation...`, "info", 0, GLOBAL_MESSAGE_ID_INDEX);
@@ -421,16 +430,37 @@ async function handleCreateLP() {
 
         if (receipt && receipt.status === 1) {
             showGlobalMessage("LP successfully created and deposited!", "success", 7000, GLOBAL_MESSAGE_ID_INDEX);
-            fetchAllStatsAndUpdateDisplay(); 
+            fetchAllStatsAndUpdateDisplay(); // Actualiza el estado de la UI
         } else {
-            throw new Error("LP Creation transaction failed on-chain. Status: " + (receipt ? receipt.status : 'unknown'));
+            // Intento de extraer más información si el recibo está disponible pero el estado es 0
+            let revertReason = "unknown";
+            if (receipt && receipt.logs && receipt.logs.length > 0) {
+                // Podrías intentar decodificar logs si el contrato emite un evento de error
+                // o usar la data del error (error.data) para mensajes de revert de Solidity 0.8+
+            }
+            throw new Error("LP Creation transaction failed on-chain. Status: " + (receipt ? receipt.status : 'unknown') + (revertReason !== "unknown" ? ` Reason: ${revertReason}` : ''));
         }
     } catch (error) {
         console.error("LP Creation Failed (handleCreateLP):", error);
         let detailedMessage = error.reason || (error.data && error.data.message) || error.message || "Unknown error during LP Creation.";
+        
+        // Mensajes más específicos basados en el código o acción del error
         if (error.code === "ACTION_REJECTED") detailedMessage = "Transaction rejected by user.";
-        else if (error.action === "estimateGas" && error.code === "CALL_EXCEPTION") detailedMessage = "Transaction would revert (estimateGas failed). Check contract funds and consider adjusting slippage if prices are volatile.";
-        else if (error.action === "sendTransaction" && error.code === "CALL_EXCEPTION") detailedMessage = "Transaction reverted. Check contract funds, pool ratio, and slippage settings.";
+        else if (error.action === "estimateGas" && error.code === "CALL_EXCEPTION") {
+            detailedMessage = "Transaction would revert (estimateGas failed). This often means: Insufficient contract funds, incorrect token approval, or a deeper contract logic issue. Check accumulated funds on contract, and consider adjusting slippage.";
+        }
+        else if (error.action === "sendTransaction" && error.code === "CALL_EXCEPTION") {
+            detailedMessage = "Transaction reverted on-chain. This often means: Insufficient contract funds, an issue with the Uniswap/PancakeSwap router call (e.g., slippage, token pair), or a logical revert in the contract itself.";
+        }
+        // Si el error es el que lanzamos en el cliente por min_amount=0
+        if (detailedMessage.includes("JansGame__NoAccumulatedFundsForLP") || detailedMessage.includes("JansGame__LPSlippageParamsRequiredIfFormingLP")) {
+            // Usamos el mensaje que generamos nosotros.
+        } else if (error.data && typeof error.data === 'string' && error.data.startsWith('0x')) {
+            // Intenta decodificar el error si es un custom error de Solidity (ej. 0x4e487b71 para Panic, o hash de custom error)
+            // Para errores de Solidity 0.8.x sin string, ethers a veces devuelve un hash o data.
+            // Necesitarías una lógica para decodificar tus errores personalizados si los quieres ver aquí.
+            // console.log("Raw revert data:", error.data); // Para depuración profunda
+        }
         
         showGlobalMessage(`LP Creation Failed: ${detailedMessage.substring(0,200)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
     }
@@ -438,23 +468,20 @@ async function handleCreateLP() {
 
 
 async function handleClaimLpRewards() {
-    // ... (your existing function, ensure it uses connectWalletAndGetSignerInstances) ...
-    // ... and ensure all contract calls use an ethers.Contract instance correctly initialized ...
-    const statusDiv = document.getElementById("lp-claim-status"); // Make sure this ID exists in index.html
+    const statusDiv = document.getElementById("lp-claim-status"); 
     const claimButton = document.getElementById("claim-lp-rewards-button");
     if (!statusDiv || !claimButton) { showGlobalMessage("LP claim UI elements missing.", "error", 0, GLOBAL_MESSAGE_ID_INDEX); return; }
     
-    clearGlobalMessage(GLOBAL_MESSAGE_ID_INDEX); // Clear main global message
-    statusDiv.textContent = "Preparing to claim LP rewards..."; 
+    clearGlobalMessage(GLOBAL_MESSAGE_ID_INDEX); 
+    statusDiv.textContent = "Preparing to claim LP rewards...";    
     statusDiv.style.color = "#f39c12"; // Orange for processing
     statusDiv.style.display = 'block'; // Make sure it's visible
     claimButton.disabled = true;
 
     const localReadOnlyContract = getReadOnlyJansGameContract();
-    if (!isIndexAppInitialized || !ethersInstance || !localReadOnlyContract) { // Check ethersInstance too
+    if (!isIndexAppInitialized || !ethersInstance || !localReadOnlyContract) { 
         showGlobalMessage("Application not ready. Please refresh.", "error", 0, GLOBAL_MESSAGE_ID_INDEX);
         statusDiv.textContent = "Failed: App not ready."; statusDiv.style.color = "#e74c3c"; // Red
-        // updateClaimLpButtonStatus(); // This will re-enable button if appropriate after full init
         return;
     }
 
@@ -484,6 +511,16 @@ async function handleClaimLpRewards() {
             updateClaimLpButtonStatus(); return;
         }
 
+        // Obtener el balance de shares del usuario para el log/depuración
+        const userJansPoolShares = await localReadOnlyContract.jansPoolShares(userAddress);
+        if (userJansPoolShares === 0n) {
+            showGlobalMessage("You have no JANS Pool Shares to claim LP rewards with.", "info", 8000, GLOBAL_MESSAGE_ID_INDEX);
+            statusDiv.textContent = "No shares to claim."; statusDiv.style.color = "#3498db";
+            updateClaimLpButtonStatus(); return;
+        }
+        console.log(`User has ${userJansPoolShares.toString()} JANS Pool Shares.`);
+
+
         statusDiv.textContent = `Claiming for Distribution ID ${currentDistroId.toString()}... Confirm in wallet.`;
         const tx = await gameContractWithSigner.claimMyLpReward(currentDistroId, { gasLimit: 500000 }); // Added gas limit
 
@@ -512,6 +549,74 @@ async function handleClaimLpRewards() {
 }
 
 
+async function updateClaimLpButtonStatus() {
+    const claimButton = document.getElementById("claim-lp-rewards-button");
+    const localReadOnlyContract = getReadOnlyJansGameContract();
+
+    if (!claimButton || !localReadOnlyContract || !isIndexAppInitialized || !ethersInstance) {
+        if(claimButton) {claimButton.disabled = true; claimButton.title = "Status cannot be determined yet.";}
+        return;
+    }
+
+    try {
+        claimButton.disabled = true; // Disable by default until checks pass
+        const currentDistroId = await localReadOnlyContract.currentLpDistributionId();
+
+        if (currentDistroId === 0n) {
+            claimButton.title = "No active LP distribution period."; return;
+        }
+
+        const snapshot = await localReadOnlyContract.distributionSnapshots(currentDistroId);
+        if (!snapshot.finalized) {
+            claimButton.title = `Distribution period ${currentDistroId.toString()} is not finalized.`; return;
+        }
+
+        // Attempt to get currently connected address if possible, without forcing connection prompt
+        let playerAddress = null;
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            playerAddress = ethersInstance.getAddress(window.ethereum.selectedAddress);
+        } else {
+            const provider = getReadOnlyProvider(); // Use the read-only provider
+            if (provider) {
+                // Attempt to list accounts if provider is set up for it, without prompting user.
+                // Note: listAccounts might still prompt in some environments, or might only return if already connected.
+                try {
+                    const accounts = await provider.listAccounts(); 
+                    if (accounts && accounts.length > 0) {
+                        playerAddress = accounts[0].address; // This is the address string from the Signerlike object
+                    }
+                } catch (e) {
+                    console.warn("Could not list accounts from read-only provider for claim button status:", e.message);
+                }
+            }
+        }
+        
+        if (playerAddress) {
+            const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(currentDistroId, playerAddress);
+            if (hasClaimed) {
+                claimButton.title = `Already claimed for distribution ${currentDistroId.toString()}.`;    
+                return;
+            }
+            
+            // Check if user has shares to claim with before enabling button
+            const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
+            if (userJansPoolShares === 0n) {
+                claimButton.title = `No JANS Pool Shares to claim LP rewards for distribution ${currentDistroId.toString()}.`;
+                return;
+            }
+
+            claimButton.disabled = false; // Enable only if all checks pass and not claimed and has shares
+            claimButton.title = `Claim LP rewards for distribution period ${currentDistroId.toString()}.`;
+        } else {
+            claimButton.title = `Connect wallet to check LP claim status for distribution ${currentDistroId.toString()}.`;
+        }
+
+    } catch (error) {
+        console.warn("Could not update claim button status:", error.message);
+        claimButton.disabled = true;
+        claimButton.title = "Error determining claim status. See console.";
+    }
+}
 async function updateClaimLpButtonStatus() {
     const claimButton = document.getElementById("claim-lp-rewards-button");
     const localReadOnlyContract = getReadOnlyJansGameContract();
