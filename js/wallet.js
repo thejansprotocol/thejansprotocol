@@ -41,8 +41,8 @@ export const LP_PAIR_ABI = [
 let ethersInstance = null;
 let readOnlyProvider = null;
 let readOnlyJansGameContract = null;
-let cachedJansGameABI = null;
-let cachedJansTokenABI = null;
+export let cachedJansGameABI = null; // <--- ADD 'export' HERE
+export let cachedJansTokenABI = null; // <--- ADD 'export' HERE
 
 export { ethersInstance }; // Export the instance so other modules can use the same Ethers library reference
 
