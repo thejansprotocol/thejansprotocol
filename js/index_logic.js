@@ -511,7 +511,7 @@ async function handleCreateLP() {
         // --- NEW DEBUGGING LOGS: Actual Contract Balances ---
         const localReadOnlyProvider = getReadOnlyProvider(); // Get provider here for balance checks
         const actualContractTaraBalance = await localReadOnlyProvider.getBalance(JANS_GAME_CONTRACT_ADDRESS);
-        const jansTokenContractInstance = new ethersInstance.Contract(JANS_TOKEN_ADDRESS, MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY, localReadOnlyProvider);
+        const jansTokenContractInstance = new ethersInstance.Contract(JANS_TOKEN_ADDRESS, cachedJansTokenABI, localReadOnlyProvider);
         const actualContractJansBalance = await jansTokenContractInstance.balanceOf(JANS_GAME_CONTRACT_ADDRESS);
         
         console.log(`Debug - ACTUAL Contract TARA Balance: ${actualContractTaraBalance.toString()}`);
