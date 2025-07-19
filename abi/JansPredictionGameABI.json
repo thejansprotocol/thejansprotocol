@@ -23,17 +23,17 @@
       },
       {
         "internalType": "address payable",
-        "name": "_communityWallet",
-        "type": "address"
-      },
-      {
-        "internalType": "address payable",
         "name": "_gameWallet",
         "type": "address"
       },
       {
         "internalType": "address payable",
         "name": "_maintenanceWallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_devFundingWallet",
         "type": "address"
       },
       {
@@ -98,11 +98,6 @@
   {
     "inputs": [],
     "name": "JansGame__EndSnapshotAlreadySubmitted",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "JansGame__EndSnapshotNotSubmitted",
     "type": "error"
   },
   {
@@ -232,11 +227,6 @@
   },
   {
     "inputs": [],
-    "name": "JansGame__ResultsAlreadyEvaluated",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "JansGame__RoundAlreadyAborted",
     "type": "error"
   },
@@ -342,6 +332,25 @@
     ],
     "name": "SafeERC20FailedOperation",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldWallet",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newWallet",
+        "type": "address"
+      }
+    ],
+    "name": "DevFundingWalletUpdated",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -1126,19 +1135,6 @@
   },
   {
     "inputs": [],
-    "name": "communityWallet",
-    "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "configuredEndPriceUsdCents",
     "outputs": [
       {
@@ -1273,6 +1269,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "devFundingWallet",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -1333,19 +1342,6 @@
       }
     ],
     "name": "emergencyWithdrawNative",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_roundId",
-        "type": "uint256"
-      }
-    ],
-    "name": "evaluateWinners",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1984,6 +1980,19 @@
   {
     "inputs": [
       {
+        "internalType": "address payable",
+        "name": "_newAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setDevFundingWallet",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_newDivisor",
         "type": "uint256"
@@ -2058,11 +2067,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "_comm",
-        "type": "address"
-      },
       {
         "internalType": "address payable",
         "name": "_game",
