@@ -104,10 +104,15 @@ export function getReadOnlyJansGameContract() {
 
 export async function connectWalletAndGetSignerInstances() {
     if (!ethersInstance) {
-        throw new Error("Ethers.js not available. Call initializeEthersCore first.");
+        if (window.ethers) {
+            console.log("Wallet.js: Ethers not globally initialized for connectWallet, attempting now.");
+            await initializeEthersCore(window.ethers);
+        } else {
+            throw new Error("Ethers.js not available. Wallet connection failed.");
+        }
     }
     if (typeof window.ethereum === "undefined") {
-        throw new Error("Wallet (e.g., MetaMask) not found.");
+        throw new Error("Wallet (e.g., MetaMask) not found. Please install a compatible wallet extension.");
     }
 
     try {
@@ -117,7 +122,7 @@ export async function connectWalletAndGetSignerInstances() {
             await browserProvider.send("eth_requestAccounts", []);
         } catch (accError) {
             if (accError.code === 4001) throw new Error("Wallet connection rejected by user.");
-            throw new Error(`Wallet account access failed: ${accError.message}`);
+            throw new Error(`Wallet account access failed: ${accError.message || 'Unknown error'}`);
         }
 
         const signer = await browserProvider.getSigner();
@@ -125,48 +130,58 @@ export async function connectWalletAndGetSignerInstances() {
         const network = await browserProvider.getNetwork();
 
         if (network.chainId !== TARGET_CHAIN_ID) {
-            const message = `Please switch your wallet to ${TARGET_NETWORK_NAME}.`;
+            const message = `Please switch your wallet to ${TARGET_NETWORK_NAME} (Chain ID: ${TARGET_CHAIN_ID}). You are on ${network.name} (${network.chainId}).`;
             showGlobalMessage(message, "warning", 10000, "global-message-main");
+            
             try {
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: ethersInstance.toBeHex(TARGET_CHAIN_ID) }],
                 });
-                // Re-create instances after network switch
+                // After switch, re-create instances for safety
                 const newProviderAfterSwitch = new ethersInstance.BrowserProvider(window.ethereum);
                 const newSigner = await newProviderAfterSwitch.getSigner();
+                const newNetwork = await newProviderAfterSwitch.getNetwork();
                 const newUserAddress = await newSigner.getAddress();
 
-                // --- CORRECCIÓN Y OPTIMIZACIÓN #1 ---
+                if (newNetwork.chainId !== TARGET_CHAIN_ID) {
+                    throw new Error(`Still on incorrect network after switch attempt. Expected ${TARGET_NETWORK_NAME}.`);
+                }
+                
                 if (!cachedJansGameABI) {
                     throw new Error("JansGame ABI not cached after network switch.");
                 }
                 const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, newSigner);
                 
                 console.log("Wallet.js: Network switched. New signer and contract instance created.");
+                // This return is correct, it exits the function after a successful network switch
                 return { signer: newSigner, provider: newProviderAfterSwitch, gameContractWithSigner, userAddress: newUserAddress };
+
             } catch (switchError) {
-                if (switchError.code === 4902) throw new Error(`${TARGET_NETWORK_NAME} not found. Please add it to your wallet.`);
-                if (switchError.code === 4001) throw new Error("Network switch rejected by user.");
-                throw new Error(`Failed to switch network: ${switchError.message}`);
+                if (switchError.code === 4902) throw new Error(`${TARGET_NETWORK_NAME} network configuration not found. Please add it to your wallet.`);
+                if (switchError.code === 4001) throw new Error("Network switch request rejected by user.");
+                throw new Error(`Failed to switch network: ${switchError.message || 'Unknown error during network switch'}`);
             }
         }
 
-        // --- CORRECCIÓN Y OPTIMIZACIÓN #2 ---
+        // This code block now only runs if the network was correct from the beginning.
         if (!cachedJansGameABI) {
             throw new Error("JansGame ABI not cached. Ensure initializeEthersCore has run successfully.");
         }
         const gameContractWithSigner = new ethersInstance.Contract(JANS_GAME_CONTRACT_ADDRESS, cachedJansGameABI, signer);
-
+        
         console.log("Wallet.js: Wallet connected successfully on the correct network.");
         return { signer, provider: browserProvider, gameContractWithSigner, userAddress };
 
     } catch (e) {
-        console.error("Wallet.js connectWalletAndGetSignerInstances error:", e);
-        throw e; // Re-throw for UI to catch
+        let finalMessage = e.message || 'Wallet connection/setup failed.';
+        if (e.code === 4001 && !finalMessage.toLowerCase().includes("rejected")) {
+            finalMessage = 'Wallet operation rejected by user.';
+        }
+        console.error("Wallet.js connectWalletAndGetSignerInstances error:", finalMessage, e);
+        throw new Error(finalMessage);
     }
 }
-
 
 // --- ABI Loading Functions ---
 export async function getJansGameABI() {
