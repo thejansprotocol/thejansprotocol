@@ -497,65 +497,51 @@ async function fetchAndDisplayOtherIndexStats() {
  */
 async function handleCreateLP() {
     console.log("Attempting to create LP...");
-    showGlobalMessage("Processing LP creation...", "info", 0, GLOBAL_MESSAGE_ID_INDEX);    
+    showGlobalMessage("Processing LP creation...", "info", 0, "global-message-main");
 
     try {
+        const localReadOnlyProvider = getReadOnlyProvider();
         const localReadOnlyContract = getReadOnlyJansGameContract();
-        if (!localReadOnlyContract) throw new Error("Read-only contract instance not available for LP creation.");
+        if (!localReadOnlyContract || !localReadOnlyProvider) {
+            throw new Error("Read-only contract or provider is not available.");
+        }
 
-        const { taraForLPSide_, jansForLPSide_, taraForReward_ } = await localReadOnlyContract.getAccumulatedLpFormingFunds();
-        console.log(`Debug - Accumulated TARA (Wei) from contract variable: ${taraForLPSide_.toString()}`);
-        console.log(`Debug - Accumulated JANS (smallest unit) from contract variable: ${jansForLPSide_.toString()}`);
-        console.log(`Debug - Accumulated TARA Reward (Wei) from contract variable: ${taraForReward_.toString()}`);
+        // Fetch accumulated funds
+        const { taraForLPSide_, jansForLPSide_ } = await localReadOnlyContract.getAccumulatedLpFormingFunds();
 
-        // --- NEW DEBUGGING LOGS: Actual Contract Balances ---
-        const localReadOnlyProvider = getReadOnlyProvider(); // Get provider here for balance checks
-        const actualContractTaraBalance = await localReadOnlyProvider.getBalance(JANS_GAME_CONTRACT_ADDRESS);
+        // --- DEBUGGING LOGS (using the CORRECT full ABI for the token) ---
+        // Ensure cachedJansTokenABI is imported at the top of the file
+        if (!cachedJansTokenABI) {
+            throw new Error("Jans Token ABI is not loaded. Check wallet.js initialization.");
+        }
         const jansTokenContractInstance = new ethersInstance.Contract(JANS_TOKEN_ADDRESS, cachedJansTokenABI, localReadOnlyProvider);
+        
+        const actualContractTaraBalance = await localReadOnlyProvider.getBalance(JANS_GAME_CONTRACT_ADDRESS);
         const actualContractJansBalance = await jansTokenContractInstance.balanceOf(JANS_GAME_CONTRACT_ADDRESS);
         
+        console.log(`Debug - Accumulated TARA (Wei): ${taraForLPSide_.toString()}`);
+        console.log(`Debug - Accumulated JANS (Wei): ${jansForLPSide_.toString()}`);
         console.log(`Debug - ACTUAL Contract TARA Balance: ${actualContractTaraBalance.toString()}`);
         console.log(`Debug - ACTUAL Contract JANS Balance: ${actualContractJansBalance.toString()}`);
+        // --- End of Debugging ---
 
         if (taraForLPSide_ <= 0n || jansForLPSide_ <= 0n) {
-            throw new Error("NoAccumulatedFundsForLP: No accumulated TARA or JANS in the contract to form LP.");
+            throw new Error("No accumulated funds in the contract to form LP.");
         }
-        
-        const SLIPPAGE_PERCENT = 5; 
-        const slippageBps = BigInt(SLIPPAGE_PERCENT * 100); 
-        const HUNDRED_PERCENT_BPS = 10000n;
 
-        console.log(`Debug - Using slippage tolerance: ${SLIPPAGE_PERCENT}% (${slippageBps.toString()} BPS)`);
+        // Slippage calculation (e.g., 5%)
+        const SLIPPAGE_PERCENT = 5; 
+        const slippageBps = BigInt(SLIPPAGE_PERCENT * 100);
+        const HUNDRED_PERCENT_BPS = 10000n;
 
         const amountNativeTaraMinForLP = (taraForLPSide_ * (HUNDRED_PERCENT_BPS - slippageBps)) / HUNDRED_PERCENT_BPS;
         const amountJansMinForLP = (jansForLPSide_ * (HUNDRED_PERCENT_BPS - slippageBps)) / HUNDRED_PERCENT_BPS;
 
-        console.log(`Debug - Calculated _amountNativeTaraMinForLP (Wei): ${amountNativeTaraMinForLP.toString()}`);
-        console.log(`Debug - Calculated _amountJansMinForLP (smallest unit): ${amountJansMinForLP.toString()}`);
-
-        if (amountNativeTaraMinForLP === 0n || amountJansMinForLP === 0n) {
-            let errorMessage = "LPSlippageParamsRequiredIfFormingLP: Calculated minimum amount for LP is zero. ";
-            if (taraForLPSide_ > 0n && amountNativeTaraMinForLP === 0n) {
-                errorMessage += `(TARA accumulated: ${taraForLPSide_.toString()} is too small for ${SLIPPAGE_PERCENT}% slippage). `;
-            }
-            if (jansForLPSide_ > 0n && amountJansMinForLP === 0n) {
-                errorMessage += `(JANS accumulated: ${jansForLPSide_.toString()} is too small for ${SLIPPAGE_PERCENT}% slippage). `;
-            }
-            errorMessage += "Increase accumulated funds or decrease slippage tolerance (not recommended).";
-            throw new Error(errorMessage);
-        }
-
-        if (taraForLPSide_ > actualContractTaraBalance) {
-            console.warn(`WARN: Accumulated TARA (${taraForLPSide_}) > Actual Contract TARA Balance (${actualContractTaraBalance}). This might cause revert if not enough actual TARA.`);
-        }
-        if (jansForLPSide_ > actualContractJansBalance) {
-            console.warn(`WARN: Accumulated JANS (${jansForLPSide_}) > Actual Contract JANS Balance (${actualContractJansBalance}). This might cause revert if not enough actual JANS.`);
-        }
-
-        const { signer, gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
+        // Connect wallet to get the signer
+        const { gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
         console.log(`LP Creation transaction initiated by: ${userAddress}`);
         
-        showGlobalMessage("Sending LP creation transaction... Please confirm in your wallet.", "info", 0, GLOBAL_MESSAGE_ID_INDEX);
+        showGlobalMessage("Sending LP creation transaction... Please confirm in your wallet.", "info", 0, "global-message-main");
 
         const tx = await gameContractWithSigner.formAndDepositLPFromAccumulated(
             amountJansMinForLP,
@@ -563,42 +549,24 @@ async function handleCreateLP() {
             { gasLimit: 1200000 } 
         );
 
-        showGlobalMessage(`Transaction sent: ${shortenAddress(tx.hash)}. Waiting for confirmation...`, "info", 0, GLOBAL_MESSAGE_ID_INDEX);
+        showGlobalMessage(`Transaction sent: ${shortenAddress(tx.hash)}. Waiting for confirmation...`, "info", 0, "global-message-main");
         const receipt = await tx.wait();
 
         if (receipt && receipt.status === 1) {
-            showGlobalMessage("LP successfully created and deposited!", "success", 7000, GLOBAL_MESSAGE_ID_INDEX);
-            fetchAllStatsAndUpdateDisplay(); 
+            showGlobalMessage("LP successfully created!", "success", 7000, "global-message-main");
+            refreshAllPageData(); 
         } else {
-            let revertReason = "unknown";
-            if (receipt && receipt.reason) revertReason = receipt.reason;
-            else if (receipt && receipt.data && typeof receipt.data === 'string' && receipt.data.startsWith('0x')) {
-                console.log("Raw revert data from receipt:", receipt.data); 
-            }
-            throw new Error(`LP Creation transaction failed on-chain. Status: ${receipt ? receipt.status : 'unknown'}. Reason: ${revertReason}`);
+            throw new Error(`LP Creation transaction failed on-chain. Status: ${receipt ? receipt.status : 'unknown'}.`);
         }
     } catch (error) {
         console.error("LP Creation Failed (handleCreateLP):", error);
-        let detailedMessage = error.reason || (error.data && error.data.message) || error.message || "Unknown error during LP Creation.";
-        
-        if (error.code === "ACTION_REJECTED") detailedMessage = "Transaction rejected by user (MetaMask).";
-        else if (error.action === "estimateGas" && error.code === "CALL_EXCEPTION") {
-            detailedMessage = "Transaction would revert during simulation (estimateGas failed). Check contract funds (TARA, JANS), ensure correct token approvals, and review slippage settings. This often indicates a core logic issue within the contract or an impossible transaction condition.";
+        let detailedMessage = error.reason || error.message || "Unknown error during LP Creation.";
+        if (error.code === "ACTION_REJECTED") {
+            detailedMessage = "Transaction rejected by user.";
         }
-        else if (error.action === "sendTransaction" && error.code === "CALL_EXCEPTION") {
-            detailedMessage = "Transaction reverted on-chain. This often means: Insufficient actual contract funds (TARA or JANS), an issue with the underlying DEX router call (e.g., severe slippage, invalid token pair), or a logical revert within the contract itself. Check accumulated funds on contract and try increasing slippage temporarily (e.g., to 10%).";
-        }
-        
-        if (detailedMessage.includes("NoAccumulatedFundsForLP") || detailedMessage.includes("LPSlippageParamsRequiredIfFormingLP")) {
-        } else if (error.data && typeof error.data === 'string' && error.data.startsWith('0x')) {
-            console.log("Raw error.data from catch:", error.data); 
-        }
-        
-        showGlobalMessage(`LP Creation Failed: ${detailedMessage.substring(0,200)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
+        showGlobalMessage(`LP Creation Failed: ${detailedMessage}`, "error", 0, "global-message-main");
     }
-}
-
-/**
+}/**
  * Handles the LP rewards claim transaction.
  */
 async function handleClaimLpRewards() {
