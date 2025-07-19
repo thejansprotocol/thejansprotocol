@@ -4,8 +4,8 @@
 // IMPORTANT: Ensure wallet.js exports ALL necessary constants and functions used here.
 // Specifically:
 // - initializeEthersCore, getReadOnlyProvider, getReadOnlyJansGameContract, connectWalletAndGetSignerInstances, ethersInstance
-// - JANS_GAME_CONTRACT_ADDRESS, TARGET_CHAIN_ID, TARGET_NETWORK_NAME, TARAXA_RPC_URL, DEX_ROUTER_ADDRESS, TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS
-// - NATIVE_TARA_DECIMALS, JANS_DECIMALS, LP_TOKEN_DECIMALS, DEFAULT_SLIPPAGE_BPS_LP
+// - JANS_GAME_CONTRACT_ADDRESS, TARGET_CHAIN_ID, TARGET_NETWORK_NAME, DEX_ROUTER_ADDRESS, TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS
+// - NATIVE_TARA_DECIMALS, JANS_DECIMALS, LP_TOKEN_DECIMALS
 // - shortenAddress, showGlobalMessage, clearGlobalMessage, formatPriceWithZeroCount
 
 import {
@@ -18,14 +18,13 @@ import {
     JANS_GAME_CONTRACT_ADDRESS,
     TARGET_CHAIN_ID,
     TARGET_NETWORK_NAME,
-    TARAXA_RPC_URL,
+    // Note: TARAXA_RPC_URL is usually used internally by getReadOnlyProvider and not directly here.
     DEX_ROUTER_ADDRESS,
     TARA_WETH_ADDRESS,
     JANS_TOKEN_ADDRESS,
     NATIVE_TARA_DECIMALS,
     JANS_DECIMALS,
     LP_TOKEN_DECIMALS,
-    // DEFAULT_SLIPPAGE_BPS_LP, // Assuming this is used, but not explicitly used in handleCreateLP logic below
     
     shortenAddress,
     showGlobalMessage, 
@@ -36,7 +35,7 @@ import {
 // --- Constants specific to this page ---
 const COINGECKO_TARA_PRICE_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=taraxa&vs_currencies=usd';
 const MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY = ["function totalSupply() view returns (uint256)"];
-const DEADLINE_MINUTES_LP = 20; // For Uniswap/PancakeSwap interactions
+// const DEADLINE_MINUTES_LP = 20; // This constant is not explicitly used in handleCreateLP here, but if used elsewhere, keep it.
 
 const LP_PAIR_ABI = [
     "function getReserves() view returns (uint112 _reserve0, uint112 _reserve1, uint32 _blockTimestampLast)",
@@ -50,12 +49,16 @@ const GLOBAL_MESSAGE_ID_INDEX = "global-error-display"; // Or your chosen ID
 
 // --- Module State (managed by this script) ---
 let isIndexAppInitialized = false; // Flag to indicate if the app's logic is ready
-let currentTaraPriceUSD = null; // Price of 1 TARA in USD
-let currentJansPerTaraRate = null; // How many JANS for 1 TARA
-let gameLpTokenAddress = null; // Address of the JANS/TARA LP token
+let currentTaraPriceUSD = null; // Price of 1 TARA in USD (fetched from CoinGecko)
+let currentJansPerTaraRate = null; // How many JANS for 1 TARA (fetched from DEX)
+let gameLpTokenAddress = null; // Address of the JANS/TARA LP token (fetched from contract)
 
 
 // --- Initialization Functions ---
+
+/**
+ * Initializes the main logic for the index page, setting up contract interactions and UI updates.
+ */
 async function initializeIndexPageLogic() {
     if (isIndexAppInitialized) {
         console.log("Index page logic already initialized.");
@@ -82,10 +85,9 @@ async function initializeIndexPageLogic() {
         } catch (e) {
             console.error("Failed to fetch GAME_LP_TOKEN address from contract:", e);
             showGlobalMessage("Error: Could not get LP token address from game contract.", "error", 0, GLOBAL_MESSAGE_ID_INDEX);
-            // Don't throw, just log error, other parts might still work.
         }
 
-        setupEventListeners(); // Set up button click handlers
+        setupEventListeners(); // Set up button click handlers once
         await fetchAllStatsAndUpdateDisplay(); // Initial fetch and display of all stats
         setInterval(fetchAllStatsAndUpdateDisplay, 60000); // Refresh stats every 60 seconds
 
@@ -107,12 +109,9 @@ async function initializeIndexPageLogic() {
  * @returns {Promise<number|null>} The TARA price in USD, or null if an error occurs.
  */
 async function fetchTaraUsdPriceFromCoinGecko() {
-    // ethersInstance is the Ethers.js library itself, not a contract or provider.
-    // It's used here for its utility functions like parseUnits if needed, but not for direct RPC calls.
-    // The fetch API is used directly.
     if (!ethersInstance) { console.warn("Ethers instance not ready for CoinGecko fetch."); return null; }
     try {
-        const response = await fetch(COINGECKO_TARA_PRICE_URL, { signal: AbortSignal.timeout(10000) }); // 10s timeout
+        const response = await fetch(COINGECKO_TARA_PRICE_URL, { signal: AbortSignal.timeout(10000) });
         if (!response.ok) { 
             console.error(`CoinGecko API Error: ${response.status} - ${response.statusText}`); 
             return null; 
@@ -137,20 +136,20 @@ async function fetchTaraUsdPriceFromCoinGecko() {
  */
 async function getJansPerTaraFromDEX() { 
     const provider = getReadOnlyProvider();
-    if (!provider || !DEX_ROUTER_ADDRESS || !TARA_WETH_ADDRESS || !JANS_TOKEN_ADDRESS || !ethersInstance || !NATIVE_TARA_DECIMALS || !JANS_DECIMALS) {
+    if (!provider || !DEX_ROUTER_ADDRESS || !TARA_WETH_ADDRESS || !JANS_TOKEN_ADDRESS || !ethersInstance || NATIVE_TARA_DECIMALS === undefined || JANS_DECIMALS === undefined) {
         console.error("DEBUG: Missing dependencies for getJansPerTaraFromDEX. Ensure wallet.js constants are imported and Ethers core initialized."); 
         return null;
     }
     try {
         const routerAbi = ["function getAmountsOut(uint amountIn, address[] path) view returns (uint[] amounts)"];
         const routerContract = new ethersInstance.Contract(DEX_ROUTER_ADDRESS, routerAbi, provider);
-        const oneTaraWei = ethersInstance.parseUnits("1", NATIVE_TARA_DECIMALS); // 1 TARA in its smallest unit
-        const path = [TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS]; // Path to swap TARA (wrapped) for JANS
+        const oneTaraWei = ethersInstance.parseUnits("1", NATIVE_TARA_DECIMALS); 
+        const path = [TARA_WETH_ADDRESS, JANS_TOKEN_ADDRESS]; 
         const amountsOut = await routerContract.getAmountsOut(oneTaraWei, path);
         if (amountsOut && amountsOut.length >= 2) {
-            const jansForOneTaraWei = amountsOut[amountsOut.length - 1]; // The last amount is the target token amount
-            if (jansForOneTaraWei >= 0n) { // Check if it's a valid non-negative BigInt
-                return parseFloat(ethersInstance.formatUnits(jansForOneTaraWei, JANS_DECIMALS)); // Convert to readable float
+            const jansForOneTaraWei = amountsOut[amountsOut.length - 1]; 
+            if (jansForOneTaraWei >= 0n) { 
+                return parseFloat(ethersInstance.formatUnits(jansForOneTaraWei, JANS_DECIMALS)); 
             }
         }
     } catch (error) { 
@@ -165,13 +164,19 @@ async function getJansPerTaraFromDEX() {
  */
 async function getJansTotalSupply() { 
     const provider = getReadOnlyProvider();
-    // Use the full ABI for JANS Token if available, otherwise fallback to minimal
-    let currentJansTokenAbi = getJansTokenABI(); 
+    let currentJansTokenAbi = null;
+    try {
+        // Attempt to get the full JANS ABI from wallet.js, or use minimal.
+        currentJansTokenAbi = getJansTokenABI(); 
+    } catch (e) {
+        console.warn("Failed to get full JANS ABI from wallet.js:", e.message);
+    }
+    
     if (!currentJansTokenAbi || currentJansTokenAbi.length <= MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY.length) {
         currentJansTokenAbi = MINIMAL_ERC20_ABI_FOR_TOTAL_SUPPLY; 
     }
 
-    if (!provider || !JANS_TOKEN_ADDRESS || !currentJansTokenAbi || !JANS_DECIMALS || !ethersInstance) {
+    if (!provider || !JANS_TOKEN_ADDRESS || !currentJansTokenAbi || JANS_DECIMALS === undefined || !ethersInstance) {
         console.error("DEBUG: Missing dependencies for getJansTotalSupply.");
         return { raw: 0n, formatted: "N/A" };
     }
@@ -194,8 +199,8 @@ async function getLpTokenPriceUsd(lpTokenAddr) {
     const provider = getReadOnlyProvider();
     const lpDecimals = LP_TOKEN_DECIMALS; // Use imported constant
 
-    if (!lpTokenAddr || lpTokenAddr === ethersInstance.ZeroAddress || !provider || !ethersInstance || currentTaraPriceUSD === null || currentJansPerTaraRate === null || currentTaraPriceUSD <= 0) {
-        console.warn("LP Token Price: Missing critical data or TARA price is zero.", {lpTokenAddr, hasProvider: !!provider, currentTaraPriceUSD, currentJansPerTaraRate});
+    if (!lpTokenAddr || lpTokenAddr === ethersInstance.ZeroAddress || !provider || !ethersInstance || currentTaraPriceUSD === null || currentJansPerTaraRate === null || currentTaraPriceUSD <= 0 || JANS_TOKEN_ADDRESS === undefined || NATIVE_TARA_DECIMALS === undefined || JANS_DECIMALS === undefined) {
+        console.warn("LP Token Price: Missing critical data for calculation. ", {lpTokenAddr, hasProvider: !!provider, currentTaraPriceUSD, currentJansPerTaraRate});
         return null;
     }
 
@@ -215,7 +220,7 @@ async function getLpTokenPriceUsd(lpTokenAddr) {
             jansPriceInUsd = currentTaraPriceUSD / currentJansPerTaraRate;
         } else {
             console.warn("LP Token Price: Cannot determine JANS USD price for reserves calculation (JANS/TARA rate or TARA USD price is zero)."); 
-            return 0; // Return 0 if JANS price in USD cannot be determined
+            return 0; 
         }
 
         let token0ValueUsd = 0; 
@@ -510,13 +515,8 @@ async function handleCreateLP() {
         } else {
             // Transaction failed on-chain (status 0). Try to provide more context.
             let revertReason = "unknown";
-            // In Ethers v6, `receipt.revertReason` might contain the error string if it was a custom error or string.
-            // However, if the contract's revert doesn't include a string (like `require(cond)` instead of `require(cond, "message")`),
-            // or if it's an internal error from the DEX router, `reason` might still be null.
             if (receipt && receipt.reason) revertReason = receipt.reason;
             else if (receipt && receipt.data && typeof receipt.data === 'string' && receipt.data.startsWith('0x')) {
-                // For custom errors (like JansGame__AddLiquidityFailed), the data might contain the error selector.
-                // You'd need a decoder for custom errors. For now, just log raw data.
                 console.log("Raw revert data:", receipt.data); 
             }
             throw new Error(`LP Creation transaction failed on-chain. Status: ${receipt ? receipt.status : 'unknown'}. Reason: ${revertReason}`);
@@ -525,7 +525,6 @@ async function handleCreateLP() {
         console.error("LP Creation Failed (handleCreateLP):", error);
         let detailedMessage = error.reason || (error.data && error.data.message) || error.message || "Unknown error during LP Creation.";
         
-        // Enhance user-facing messages based on common Ethers.js error codes or custom errors.
         if (error.code === "ACTION_REJECTED") detailedMessage = "Transaction rejected by user (MetaMask).";
         else if (error.action === "estimateGas" && error.code === "CALL_EXCEPTION") {
             detailedMessage = "Transaction would revert during simulation (estimateGas failed). Check contract funds (TARA, JANS), ensure correct token approvals, and review slippage settings. This often indicates a core logic issue within the contract or an impossible transaction condition.";
@@ -533,13 +532,11 @@ async function handleCreateLP() {
         else if (error.action === "sendTransaction" && error.code === "CALL_EXCEPTION") {
             detailedMessage = "Transaction reverted on-chain. This often means: Insufficient actual contract funds (TARA or JANS), an issue with the underlying DEX router call (e.g., severe slippage, invalid token pair), or a logical revert within the contract itself. Check accumulated funds on contract.";
         }
-        // Specific errors from our frontend-side checks
         if (detailedMessage.includes("NoAccumulatedFundsForLP") || detailedMessage.includes("LPSlippageParamsRequiredIfFormingLP")) {
             // Use the more descriptive error message generated by our custom throws.
         } else if (error.data && typeof error.data === 'string' && error.data.startsWith('0x')) {
             // Attempt to decode custom Solidity errors if `error.reason` is not descriptive.
             // Example for `JansGame__NoAccumulatedFundsForLP()`: You would need to know its selector (first 4 bytes of hash)
-            // if (error.data.startsWith('0x...')) detailedMessage += ' (Contract-specific error code)';
         }
         
         showGlobalMessage(`LP Creation Failed: ${detailedMessage.substring(0,200)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
@@ -612,7 +609,6 @@ async function handleClaimLpRewards() {
             statusDiv.textContent = `Claimed! Tx: ${shortenAddress(receipt.transactionHash || tx.hash, 10)}`;
             statusDiv.style.color = "#2ecc71"; // Green
         } else {
-            // Transaction failed on-chain (status 0).
             throw new Error(`LP Reward Claim Tx failed. Period: ${currentDistroId.toString()}. Hash: ${receipt ? receipt.transactionHash : tx.hash}. Status: ${receipt ? receipt.status : 'unknown'}`);
         }
 
@@ -675,12 +671,14 @@ async function updateClaimLpButtonStatus() {
             const provider = getReadOnlyProvider();
             if (provider) {
                 try {
+                    // provider.listAccounts() requires MetaMask to be connected to the site.
+                    // It will usually trigger a prompt if not already connected.
                     const accounts = await provider.listAccounts(); 
                     if (accounts && accounts.length > 0) {
                         playerAddress = accounts[0].address; 
                     }
                 } catch (e) {
-                    console.warn("Could not list accounts from read-only provider for claim button status:", e.message);
+                    console.warn("Could not list accounts from read-only provider for claim button status (likely not connected yet):", e.message);
                 }
             }
         }
@@ -765,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateDisplayOnErrorState("Ethers Init Failed");
                 });
         } else {
-            console.warn("Index page: Ethers.js not found on window. Waiting for 'ethersReady' event or retrying...");
+            console.warn("Index page: Ethers.js not found on window. Waiting for 'ethersReady' or retrying...");
             showGlobalMessage("Waiting for blockchain library...", "info", 0, GLOBAL_MESSAGE_ID_INDEX);
             
             // Set a timeout as a fallback in case 'ethersReady' event never fires
