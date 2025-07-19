@@ -511,7 +511,7 @@ async function handleCreateLP() {
             throw new Error("NoAccumulatedFundsForLP: No accumulated TARA or JANS in the contract to form LP.");
         }
 
-        const SLIPPAGE_PERCENT = 5; 
+        const SLIPPAGE_PERCENT = 20; 
         const slippageBps = BigInt(SLIPPAGE_PERCENT * 100); 
         const HUNDRED_PERCENT_BPS = 10000n;
 
