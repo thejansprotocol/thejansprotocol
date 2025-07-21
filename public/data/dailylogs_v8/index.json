@@ -38,5 +38,13 @@
     "roundLogged": "14",
     "isAborted": false,
     "isEvaluated": true
+  },
+  "15": {
+    "date": "2025-07-21",
+    "file": "DATA_ROUND_15.txt",
+    "timestamp": "2025-07-21T23:18:41.800Z",
+    "roundLogged": "15",
+    "isAborted": true,
+    "isEvaluated": false
   }
 }
