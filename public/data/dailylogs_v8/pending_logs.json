@@ -1,13 +1,28 @@
 [
   {
+<<<<<<< Updated upstream
     "name": "STIVUN",
     "price": "0.00000654839259825881",
     "price_change_1h": "0",
+=======
+    "name": "BTR",
+    "price": "885.895031195241",
+    "price_change_1h": "0",
+    "price_change_6h": "-10.08",
+    "price_change_24h": "-0.89",
+    "fdv": "$88,589.50"
+  },
+  {
+    "name": "STIVUN",
+    "price": "0.00000654839259825881",
+    "price_change_1h": "0",
+>>>>>>> Stashed changes
     "price_change_6h": "874.33",
     "price_change_24h": "874.33",
     "fdv": "$6,548.39"
   },
   {
+<<<<<<< Updated upstream
     "name": "FOMOG",
     "price": "2.03401899646436",
     "price_change_1h": "0",
@@ -38,10 +53,19 @@
     "price_change_6h": "0",
     "price_change_24h": "-0.55",
     "fdv": "$8,834.66"
+=======
+    "name": "TSWAP",
+    "price": "0.00161649687539492",
+    "price_change_1h": "0.98",
+    "price_change_6h": "6.07",
+    "price_change_24h": "6.07",
+    "fdv": "$1,616,496.88"
+>>>>>>> Stashed changes
   },
   {
     "name": "PKEY",
     "price": "0.00016425395886849",
+<<<<<<< Updated upstream
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
@@ -66,6 +90,8 @@
   {
     "name": "TGLD",
     "price": "121.017255149129",
+=======
+>>>>>>> Stashed changes
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
@@ -78,5 +104,48 @@
     "price_change_6h": "0",
     "price_change_24h": "0",
     "fdv": "$14,989.18"
+<<<<<<< Updated upstream
+=======
+  },
+  {
+    "name": "MST",
+    "price": "0.109923373990561",
+    "price_change_1h": "0",
+    "price_change_6h": "0.51",
+    "price_change_24h": "4.98",
+    "fdv": "$97,391.90"
+  },
+  {
+    "name": "TGLD",
+    "price": "121.017255149129",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$6,066.03"
+  },
+  {
+    "name": "CHDPU",
+    "price": "0.000101051910381464",
+    "price_change_1h": "0",
+    "price_change_6h": "17.63",
+    "price_change_24h": "26.42",
+    "fdv": "$101,041.81"
+  },
+  {
+    "name": "ETH",
+    "price": "2354.89254426554",
+    "price_change_1h": "0",
+    "price_change_6h": "-3.85",
+    "price_change_24h": "-3.85",
+    "fdv": "$10,445.50"
+  },
+  {
+    "name": "GRUMPY",
+    "price": "0.000000139166102884836",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "7.18",
+    "fdv": "$69,583.05"
+>>>>>>> Stashed changes
   }
 ]
