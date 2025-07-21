@@ -14,5 +14,13 @@
     "roundLogged": "5",
     "isAborted": false,
     "isEvaluated": true
+  },
+  "6": {
+    "date": "2025-07-21",
+    "file": "round_6_2025-07-21T19-22-11-534Z.log.txt",
+    "timestamp": "2025-07-21T19:22:11.534Z",
+    "roundLogged": "6",
+    "isAborted": false,
+    "isEvaluated": true
   }
 }
