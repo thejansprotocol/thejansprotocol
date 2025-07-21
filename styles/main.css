@@ -182,12 +182,17 @@ header {
 
 #daily-log-list { list-style-type: none; padding: 0; margin: 0; }
 #daily-log-list a {
-    color: #282828; text-decoration: none; display: block;
-    padding: 5px 2px; font-size: 0.9em; border-radius: 3px;
+    color: inherit; /* ✅ This makes the link use the random color from its parent */
+    text-decoration: none;
+    display: block;
+    padding: 5px 2px;
+    font-size: 0.9em;
+    border-radius: 3px;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
-#daily-log-list a:hover { color: #ec502d; }
-
+#daily-log-list a:hover {
+    color: #ec502d; /* You can keep the hover color or make it inherit too */
+}
 #transaction-list {
     list-style-type: none; padding: 0; margin: 0;
 }
