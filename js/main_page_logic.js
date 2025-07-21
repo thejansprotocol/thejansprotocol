@@ -35,7 +35,7 @@ import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 
 // --- Configuration ---
 const SNAPSHOT_FILE_PATH = 'public/data/snapshots/latest_snapshot.json';
-const DAILY_LOG_INDEX_FILE = 'public/data/dailylogs_v8';
+const DAILY_LOG_INDEX_FILE = 'public/data/dailylogs_v8/index.json'; // ✅ CORREGIDO
 const TICKET_HISTORY_FILE_PATH = './frontend/data/block_index/ticket_history.json';
 
 const POOLS_TO_SELECT = 10;
@@ -456,33 +456,56 @@ async function fetchTransactionsFromRPC() {
 }
 
 // --- Daily Log List Display ---
-async function displayDailyLogLinks() { 
+async function displayDailyLogLinks() {
+    // Asumo que tienes una constante como esta definida en tu script
+    const DAILY_LOG_INDEX_FILE = 'data/dailylogs_v8/index.json';
+    const DOM_IDS = { dailyLogLinksContainer: 'daily-log-links' }; // Asegúrate de que el ID sea correcto
+
     const logLinksContainer = document.getElementById(DOM_IDS.dailyLogLinksContainer);
-    if (!logLinksContainer) { console.warn("Daily log links container not found."); return; }
+    if (!logLinksContainer) {
+        console.warn("Daily log links container not found.");
+        return;
+    }
     logLinksContainer.innerHTML = '<li>Loading log list...</li>';
 
     try {
+        // Se añade un parámetro 'v' para evitar problemas de caché al cargar el index.json
         const logIndex = await fetchJsonFile(DAILY_LOG_INDEX_FILE + `?v=${Date.now()}`);
-        if (logIndex && Array.isArray(logIndex) && logIndex.length > 0) {
+
+        // --- CAMBIO PRINCIPAL: Se verifica si es un objeto con claves ---
+        if (logIndex && typeof logIndex === 'object' && Object.keys(logIndex).length > 0) {
             logLinksContainer.innerHTML = '';
-            logIndex.sort((a,b) => b.date.localeCompare(a.date));
-            logIndex.forEach(logEntry => {
+
+            // Convertimos el objeto en un array para poder ordenarlo y recorrerlo
+            const logEntries = Object.values(logIndex);
+
+            // Ordenamos por timestamp para que el más reciente siempre esté primero
+            logEntries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            logEntries.forEach(logEntry => {
                 const li = document.createElement('li');
                 const link = document.createElement('a');
                 link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
-                let textContent = `Log: ${logEntry.date}`;
-                if(logEntry.roundStartedId || logEntry.roundClosedId) {
-                    textContent += ` (R${logEntry.roundStartedId || '_'}S / R${logEntry.roundClosedId || '_'}E)`;
-                }
+
+                // --- CAMBIO: Texto del enlace más informativo ---
+                let status = logEntry.isEvaluated ? 'Evaluated' : (logEntry.isAborted ? 'Aborted' : 'Pending');
+                let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date}) - Status: ${status}`;
+
                 link.textContent = textContent;
                 link.target = "_blank";
-                link.style.color = getRandomHexColor(); 
+                // Opcional: estilo para indicar el estado
+                if (logEntry.isAborted) {
+                    link.style.color = 'orange';
+                } else if (!logEntry.isEvaluated) {
+                    link.style.color = 'gray';
+                }
+
                 li.appendChild(link);
                 li.style.marginBottom = "3px";
                 logLinksContainer.appendChild(li);
             });
-        } else { 
-            logLinksContainer.innerHTML = '<li>No daily logs found.</li>'; 
+        } else {
+            logLinksContainer.innerHTML = '<li>No daily logs found.</li>';
         }
     } catch (error) {
         console.error("Error loading daily log links:", error);
@@ -490,6 +513,14 @@ async function displayDailyLogLinks() {
     }
 }
 
+// Suponiendo que tienes una función similar a esta para hacer el fetch
+async function fetchJsonFile(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+}
 // --- UI Timers ---
 function initializeUiTimers() {
     const updateAllTimes = () => {
