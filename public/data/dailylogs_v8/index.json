@@ -16,6 +16,7 @@
     "isEvaluated": true
   },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "6": {
     "date": "2025-07-21",
     "file": "round_6_2025-07-21T19-22-11-534Z.log.txt",
@@ -27,6 +28,13 @@
     "file": "round_7_2025-07-21T19-30-08-931Z.log.txt",
     "timestamp": "2025-07-21T19:30:08.931Z",
     "roundLogged": "7",
+>>>>>>> Stashed changes
+=======
+  "8": {
+    "date": "2025-07-21",
+    "file": "round_8_2025-07-21T19-38-07-462Z.log.txt",
+    "timestamp": "2025-07-21T19:38:07.462Z",
+    "roundLogged": "8",
 >>>>>>> Stashed changes
     "isAborted": false,
     "isEvaluated": true

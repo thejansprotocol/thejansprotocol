@@ -1,6 +1,7 @@
 [
   {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     "name": "STIVUN",
     "price": "0.00000654839259825881",
     "price_change_1h": "0",
@@ -140,12 +141,89 @@
     "fdv": "$10,445.50"
   },
   {
+=======
+    "name": "CHDPU",
+    "price": "0.000101051910381464",
+    "price_change_1h": "0",
+    "price_change_6h": "17.63",
+    "price_change_24h": "26.42",
+    "fdv": "$101,041.81"
+  },
+  {
+    "name": "TGLD",
+    "price": "121.017255149129",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$6,066.03"
+  },
+  {
+    "name": "BTR",
+    "price": "885.895031195241",
+    "price_change_1h": "0",
+    "price_change_6h": "-10.08",
+    "price_change_24h": "-0.89",
+    "fdv": "$88,589.50"
+  },
+  {
+    "name": "ETH",
+    "price": "1513.95207489002",
+    "price_change_1h": "-13.05",
+    "price_change_6h": "-38.11",
+    "price_change_24h": "-38.19",
+    "fdv": "$6,715.37"
+  },
+  {
+    "name": "LARA",
+    "price": "0.000605357817081581",
+    "price_change_1h": "4.18",
+    "price_change_6h": "1.3",
+    "price_change_24h": "9.24",
+    "fdv": "$605,357.82"
+  },
+  {
+    "name": "PKEY",
+    "price": "0.00016425395886849",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$5,256.13"
+  },
+  {
+    "name": "TSWAP",
+    "price": "0.00161649687539492",
+    "price_change_1h": "0.98",
+    "price_change_6h": "6.07",
+    "price_change_24h": "6.07",
+    "fdv": "$1,616,496.88"
+  },
+  {
+    "name": "MST",
+    "price": "0.109923373990561",
+    "price_change_1h": "0",
+    "price_change_6h": "0.51",
+    "price_change_24h": "4.98",
+    "fdv": "$97,391.90"
+  },
+  {
+    "name": "FARTAX",
+    "price": "0.000000181356762329258",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$18,135.68"
+  },
+  {
+>>>>>>> Stashed changes
     "name": "GRUMPY",
     "price": "0.000000139166102884836",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "7.18",
     "fdv": "$69,583.05"
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   }
 ]
