@@ -477,18 +477,17 @@ async function displayDailyLogLinks() {
                 const link = document.createElement('a');
                 link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
 
-                let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date});
+                // ✅ CAMBIO: Usamos solo el nombre del archivo para el texto.
+                let textContent = logEntry.file;
 
                 link.textContent = textContent;
                 link.target = "_blank";
                 
-                // Aplicamos los colores al <li>
                 if (logEntry.isAborted) {
                     li.style.color = 'orange';
                 } else if (!logEntry.isEvaluated) {
                     li.style.color = 'gray';
                 } else {
-                    // ✅ CAMBIO: Asignamos un color aleatorio a los logs evaluados
                     li.style.color = getRandomHexColor();
                 }
 
@@ -504,7 +503,6 @@ async function displayDailyLogLinks() {
         logLinksContainer.innerHTML = '<li style="color:red;">Error loading log list.</li>';
     }
 }
-
 // --- UI Timers ---
 function initializeUiTimers() {
     const updateAllTimes = () => {
