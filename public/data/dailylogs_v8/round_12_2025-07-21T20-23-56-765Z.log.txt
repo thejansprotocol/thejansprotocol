@@ -1,0 +1,18 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 12
+[Status]
+  Aborted: false
+  Results Evaluated: true
+[Timing]
+  Start Time (Local): Mon, 21 Jul 2025 20:17:11 GMT
+  End Time (Local): Mon, 21 Jul 2025 20:24:20 GMT
+[Prices & Outcomes]
+  | #  | Token Address   | Start Price                 | End Price                   | Outcome |
+  |----|-----------------|-----------------------------|-----------------------------|---------|
+  (Could not generate table: event data or price data missing)
+[Winners & Distribution]
+  Highest Score Achieved: 0
+  Total Prize JANS Distributed: 0.0 JANS
+  Evaluation Transaction Hash: 0xa6c20ada3966f5ae74c24c583c1037966fb57b6a9125bf442e45f2d549812561
+===================================================

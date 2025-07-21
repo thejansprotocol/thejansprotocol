@@ -1,5 +1,6 @@
 {
   "date": "2025-07-21",
+<<<<<<< Updated upstream
   "processedAtUTC": "2025-07-21T20:16:51.833Z",
   "jobDurationSeconds": "32.59",
   "finalChainRoundIdFromScriptEnd": "12",
@@ -26,6 +27,34 @@
       "139166102884"
     ],
     "startChecksum": "0x773bc1bf39a07ee765efcbac6787ae16501f474724819d471947e3eaf6aae624"
+=======
+  "processedAtUTC": "2025-07-21T20:23:56.765Z",
+  "jobDurationSeconds": "57.10",
+  "finalChainRoundIdFromScriptEnd": "13",
+  "roundClosedInfo": null,
+  "roundStartedInfo": {
+    "roundId": "13",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0xd5ead400eb0e34d3c90d3e6094290fa07bf56ebeb2f8740d6d6417a34200fd9a",
+    "blockNumberOfStart": "19920301",
+    "isFirstRound": false,
+    "selectedPoolsActualCount": 10,
+    "paddedTo": 10,
+    "startTimeOnChain": "1753129487",
+    "startPrices": [
+      "6548392598258",
+      "14989180801608000",
+      "109923373990561000",
+      "139166102884",
+      "181356762329",
+      "121017255149129000000",
+      "12804004",
+      "584000900187226",
+      "2034018996464360000",
+      "21212203859752700"
+    ],
+    "startChecksum": "0x8802eff9c7075bb4927686a8b766b3d9892126fa038b31c0b9090637f9ef1df9"
+>>>>>>> Stashed changes
   },
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
