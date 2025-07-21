@@ -34,8 +34,8 @@ import {
 import { openTicketPurchaseModal } from './ticket_modal_logic.js';
 
 // --- Configuration ---
-const SNAPSHOT_FILE_PATH = './public/data/snapshots/latest_snapshot.json';
-const DAILY_LOG_INDEX_FILE = './public/data/dailylogs_v8/index.json';
+const SNAPSHOT_FILE_PATH = 'public/data/snapshots/latest_snapshot.json';
+const DAILY_LOG_INDEX_FILE = 'public/data/dailylogs_v8';
 const TICKET_HISTORY_FILE_PATH = './frontend/data/block_index/ticket_history.json';
 
 const POOLS_TO_SELECT = 10;
