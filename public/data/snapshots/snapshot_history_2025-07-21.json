@@ -1,10 +1,44 @@
 {
   "date": "2025-07-21",
+<<<<<<< Updated upstream
   "processedAtUTC": "2025-07-21T03:42:49.750Z",
   "jobDurationSeconds": "5.60",
   "finalChainRoundIdFromScriptEnd": "1",
   "roundClosedInfo": null,
   "roundStartedInfo": null,
+=======
+  "processedAtUTC": "2025-07-21T04:08:29.659Z",
+  "jobDurationSeconds": "36.01",
+  "finalChainRoundIdFromScriptEnd": "2",
+  "roundClosedInfo": {
+    "roundId": "1",
+    "status": "AbortedOnChain",
+    "onChainStartTime": "1753068463"
+  },
+  "roundStartedInfo": {
+    "roundId": "2",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0x0d4b86d23272abcb3534521c0da6837e3fe4f5fee7f43a0a789c7c730268eae3",
+    "blockNumberOfStart": "19904209",
+    "isFirstRound": false,
+    "selectedPoolsActualCount": 10,
+    "paddedTo": 10,
+    "startTimeOnChain": "1753070936",
+    "startPrices": [
+      "2103099489663990000",
+      "12874374",
+      "72241812299940",
+      "888278202136304000000",
+      "121017255149129000000",
+      "1227268751013270",
+      "132384401914",
+      "18998861472243300",
+      "14989180801608000",
+      "102692478960977000"
+    ],
+    "startChecksum": "0x1b27db96c91fc6fd1ca6d27ce332b421c51af221a8f76de8662ce1a9974377be"
+  },
+>>>>>>> Stashed changes
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
 }
