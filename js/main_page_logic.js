@@ -457,10 +457,6 @@ async function fetchTransactionsFromRPC() {
 
 // --- Daily Log List Display ---
 async function displayDailyLogLinks() {
-    // Asumo que tienes una constante como esta definida en tu script
-    const DAILY_LOG_INDEX_FILE = 'data/dailylogs_v8/index.json';
-    const DOM_IDS = { dailyLogLinksContainer: 'daily-log-links' }; // Asegúrate de que el ID sea correcto
-
     const logLinksContainer = document.getElementById(DOM_IDS.dailyLogLinksContainer);
     if (!logLinksContainer) {
         console.warn("Daily log links container not found.");
