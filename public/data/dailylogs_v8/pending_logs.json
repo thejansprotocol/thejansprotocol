@@ -1,6 +1,5 @@
 [
   {
-<<<<<<< Updated upstream
     "name": "FARTAX",
     "price": "0.000000181356762329258",
     "price_change_1h": "0",
@@ -23,46 +22,6 @@
     "price_change_6h": "3.45",
     "price_change_24h": "3.45",
     "fdv": "$573,289.96"
-=======
-    "name": "FOMOG",
-    "price": "2.10309948966399",
-    "price_change_1h": "0",
-    "price_change_6h": "0.73",
-    "price_change_24h": "6.68",
-    "fdv": "$25,237.19"
-  },
-  {
-    "name": "JANS",
-    "price": "0.000000000012874374702011",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$8,883.22"
-  },
-  {
-    "name": "CHDPU",
-    "price": "0.0000722418122999408",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-7.21",
-    "fdv": "$72,234.59"
-  },
-  {
-    "name": "BTR",
-    "price": "888.278202136304",
-    "price_change_1h": "0",
-    "price_change_6h": "-0.62",
-    "price_change_24h": "7.63",
-    "fdv": "$88,827.82"
-  },
-  {
-    "name": "TGLD",
-    "price": "121.017255149129",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "14.01",
-    "fdv": "$6,066.03"
->>>>>>> Stashed changes
   },
   {
     "name": "TSWAP",
@@ -73,7 +32,6 @@
     "fdv": "$1,227,268.75"
   },
   {
-<<<<<<< Updated upstream
     "name": "PKEY",
     "price": "0.00016425395886849",
     "price_change_1h": "0",
@@ -120,37 +78,5 @@
     "price_change_6h": "-0.55",
     "price_change_24h": "4.81",
     "fdv": "$68,044.57"
-=======
-    "name": "GRUMPY",
-    "price": "0.00000013238440191414",
-    "price_change_1h": "0",
-    "price_change_6h": "1.95",
-    "price_change_24h": "20.6",
-    "fdv": "$66,192.20"
-  },
-  {
-    "name": "SMASH",
-    "price": "0.0189988614722433",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$12,349.26"
-  },
-  {
-    "name": "TXTR",
-    "price": "0.014989180801608",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$14,989.18"
-  },
-  {
-    "name": "MST",
-    "price": "0.102692478960977",
-    "price_change_1h": "0.24",
-    "price_change_6h": "-6.21",
-    "price_change_24h": "5.34",
-    "fdv": "$90,985.35"
->>>>>>> Stashed changes
   }
 ]
