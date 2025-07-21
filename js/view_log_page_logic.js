@@ -2,7 +2,7 @@
 // Carga el log del archivo pasado por el parámetro ?logFile=...
 // y aplica colores de fondo random con contraste.
 
-const LOGS_BASE_URL = 'data/dailylogs_v8/'; // Ruta relativa a la carpeta public
+const LOGS_BASE_URL = 'public/data/dailylogs_v8/'; // Ruta relativa a la carpeta public
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 
