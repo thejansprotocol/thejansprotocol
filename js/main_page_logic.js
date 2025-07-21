@@ -477,8 +477,7 @@ async function displayDailyLogLinks() {
                 const link = document.createElement('a');
                 link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
 
-                let status = logEntry.isEvaluated ? 'Evaluated' : (logEntry.isAborted ? 'Aborted' : 'Pending');
-                let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date}) - Status: ${status}`;
+                let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date});
 
                 link.textContent = textContent;
                 link.target = "_blank";
