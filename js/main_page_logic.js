@@ -465,17 +465,11 @@ async function displayDailyLogLinks() {
     logLinksContainer.innerHTML = '<li>Loading log list...</li>';
 
     try {
-        // Se añade un parámetro 'v' para evitar problemas de caché al cargar el index.json
         const logIndex = await fetchJsonFile(DAILY_LOG_INDEX_FILE + `?v=${Date.now()}`);
 
-        // --- CAMBIO PRINCIPAL: Se verifica si es un objeto con claves ---
         if (logIndex && typeof logIndex === 'object' && Object.keys(logIndex).length > 0) {
             logLinksContainer.innerHTML = '';
-
-            // Convertimos el objeto en un array para poder ordenarlo y recorrerlo
             const logEntries = Object.values(logIndex);
-
-            // Ordenamos por timestamp para que el más reciente siempre esté primero
             logEntries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             logEntries.forEach(logEntry => {
@@ -483,17 +477,20 @@ async function displayDailyLogLinks() {
                 const link = document.createElement('a');
                 link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
 
-                // --- CAMBIO: Texto del enlace más informativo ---
                 let status = logEntry.isEvaluated ? 'Evaluated' : (logEntry.isAborted ? 'Aborted' : 'Pending');
                 let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date}) - Status: ${status}`;
 
                 link.textContent = textContent;
                 link.target = "_blank";
-                // Opcional: estilo para indicar el estado
+                
+                // Aplicamos los colores al <li>
                 if (logEntry.isAborted) {
-                    link.style.color = 'orange';
+                    li.style.color = 'orange';
                 } else if (!logEntry.isEvaluated) {
-                    link.style.color = 'gray';
+                    li.style.color = 'gray';
+                } else {
+                    // ✅ CAMBIO: Asignamos un color aleatorio a los logs evaluados
+                    li.style.color = getRandomHexColor();
                 }
 
                 li.appendChild(link);
