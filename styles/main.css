@@ -192,8 +192,7 @@ header {
 }
 #daily-log-list a:hover {
     color: #ec502d; /* You can keep the hover color or make it inherit too */
-}
-#transaction-list {
+}#transaction-list {
     list-style-type: none; padding: 0; margin: 0;
 }
 #transaction-list li { padding: 3px 0; font-size: 0.85em; line-height: 1.3; }
