@@ -1,41 +1,9 @@
 {
-  "3": {
+  "9": {
     "date": "2025-07-21",
-    "file": "round_3_2025-07-21T14-59-31-472Z.log.txt",
-    "timestamp": "2025-07-21T14:59:31.472Z",
-    "roundLogged": "3",
-    "isAborted": false,
-    "isEvaluated": true
-  },
-  "5": {
-    "date": "2025-07-21",
-    "file": "round_5_2025-07-21T18-22-18-682Z.log.txt",
-    "timestamp": "2025-07-21T18:22:18.682Z",
-    "roundLogged": "5",
-    "isAborted": false,
-    "isEvaluated": true
-  },
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "6": {
-    "date": "2025-07-21",
-    "file": "round_6_2025-07-21T19-22-11-534Z.log.txt",
-    "timestamp": "2025-07-21T19:22:11.534Z",
-    "roundLogged": "6",
-=======
-  "7": {
-    "date": "2025-07-21",
-    "file": "round_7_2025-07-21T19-30-08-931Z.log.txt",
-    "timestamp": "2025-07-21T19:30:08.931Z",
-    "roundLogged": "7",
->>>>>>> Stashed changes
-=======
-  "8": {
-    "date": "2025-07-21",
-    "file": "round_8_2025-07-21T19-38-07-462Z.log.txt",
-    "timestamp": "2025-07-21T19:38:07.462Z",
-    "roundLogged": "8",
->>>>>>> Stashed changes
+    "file": "round_9_2025-07-21T19-48-42-329Z.log.txt",
+    "timestamp": "2025-07-21T19:48:42.329Z",
+    "roundLogged": "9",
     "isAborted": false,
     "isEvaluated": true
   }
