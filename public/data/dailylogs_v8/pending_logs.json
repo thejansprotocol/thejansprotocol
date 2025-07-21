@@ -1,43 +1,67 @@
 [
   {
     "name": "TGLD",
-    "price": "101.28800192096",
+    "price": "121.017255149129",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "14.01",
+    "fdv": "$6,066.03"
+  },
+  {
+    "name": "LARA",
+    "price": "0.000466149684694102",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$5,077.09"
-  },
-  {
-    "name": "CHDPU",
-    "price": "0.0000669045265673797",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-1.49",
-    "fdv": "$66,900.51"
-  },
-  {
-    "name": "TSWAP",
-    "price": "0.00123313611333063",
-    "price_change_1h": "-1.7",
-    "price_change_6h": "-1.7",
-    "price_change_24h": "0.84",
-    "fdv": "$1,233,136.11"
-  },
-  {
-    "name": "JANS",
-    "price": "0.0000000000101689443650542",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-11.76",
-    "fdv": "$7,016.49"
+    "fdv": "$466,149.68"
   },
   {
     "name": "MST",
-    "price": "0.0955784004753806",
+    "price": "0.102692478960977",
+    "price_change_1h": "-0.53",
+    "price_change_6h": "-1.93",
+    "price_change_24h": "5.34",
+    "fdv": "$90,985.35"
+  },
+  {
+    "name": "CHDPU",
+    "price": "0.0000722418122999408",
     "price_change_1h": "0",
-    "price_change_6h": "-1.06",
-    "price_change_24h": "4.22",
-    "fdv": "$84,682.28"
+    "price_change_6h": "0",
+    "price_change_24h": "-7.21",
+    "fdv": "$72,234.59"
+  },
+  {
+    "name": "BTR",
+    "price": "888.278202136304",
+    "price_change_1h": "0",
+    "price_change_6h": "-0.62",
+    "price_change_24h": "7.63",
+    "fdv": "$88,827.82"
+  },
+  {
+    "name": "FOMOG",
+    "price": "2.10309948966399",
+    "price_change_1h": "0",
+    "price_change_6h": "3.27",
+    "price_change_24h": "6.68",
+    "fdv": "$25,237.19"
+  },
+  {
+    "name": "GRUMPY",
+    "price": "0.00000013238440191414",
+    "price_change_1h": "0",
+    "price_change_6h": "1.95",
+    "price_change_24h": "20.6",
+    "fdv": "$66,192.20"
+  },
+  {
+    "name": "TSWAP",
+    "price": "0.00122726875101327",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$1,227,268.75"
   },
   {
     "name": "FARTAX",
@@ -48,35 +72,11 @@
     "fdv": "$18,135.68"
   },
   {
-    "name": "LARA",
-    "price": "0.000466872365296913",
-    "price_change_1h": "1.51",
-    "price_change_6h": "1.51",
-    "price_change_24h": "1.51",
-    "fdv": "$466,872.37"
-  },
-  {
-    "name": "BTR",
-    "price": "753.027530682102",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "46.23",
-    "fdv": "$75,302.75"
-  },
-  {
     "name": "TXTR",
-    "price": "0.01896597604",
+    "price": "0.014989180801608",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$18,965.98"
-  },
-  {
-    "name": "SMASH",
-    "price": "0.017120881635047",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$11,128.57"
+    "fdv": "$14,989.18"
   }
 ]
