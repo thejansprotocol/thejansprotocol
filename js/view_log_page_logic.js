@@ -2,7 +2,7 @@
 // Carga el log de la fecha pasada por ?date=YYYY-MM-DD
 // y aplica colores de fondo random con contraste.
 
-const LOGS_BASE_URL = '/thejansprotocol/data/dailylogs_v8/';
+const LOGS_BASE_URL = 'public/data/dailylogs_v8/';
 const LOG_CONTENT_ELEMENT_ID = "log-content";
 const LOG_TITLE_ELEMENT_ID = "log-title";
 
