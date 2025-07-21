@@ -1,8 +1,10 @@
-[
-  {
+{
+  "3": {
     "date": "2025-07-21",
-    "file": "round_1_2025-07-21T13-55-22-176Z.log.txt",
-    "timestamp": "2025-07-21T13:55:22.176Z",
-    "roundLogged": "1"
+    "file": "round_3_2025-07-21T14-59-31-472Z.log.txt",
+    "timestamp": "2025-07-21T14:59:31.472Z",
+    "roundLogged": "3",
+    "isAborted": false,
+    "isEvaluated": true
   }
-]
+}
