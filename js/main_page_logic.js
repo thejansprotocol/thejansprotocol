@@ -477,8 +477,8 @@ async function displayDailyLogLinks() {
                 const link = document.createElement('a');
                 link.href = `view_log_page.html?logFile=${encodeURIComponent(logEntry.file)}`;
 
-                // ✅ CAMBIO: Usamos solo el nombre del archivo para el texto.
-                let textContent = logEntry.file;
+                // ✅ CAMBIO: Texto del enlace con el formato que querías.
+                let textContent = `Round ${logEntry.roundLogged} Log (${logEntry.date})`;
 
                 link.textContent = textContent;
                 link.target = "_blank";
@@ -503,6 +503,7 @@ async function displayDailyLogLinks() {
         logLinksContainer.innerHTML = '<li style="color:red;">Error loading log list.</li>';
     }
 }
+
 // --- UI Timers ---
 function initializeUiTimers() {
     const updateAllTimes = () => {
