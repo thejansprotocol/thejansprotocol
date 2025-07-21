@@ -1,0 +1,32 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 1
+
+[Status]
+  Aborted: N/A
+  Results Evaluated: N/A
+  Start Snapshot Submitted: N/A
+  End Snapshot Submitted: N/A
+  Start Checksum: N/A
+  End Checksum:   N/A
+
+[Timing]
+  Start Time (Unix): N/A
+  Start Time (Local): N/A
+  End Time (Unix): 1753106130
+  End Time (Local): 7/21/2025, 1:55:30 PM UTC
+
+[Prices & Outcomes]
+  | #  | Token Name      | Contract Address  | Start Price                 | End Price                   | Outcome | 24h %      | FDV             |
+  |----|-----------------|-------------------|-----------------------------|-----------------------------|---------|------------|-----------------|
+  (No complete price data for table)
+
+[Winners & Distribution]
+  Highest Score Achieved: 0
+  Total Prize JANS Distributed: 0.0 JANS
+  Evaluation Transaction Hash: 0xdcbe77ffb2ee6a5876498302471bc4381502d8af33512b3f4395a8c2f9b321af
+  Evaluation Block: 19913897
+
+Winning Tickets (Highest Score):
+     No winning tickets found for this score.
+===================================================
