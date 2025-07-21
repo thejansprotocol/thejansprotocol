@@ -102,6 +102,11 @@
   },
   {
     "inputs": [],
+    "name": "JansGame__EndSnapshotNotSubmitted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "JansGame__IncorrectNativeValueSent",
     "type": "error"
   },
@@ -223,6 +228,11 @@
   {
     "inputs": [],
     "name": "JansGame__PriceConfigInvalid",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "JansGame__ResultsAlreadyEvaluated",
     "type": "error"
   },
   {
@@ -1342,6 +1352,19 @@
       }
     ],
     "name": "emergencyWithdrawNative",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_rId",
+        "type": "uint256"
+      }
+    ],
+    "name": "evaluateWinners",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
