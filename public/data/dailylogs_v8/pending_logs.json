@@ -1,5 +1,6 @@
 [
   {
+<<<<<<< Updated upstream
     "name": "FOMOG",
     "price": "2.10309948966399",
     "price_change_1h": "0",
@@ -18,12 +19,25 @@
   {
     "name": "CHDPU",
     "price": "0.0000722418122999408",
+=======
+    "name": "FARTAX / WTARA",
+    "price": "0.0000001490418156",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "-7.21",
-    "fdv": "$72,234.59"
+    "price_change_24h": "0",
+    "fdv": "$14,904.18"
   },
   {
+    "name": "TSWAP / WTARA 1%",
+    "price": "0.00306224936622605",
+>>>>>>> Stashed changes
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0.29",
+    "fdv": "$3,062,249.37"
+  },
+  {
+<<<<<<< Updated upstream
     "name": "BTR",
     "price": "888.278202136304",
     "price_change_1h": "0",
@@ -42,12 +56,17 @@
   {
     "name": "TSWAP",
     "price": "0.00122726875101327",
+=======
+    "name": "TXTR / WTARA 1%",
+    "price": "0.0131662270691231",
+>>>>>>> Stashed changes
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$1,227,268.75"
+    "fdv": "$13,166.23"
   },
   {
+<<<<<<< Updated upstream
     "name": "GRUMPY",
     "price": "0.00000013238440191414",
     "price_change_1h": "0",
@@ -62,13 +81,62 @@
     "price_change_6h": "0",
     "price_change_24h": "0",
     "fdv": "$12,349.26"
+=======
+    "name": "FOMOG / WTARA",
+    "price": "0.758989466433881",
+    "price_change_1h": "0",
+    "price_change_6h": "0.15",
+    "price_change_24h": "0.15",
+    "fdv": "$9,107.87"
   },
   {
-    "name": "TXTR",
-    "price": "0.014989180801608",
+    "name": "CHDPU / WTARA",
+    "price": "0.0000386867940534273",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "-2.64",
+    "fdv": "$38,684.47"
+  },
+  {
+    "name": "SMASH / WTARA",
+    "price": "0.00829665016755177",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
+    "fdv": "$5,392.82"
+>>>>>>> Stashed changes
+  },
+  {
+    "name": "BTR / WTARA",
+    "price": "50.8081387938177",
+    "price_change_1h": "0",
+    "price_change_6h": "-4.14",
+    "price_change_24h": "-27.07",
+    "fdv": "$5,080.81"
+  },
+  {
+    "name": "LARA / WTARA 1%",
+    "price": "0.000364688377106663",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "-8.58",
+    "fdv": "$364,688.38"
+  },
+  {
+    "name": "ETH / WTARA 1%",
+    "price": "2429.85570239137",
+    "price_change_1h": "-0.15",
+    "price_change_6h": "-0.15",
+    "price_change_24h": "1.42",
+    "fdv": "$16,048.12"
+  },
+  {
+    "name": "GRUMPY / WTARA",
+    "price": "0.0000000338783526983306",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+<<<<<<< Updated upstream
     "fdv": "$14,989.18"
   },
   {
@@ -78,5 +146,8 @@
     "price_change_6h": "-6.21",
     "price_change_24h": "5.34",
     "fdv": "$90,985.35"
+=======
+    "fdv": "$16,939.18"
+>>>>>>> Stashed changes
   }
 ]

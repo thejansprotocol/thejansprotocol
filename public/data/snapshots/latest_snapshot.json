@@ -2,6 +2,7 @@
   {
     "rank": 1,
     "is_active_round": true,
+<<<<<<< Updated upstream
     "pool_name": "FOMOG",
     "pool_address": "0x4afcfbf183c743362cee976e5e94a3e5fb729935",
     "base_token_price_usd": "2.10309948966399",
@@ -9,39 +10,73 @@
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0.73",
     "price_change_percentage_24h": "6.68"
+=======
+    "pool_name": "FARTAX / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.0000001490418156",
+    "fdv_usd": "$14,904.18",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "0"
+>>>>>>> Stashed changes
   },
   {
     "rank": 2,
     "is_active_round": true,
+<<<<<<< Updated upstream
     "pool_name": "JANS",
     "pool_address": "0xa52fc8bd9b64cb971cca78b558de8de8615c9a28",
     "base_token_price_usd": "0.000000000012874374702011",
     "fdv_usd": "$8,883.22",
+=======
+    "pool_name": "TSWAP / WTARA 1%",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.00306224936622605",
+    "fdv_usd": "$3,062,249.37",
+>>>>>>> Stashed changes
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "0.29"
+  },
+  {
+    "rank": 3,
+    "is_active_round": true,
+<<<<<<< Updated upstream
+    "pool_name": "CHDPU",
+    "pool_address": "0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
+    "base_token_price_usd": "0.0000722418122999408",
+    "fdv_usd": "$72,234.59",
+=======
+    "pool_name": "TXTR / WTARA 1%",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.0131662270691231",
+    "fdv_usd": "$13,166.23",
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0",
     "price_change_percentage_24h": "0"
   },
   {
-    "rank": 3,
+    "rank": 4,
     "is_active_round": true,
-    "pool_name": "CHDPU",
-    "pool_address": "0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
-    "base_token_price_usd": "0.0000722418122999408",
-    "fdv_usd": "$72,234.59",
+    "pool_name": "FOMOG / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.758989466433881",
+    "fdv_usd": "$9,107.87",
+>>>>>>> Stashed changes
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "-7.21"
+    "price_change_percentage_6h": "0.15",
+    "price_change_percentage_24h": "0.15"
   },
   {
     "rank": 4,
     "is_active_round": true,
-    "pool_name": "BTR",
-    "pool_address": "0xf9ba22c56c04040115224c8048c21406fc8ac1a7",
-    "base_token_price_usd": "888.278202136304",
-    "fdv_usd": "$88,827.82",
+    "pool_name": "CHDPU / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.0000386867940534273",
+    "fdv_usd": "$38,684.47",
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "-0.62",
-    "price_change_percentage_24h": "7.63"
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "-2.64"
   },
   {
     "rank": 5,
@@ -57,10 +92,17 @@
   {
     "rank": 6,
     "is_active_round": true,
+<<<<<<< Updated upstream
     "pool_name": "TSWAP",
     "pool_address": "0x712037beab9a29216650b8d032b4d9a59af8ad6c",
     "base_token_price_usd": "0.00122726875101327",
     "fdv_usd": "$1,227,268.75",
+=======
+    "pool_name": "SMASH / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.00829665016755177",
+    "fdv_usd": "$5,392.82",
+>>>>>>> Stashed changes
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0",
     "price_change_percentage_24h": "0"
@@ -68,32 +110,57 @@
   {
     "rank": 7,
     "is_active_round": true,
-    "pool_name": "GRUMPY",
-    "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
-    "base_token_price_usd": "0.00000013238440191414",
-    "fdv_usd": "$66,192.20",
+    "pool_name": "BTR / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "50.8081387938177",
+    "fdv_usd": "$5,080.81",
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "1.95",
-    "price_change_percentage_24h": "20.6"
+    "price_change_percentage_6h": "-4.14",
+    "price_change_percentage_24h": "-27.07"
   },
   {
     "rank": 8,
     "is_active_round": true,
+<<<<<<< Updated upstream
     "pool_name": "SMASH",
     "pool_address": "0xeda40f838f514aafcfa82911be5130bc9caa09e8",
     "base_token_price_usd": "0.0189988614722433",
     "fdv_usd": "$12,349.26",
+=======
+    "pool_name": "LARA / WTARA 1%",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.000364688377106663",
+    "fdv_usd": "$364,688.38",
+>>>>>>> Stashed changes
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
+    "price_change_percentage_24h": "-8.58"
   },
   {
     "rank": 9,
     "is_active_round": true,
+<<<<<<< Updated upstream
     "pool_name": "TXTR",
     "pool_address": "0xbbe79c01e55d6f88cc008a32bca613f083ee7374",
     "base_token_price_usd": "0.014989180801608",
     "fdv_usd": "$14,989.18",
+=======
+    "pool_name": "ETH / WTARA 1%",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "2429.85570239137",
+    "fdv_usd": "$16,048.12",
+    "price_change_percentage_1h": "-0.15",
+    "price_change_percentage_6h": "-0.15",
+    "price_change_percentage_24h": "1.42"
+  },
+  {
+    "rank": 10,
+    "is_active_round": true,
+    "pool_name": "GRUMPY / WTARA",
+    "pool_address": "0x0000000000000000000000000000000000000000",
+    "base_token_price_usd": "0.0000000338783526983306",
+    "fdv_usd": "$16,939.18",
+>>>>>>> Stashed changes
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0",
     "price_change_percentage_24h": "0"
