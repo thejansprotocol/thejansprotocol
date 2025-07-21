@@ -1,6 +1,6 @@
 [
   {
-    "name": "TGLD / WTARA",
+    "name": "TGLD",
     "price": "101.28800192096",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -8,7 +8,7 @@
     "fdv": "$5,077.09"
   },
   {
-    "name": "CHDPU / WTARA 1%",
+    "name": "CHDPU",
     "price": "0.0000669045265673797",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -16,7 +16,7 @@
     "fdv": "$66,900.51"
   },
   {
-    "name": "TSWAP / WTARA 1%",
+    "name": "TSWAP",
     "price": "0.00123313611333063",
     "price_change_1h": "-1.7",
     "price_change_6h": "-1.7",
@@ -24,7 +24,7 @@
     "fdv": "$1,233,136.11"
   },
   {
-    "name": "JANS / WTARA",
+    "name": "JANS",
     "price": "0.0000000000101689443650542",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -32,7 +32,7 @@
     "fdv": "$7,016.49"
   },
   {
-    "name": "MST / WTARA 1%",
+    "name": "MST",
     "price": "0.0955784004753806",
     "price_change_1h": "0",
     "price_change_6h": "-1.06",
@@ -40,7 +40,7 @@
     "fdv": "$84,682.28"
   },
   {
-    "name": "FARTAX / WTARA",
+    "name": "FARTAX",
     "price": "0.000000181356762329258",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -48,7 +48,7 @@
     "fdv": "$18,135.68"
   },
   {
-    "name": "LARA / WTARA 1%",
+    "name": "LARA",
     "price": "0.000466872365296913",
     "price_change_1h": "1.51",
     "price_change_6h": "1.51",
@@ -56,7 +56,7 @@
     "fdv": "$466,872.37"
   },
   {
-    "name": "BTR / WTARA",
+    "name": "BTR",
     "price": "753.027530682102",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -64,7 +64,7 @@
     "fdv": "$75,302.75"
   },
   {
-    "name": "TXTR / WTARA 1%",
+    "name": "TXTR",
     "price": "0.01896597604",
     "price_change_1h": "0",
     "price_change_6h": "0",
@@ -72,7 +72,7 @@
     "fdv": "$18,965.98"
   },
   {
-    "name": "SMASH / WTARA",
+    "name": "SMASH",
     "price": "0.017120881635047",
     "price_change_1h": "0",
     "price_change_6h": "0",
