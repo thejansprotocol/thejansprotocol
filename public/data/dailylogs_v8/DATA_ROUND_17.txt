@@ -1,0 +1,27 @@
+===================================================
+ROUND SUMMARY
+  Round ID: 17
+[Status]
+  Aborted: false
+  Results Evaluated: true
+[Timing]
+  Start Time (Local): Tue, 22 Jul 2025 11:21:17 GMT
+  End Time (Local): Tue, 22 Jul 2025 23:18:36 GMT
+[Prices & Outcomes]
+  | #  | Token Address                               | Start Price         | End Price           | Outcome |
+  |----|---------------------------------------------|---------------------|---------------------|---------|
+  | 1  | 0x712037beab9a29216650B8d032b4D9A59AF8AD6C | 0.00135302903319758 | 0.00154270828957104 | UP      |
+  | 2  | 0x4AFCfbf183c743362cEE976e5e94a3E5FB729935 | 1.83443559852255 | 2.16802546626922 | UP      |
+  | 3  | 0x39b1fC930C43606af5C353e90a55db10bCaF4087 | 1513.95207489002 | 2990.40844593233 | UP      |
+  | 4  | 0x3Ba8E4DCfCD0971a318D1E5fD0810F6Af72FF8D1 | 121.017255149129 | 146.245949793276 | UP      |
+  | 5  | 0x8B7FCf9934E58674D9bC6FC9aD8E684380DA1FD4 | 0.0999474875360443 | 0.1001248599 | UP      |
+  | 6  | 0xEDA40f838f514AAfCfA82911be5130bc9CaA09E8 | 0.0212122038597527 | 0.0196511800743422 | DOWN    |
+  | 7  | 0xf9BA22c56c04040115224c8048C21406fc8Ac1a7 | 885.895031195241 | 687.642828308545 | DOWN    |
+  | 8  | 0xE6A69cD4FF127ad8E53C21a593F7BaC4c608945e | 0.0(3)5840   | 0.0(3)5117   | DOWN    |
+  | 9  | 0x96B86CCe868FcC6681d8AB2c8E53C93E9750bA3A | 0.0(3)1642   | 0.0(3)1172   | DOWN    |
+  | 10 | 0xaad94Afea296DCF8c97D05dbf3733A245c3Ea78F | 0.0(4)9358   | 0.0(4)9358   | UP      |
+[Winners & Distribution]
+  Highest Score Achieved: 8
+  Total Prize JANS Distributed: 9669515258.577205423672264838 JANS
+  Evaluation Transaction Hash: 0x66f0f9a33a696356c9832abf17f67e37154c16cc77963396200e3bb3ce0a0299
+===================================================
