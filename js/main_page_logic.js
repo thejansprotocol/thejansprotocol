@@ -619,12 +619,15 @@ function updateSnapshotTimeDisplay() {
     }
 }
 
-function updateCountdownTimerDisplay() {
+// --- Replace this entire function ---
+
+async function updateCountdownTimerDisplay() {
     const span = document.getElementById(DOM_IDS.countdownTimer);
     if (!span) return;
 
     const nowEpoch = Math.floor(Date.now() / 1000);
-    
+
+    // This checks if we are in an active round with all necessary data loaded
     if (localCurrentRoundId > 0n && localRoundStartTime && localTicketSalesDuration && localRoundDurationSeconds) {
         const salesEndTimeEpoch = localRoundStartTime + localTicketSalesDuration;
         const roundEndTimeEpoch = localRoundStartTime + localRoundDurationSeconds;
