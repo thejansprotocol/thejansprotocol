@@ -360,19 +360,78 @@ async function fetchAndDisplaySimplifiedTransactions() {
     const mobileLastTxDiv = document.getElementById(DOM_IDS_MOBILE.mobileLastTransaction);
     if (!txListUl && !mobileLastTxDiv) return;
 
+    let lastIndexedBlock = 0;
+    const roProvider = getReadOnlyProvider();
+    const latestBlockOnChain = await roProvider.getBlockNumber();
+
+    // --- FASE 1: Cargar el historial desde el archivo JSON ---
     try {
-        const historyData = await fetchJsonFile(TICKET_HISTORY_FILE_PATH);
-        if (!Array.isArray(historyData)) {
-            throw new Error("History file not found or invalid, falling back to RPC.");
+        const cacheBuster = `?v=${new Date().getTime()}`;
+        const historyData = await fetchJsonFile(TICKET_HISTORY_FILE_PATH + cacheBuster);
+        
+        // Asumimos que tu JSON tiene la estructura: { "lastIndexedBlock": 12345, "transactions": [...] }
+        if (historyData && Array.isArray(historyData.transactions)) {
+            console.log("✅ Transaction history loaded from JSON index.");
+            localTicketTransactions = historyData.transactions;
+            lastIndexedBlock = historyData.lastIndexedBlock || 0;
+            renderTransactionLists();
+        } else {
+            throw new Error("History file is invalid.");
         }
-        console.log("✅ Transaction history loaded from JSON index.");
-        localTicketTransactions = historyData;
-        renderTransactionLists();
+
+        // --- FASE 2: Ponerse al día con los bloques recientes ---
+        if (latestBlockOnChain > lastIndexedBlock) {
+            console.log(`... Index file is behind by ${latestBlockOnChain - lastIndexedBlock} blocks. Fetching recent transactions from RPC...`);
+            await fetchTransactionsFromRPC(lastIndexedBlock + 1, latestBlockOnChain);
+        }
+
     } catch (error) {
-        console.warn(`⚠️ ${error.message}`);
-        console.log("...Attempting to fetch recent transactions directly from RPC.");
-        await fetchTransactionsFromRPC(); 
+        console.warn(`⚠️ Could not load history from JSON (${error.message}). Falling back to full RPC fetch for recent history.`);
+        // Si el archivo JSON falla, buscamos en los últimos 15,000 bloques como respaldo.
+        lastIndexedBlock = Math.max(0, latestBlockOnChain - 15000);
+        await fetchTransactionsFromRPC(lastIndexedBlock, latestBlockOnChain);
     }
+    
+    // --- FASE 3: Empezar a escuchar eventos en vivo ---
+    listenForLiveTransactions();
+}
+
+function listenForLiveTransactions() {
+    const roContract = getReadOnlyJansGameContract();
+    const roProvider = getReadOnlyProvider();
+    if (!roContract || !roProvider) return;
+
+    console.log("🎧 Listening for live 'TicketPurchased' events...");
+    
+    const eventFilter = roContract.filters.TicketPurchased();
+
+    // Nos suscribimos a los nuevos eventos.
+    roProvider.on(eventFilter, async (log) => {
+        try {
+            // Solo procesamos si el evento es de la ronda actual
+            const event = roContract.interface.parseLog(log);
+            if (event.args.roundId.toString() !== localCurrentRoundId.toString()) {
+                return; 
+            }
+
+            console.log("🔥 Live transaction detected!", event.args);
+
+            const block = await roProvider.getBlock(log.blockNumber);
+            const newTx = {
+                player: event.args.player,
+                timestamp: Number(block.timestamp) * 1000,
+                txHash: log.transactionHash,
+                ticketId: event.args.ticketId
+            };
+            
+            // Añadimos la nueva transacción al principio de la lista y volvemos a renderizar
+            localTicketTransactions.unshift(newTx);
+            renderTransactionLists();
+
+        } catch(e) {
+            console.error("Error processing live event:", e);
+        }
+    });
 }
 
 function renderTransactionLists() {
