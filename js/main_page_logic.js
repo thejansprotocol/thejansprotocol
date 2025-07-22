@@ -76,6 +76,37 @@ const TABLE_PRICE_DISPLAY_OPTIONS = {
     zeroCountThreshold: 4, significantDigits: 4, defaultDisplayDecimals: 6, minNormalDecimals: 2
 };
 
+// --- NEW FUNCTION: To listen for live events correctly ---
+function setupLiveTransactionListener() {
+    console.log("🎧 Setting up live event listener for new ticket purchases...");
+    try {
+        const roContract = getReadOnlyJansGameContract();
+        if (!roContract) {
+            console.warn("Listener setup failed: contract not available.");
+            return;
+        }
+
+        // Define the event filter using the correct Ethers v6 syntax
+        const eventFilter = roContract.filters.TicketPurchased();
+
+        // Remove any old listeners to prevent duplicates
+        roContract.off(eventFilter);
+
+        // Attach the new listener
+        roContract.on(eventFilter, (roundId, player, ticketId, pricePaidNative, sharesAllocated, picks, event) => {
+            console.log(`✅ Live Event Received: New ticket purchased in round ${roundId.toString()} by ${player}`);
+            
+            // This is a simple refresh. You could also build a more advanced logic
+            // to just add the new transaction to the top of the list without a full refresh.
+            showGlobalMessage("New ticket purchased! Refreshing data...", "info", 4000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
+            refreshAllPageData();
+        });
+
+    } catch (error) {
+        console.error("❌ Failed to set up live transaction listener:", error);
+    }
+}
+
 // --- Helper Functions ---
 function getRandomHexColor() {
     let color = '#';
@@ -699,6 +730,8 @@ async function initializeMainPageOnceEthersReady() {
             showGlobalMessage("Refreshing page data...", "info", 2000, GLOBAL_MESSAGE_DISPLAY_ID_MAIN);
             await refreshAllPageData();
         };
+
+        setupLiveTransactionListener();
 
         localIsAppInitialized = true;
         console.log("MainPageLogic: Initialization complete.");
