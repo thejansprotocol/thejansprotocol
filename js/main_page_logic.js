@@ -604,15 +604,15 @@ function initializeUiTimers() {
     setInterval(updateAllTimes, 1000);
 }
 
-function updateSnapshotTimeDisplay() { 
+function updateSnapshotTimeDisplay() {
     const span = document.getElementById(DOM_IDS.snapshotTimestamp);
     if (!span) return;
 
     if (localRoundStartTime) {
         const snapshotDate = new Date(localRoundStartTime * 1000);
-        span.textContent = "Latest Snapshot From: " + snapshotDate.toLocaleString('en-GB', { 
-            day: '2-digit', month: 'short', year: 'numeric', 
-            hour: '2-digit', minute: '2-digit', timeZone: 'UTC' 
+        span.textContent = "Latest Snapshot From: " + snapshotDate.toLocaleString('en-GB', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC'
         }) + " UTC";
     } else {
         span.textContent = "Latest Snapshot From: Loading...";
@@ -632,6 +632,7 @@ function updateCountdownTimerDisplay() {
         let salesText = '';
         let evaluationText = '';
 
+        // Part 1: Calculate Sales Countdown
         if (nowEpoch < salesEndTimeEpoch) {
             const salesDiff = salesEndTimeEpoch - nowEpoch;
             const h = String(Math.floor(salesDiff / 3600)).padStart(2, '0');
@@ -642,6 +643,7 @@ function updateCountdownTimerDisplay() {
             salesText = `Sales CLOSED`;
         }
 
+        // Part 2: Calculate Evaluation Countdown
         if (nowEpoch < roundEndTimeEpoch) {
             const roundDiff = roundEndTimeEpoch - nowEpoch;
             const h = String(Math.floor(roundDiff / 3600)).padStart(2, '0');
