@@ -1,51 +1,43 @@
 [
   {
-    "name": "TGLD",
-    "price": "146.245949793276",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-1.57",
-    "fdv": "$7,330.62"
-  },
-  {
     "name": "TSWAP",
     "price": "0.00138744719947368",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "2.54",
+    "price_change_24h": "0.62",
     "fdv": "$1,387,447.20"
   },
   {
-    "name": "LARA",
-    "price": "0.000537692278403482",
+    "name": "FOMOG",
+    "price": "1.75799681015142",
     "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "3.56",
-    "fdv": "$537,692.28"
+    "price_change_6h": "0.02",
+    "price_change_24h": "0.02",
+    "fdv": "$21,095.96"
   },
   {
     "name": "MST",
     "price": "0.095245392757573",
     "price_change_1h": "0",
-    "price_change_6h": "-3.07",
+    "price_change_6h": "0",
     "price_change_24h": "-5.23",
     "fdv": "$84,387.24"
   },
   {
-    "name": "STIVUN",
-    "price": "0.00000712410807341293",
+    "name": "CHDPU",
+    "price": "0.0000809941894191028",
     "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "17.68",
-    "fdv": "$7,124.11"
+    "price_change_6h": "0.95",
+    "price_change_24h": "0.95",
+    "fdv": "$80,986.09"
   },
   {
-    "name": "JANS",
-    "price": "0.0000000000140817674985295",
+    "name": "ETH",
+    "price": "3247.78604621718",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "28.72",
-    "fdv": "$9,716.31"
+    "price_change_24h": "130.09",
+    "fdv": "$14,406.06"
   },
   {
     "name": "FOMOG",
@@ -56,12 +48,12 @@
     "fdv": "$21,159.44"
   },
   {
-    "name": "FARTAX",
-    "price": "0.00000018766736939063",
+    "name": "STIVUN",
+    "price": "0.00000712410807341293",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "-1.56",
-    "fdv": "$18,766.74"
+    "price_change_24h": "17.68",
+    "fdv": "$7,124.11"
   },
   {
     "name": "SMASH",
@@ -72,11 +64,19 @@
     "fdv": "$12,773.27"
   },
   {
-    "name": "ETH",
-    "price": "3247.78604621718",
+    "name": "LARA",
+    "price": "0.000537692278403482",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "130.09",
-    "fdv": "$14,406.06"
+    "price_change_24h": "3.56",
+    "fdv": "$537,692.28"
+  },
+  {
+    "name": "GRUMPY",
+    "price": "0.000000122720033694262",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "2.5",
+    "fdv": "$61,360.02"
   }
 ]
