@@ -637,22 +637,24 @@ async function handleClaimLpRewards() {
  * Updates the visual status of the LP claim button by checking past distribution periods.
  * This is the corrected version that loops backwards to find a claimable period.
  */
+/**
+ * REVISED: Updates the LP claim button status and tooltip based on detailed UX requirements.
+ * The button text remains constant, only the tooltip (title) and visual state change.
+ */
 async function updateClaimLpButtonStatus() {
     const claimButton = document.getElementById("claim-lp-rewards-button");
     if (!claimButton) return;
 
-    // --- 1. Estado Inicial: "Comprobando..." ---
-    claimButton.disabled = true;
+    // --- 1. Reset state for new check ---
+    claimButton.disabled = true; // Disable by default during check
     claimButton.classList.remove('claim-available', 'claim-blink');
-    claimButton.style.backgroundColor = '';
-    claimButton.textContent = "Checking Status..."; // Texto visible
-    claimButton.title = "Checking blockchain for claimable rewards..."; // Tooltip
+    claimButton.textContent = "Claim LP Rewards"; // Text is now constant
+    claimButton.title = "Checking Status..."; // Initial hover state
     delete claimButton.dataset.claimId;
 
     const localReadOnlyContract = getReadOnlyJansGameContract();
     if (!isIndexAppInitialized || !ethersInstance || !localReadOnlyContract) {
-        claimButton.title = "Status cannot be determined yet (app not ready).";
-        claimButton.textContent = "App Not Ready";
+        claimButton.title = "App not ready. Please refresh.";
         return;
     }
 
@@ -663,55 +665,55 @@ async function updateClaimLpButtonStatus() {
         }
 
         if (!playerAddress) {
-            claimButton.title = "Connect wallet to check for LP rewards.";
-            claimButton.textContent = "Connect Wallet";
-            return;
-        }
-        
-        const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
-        if (userJansPoolShares === 0n) {
-            claimButton.title = "You have no JANS Pool Shares to claim rewards with.";
-            claimButton.textContent = "No Shares Held";
+            claimButton.title = "Please connect your wallet to check status.";
             return;
         }
 
         const latestDistroId = await localReadOnlyContract.currentLpDistributionId();
-        if (latestDistroId === 0n) {
-            claimButton.title = "No active LP distribution periods yet.";
-            claimButton.textContent = "No Active Cycles";
-            return;
-        }
 
-        // --- 2. Bucle para encontrar algo que reclamar ---
+        // Loop backwards from the latest *possible* ID to find a claimable one
         for (let i = latestDistroId; i >= 1; i--) {
             const idToCheck = BigInt(i);
+
             const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(idToCheck, playerAddress);
-            if (hasClaimed) continue;
+            if (hasClaimed) {
+                continue; // You've claimed this one, check the next older one
+            }
 
             const snapshot = await localReadOnlyContract.distributionSnapshots(idToCheck);
             if (snapshot.finalized) {
-                // --- 3. Estado de Éxito: ¡Listo para reclamar! ---
-                claimButton.disabled = false;
-                claimButton.textContent = `Claim Rewards (Cycle ${idToCheck})`; // Texto visible
-                claimButton.title = `Click to claim your LP REWARDS for distribution cycle ${idToCheck}!`; // Tooltip
-                claimButton.classList.add('claim-available', 'claim-blink');
-                claimButton.dataset.claimId = idToCheck.toString();
-                return;
+                // Found a finalized, unclaimed period. Now check if user has shares.
+                const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
+
+                if (userJansPoolShares === 0n) {
+                    // State: Cycle is active, but user has no shares
+                    claimButton.title = `LP Distribution Cycle ${idToCheck} is active: Nothing to Claim (You have no shares).`;
+                    claimButton.disabled = true;
+                    return; // Stop checking, this is the most relevant status
+                } else {
+                    // State: Ready to Claim!
+                    claimButton.title = `LP Distribution Cycle ${idToCheck} is active: claim your LP Rewards!`;
+                    claimButton.disabled = false;
+                    claimButton.classList.add('claim-available', 'claim-blink');
+                    claimButton.dataset.claimId = idToCheck.toString();
+                    return; // Stop checking, we found the one to claim
+                }
             }
         }
-        
-        // --- 4. Estado Final: No se encontró nada para reclamar ---
-        claimButton.title = "No claimable LP reward periods found at this time for your wallet.";
-        claimButton.textContent = "Nothing to Claim";
-        // Opcional: darle un color verde si ya ha reclamado algo en el pasado
-        claimButton.style.backgroundColor = '#28a745';
+
+        // --- If the loop finishes without finding a claimable period ---
+        // State: Not Ready or All Claimed
+        const nextCycleId = latestDistroId + 1n;
+        claimButton.title = `LP Distribution Cycle ${nextCycleId} is not ready yet.`;
+        claimButton.disabled = true;
 
     } catch (error) {
         console.warn("Could not update claim button status:", error.message);
-        claimButton.title = "Error determining claim status. See console.";
-        claimButton.textContent = "Error";
+        claimButton.title = "Error determining claim status. See console for details.";
+        claimButton.disabled = true;
     }
 }
+
 // --- Page Load Initialization (Entry Point) ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded for index.html. Attempting to initialize Ethers and App logic...");
