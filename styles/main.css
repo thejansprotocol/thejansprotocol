@@ -313,9 +313,14 @@ table.token-table td:last-child { border-right: none; }
 table.token-table tbody tr:last-child td { border-bottom: none; }
 
 
-/* --- Button Styling (Refactored) --- */
+/* === Button Styling (Revised & Refined) === */
+
 /* 1. Common styles for all action buttons */
-.buy-button, .lp-create-button, .lp-claim-button, #connect-wallet, .action-button {
+.buy-button,
+.lp-create-button,
+.lp-claim-button,
+#connect-wallet,
+.action-button {
     display: inline-block;
     padding: 10px 20px;
     font-size: 1em;
@@ -326,18 +331,27 @@ table.token-table tbody tr:last-child td { border-bottom: none; }
     cursor: pointer;
     text-decoration: none;
     text-align: center;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     margin: 5px;
     min-width: 180px;
 }
 
-/* 2. Common hover and active states */
-.buy-button:hover, .lp-create-button:hover, .lp-claim-button:hover, #connect-wallet:hover, .action-button:hover {
+/* 2. Common hover and active states (for enabled buttons) */
+.buy-button:not(:disabled):hover,
+.lp-create-button:not(:disabled):hover,
+.lp-claim-button:not(:disabled):hover,
+#connect-wallet:not(:disabled):hover,
+.action-button:not(:disabled):hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-.buy-button:active, .lp-create-button:active, .lp-claim-button:active, #connect-wallet:active, .action-button:active {
+
+.buy-button:not(:disabled):active,
+.lp-create-button:not(:disabled):active,
+.lp-claim-button:not(:disabled):active,
+#connect-wallet:not(:disabled):active,
+.action-button:not(:disabled):active {
     transform: translateY(0px);
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
@@ -349,29 +363,37 @@ table.token-table tbody tr:last-child td { border-bottom: none; }
 .lp-create-button, #connect-wallet { background-color: #27ae60; /* GREEN */ }
 .lp-create-button:hover, #connect-wallet:hover { background-color: #229954; }
 
-.lp-claim-button { background-color: #3498db; /* BLUE */ }
-.lp-claim-button:hover { background-color: #2980b9; }
-
-/* 4. Claim LP Button States (Blinking Effect) */
+/* --- 4. LP Claim Button - All States --- */
 @keyframes blink-effect {
   50% {
     opacity: 0.7;
     transform: scale(1.02);
   }
 }
+
+/* Base style is a solid blue */
+.lp-claim-button {
+    background-color: #3498db; /* Default BLUE */
+}
+
+/* When disabled, it stays blue but looks inactive */
+.lp-claim-button:disabled {
+  background-color: #5dade2; /* Lighter, duller blue */
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* When ready to claim, it becomes vibrant */
 .lp-claim-button.claim-available {
-  background-color: #007bff; /* A more vibrant blue to stand out */
-  border-color: #0069d9;
-  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  background-color: #007bff; /* Vibrant "active" blue */
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
 }
-.lp-claim-button.claim-available:hover {
-    background-color: #0069d9;
-    border-color: #0062cc;
-}
+
+/* This class applies the blinking animation */
 .lp-claim-button.claim-blink {
   animation: blink-effect 1.5s infinite;
 }
-
 
 /* --- Other Sections --- */
 .buy-button-container {
