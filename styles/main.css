@@ -4,12 +4,12 @@ html, body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    display: flex;            /* For sticky footer layout */
-    flex-direction: column; /* Stacks children (main, footer) vertically */
+    display: flex;           /* For sticky footer layout */
+    flex-direction: column;  /* Stacks children (main, footer) vertically */
     font-family: Arial, sans-serif;
     background-color: #ffed91; /* Your page background color */
-    color: #000000; /* Default text color */
-    font-size: 16px; /* Base font-size for easier rem scaling */
+    color: #000000;          /* Default text color */
+    font-size: 16px;         /* Base font-size for easier rem scaling */
 }
 
 /* Apply box-sizing to all elements for easier layout */
@@ -66,20 +66,15 @@ header {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    /* position: absolute; /* This will be changed to static for mobile flow */
-    /* top: 10px; */
-    /* right: 10px; */
-    padding: 10px; /* Keep padding, but position will be managed by flex flow on mobile */
+    padding: 10px;
 }
 
 #connect-wallet {
     margin-bottom: 10px;
-    /* Your existing button styles for #connect-wallet will apply */
 }
 
 .logo-container {
     margin-top: 8px;
-    /* transform: translate(-110px, -18px); /* This will likely need adjustment or removal for mobile */
 }
 .logo-img {
     width: 300px;
@@ -87,27 +82,25 @@ header {
     display: block;
     max-width: 100%;
     position: relative;
-    top: -20px;     /* Move up by 20px */
-    left: 20px;     /* Move right by 20px */
+    top: -20px;       /* Move up by 20px */
+    left: 20px;      /* Move right by 20px */
 }
-
-
 
 /* --- Barra de Navegación Principal --- */
 .main-nav {
     border-top: 2px solid rgb(0, 0, 0);
-    padding: 5px 20px; /* Keep your padding */
+    padding: 5px 20px;
     margin-top: 0;
     width: 100%;
 }
 .nav-list {
     display: flex;
-    justify-content: left; /* Keep your alignment */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: left;
+    flex-wrap: wrap;
     list-style: none;
     margin: 4px 0 0 0;
     padding: 0;
-    gap: 5px; /* Minimal gap for wrapped items */
+    gap: 5px;
 }
 .nav-list li {
     margin-right: 50px;
@@ -117,7 +110,7 @@ header {
     text-decoration: none;
     color: rgb(0, 0, 0);
     font-size: 1.1rem;
-    padding: 5px 0; /* Minimal vertical padding for touch */
+    padding: 5px 0;
 }
 .nav-list li a:hover, .nav-list li a.active { color: #ec502d; }
 
@@ -143,7 +136,7 @@ header {
 /* --- Daily Page Wrapper (Holds Sidebars and Main Content Table) --- */
 .daily-page-wrapper {
     display: flex;
-    flex-wrap: wrap; /* Allows items to wrap to next line if not enough space */
+    flex-wrap: wrap;
     gap: 20px;
     width: 100%;
     max-width: 1600px;
@@ -152,28 +145,23 @@ header {
 }
 
 .daily-logs-sidebar, .ticket-transactions-sidebar {
-    flex-basis: 270px; /* Initial desired width */
-    flex-shrink: 0;   /* Don't shrink these if space is tight initially */
+    flex-basis: 270px;
+    flex-shrink: 0;
     background-color: transparent;
     border: none;
     padding: 0;
-    max-height: 60vh; /* Will be overridden on mobile */
+    max-height: 60vh;
     overflow-y: auto;
 }
 
-.daily-logs-sidebar {
-    /* margin-left: 50px; /* Let gap handle spacing */
-}
-
 .daily-main-content-area {
-    flex-grow: 1;    /* Allows this to take up remaining space */
-    flex-basis: 0; /* Start from 0 and grow */
-    min-width: 320px; /* Adjust if needed, ensures it doesn't get too small */
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 320px;
 }
 
 .daily-logs-sidebar h3, .ticket-transactions-sidebar h3 {
     margin-top: 0;
-    /* margin-left: 50px; /* Removed, padding of parent if needed */
     font-size: 1.1em;
     padding-bottom: 5px;
     margin-bottom: 10px;
@@ -182,7 +170,7 @@ header {
 
 #daily-log-list { list-style-type: none; padding: 0; margin: 0; }
 #daily-log-list a {
-    color: inherit; /* ✅ This makes the link use the random color from its parent */
+    color: inherit;
     text-decoration: none;
     display: block;
     padding: 5px 2px;
@@ -191,13 +179,15 @@ header {
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 #daily-log-list a:hover {
-    color: #ec502d; /* You can keep the hover color or make it inherit too */
-}#transaction-list {
+    color: #ec502d;
+}
+#transaction-list {
     list-style-type: none; padding: 0; margin: 0;
 }
 #transaction-list li { padding: 3px 0; font-size: 0.85em; line-height: 1.3; }
 
 
+/* --- Action & Stats Section --- */
 .action-and-stats-wrapper {
   display: flex;
   flex-direction: column;
@@ -213,7 +203,7 @@ header {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  flex-wrap: wrap; /* Allow buttons to wrap */
+  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -226,22 +216,22 @@ header {
 
 .stats-row {
   display: flex;
-  justify-content: center;     /* Center the whole row */
+  justify-content: center;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: 2px;                    /* ↓ very tight space between blocks */
+  gap: 2px;
   width: 100%;
-  margin: -70px auto 0;        /* Move row upward */
+  margin: -70px auto 0;
   position: relative;
 }
 
 .stat-block {
-  padding: 1px 1px;            /* ↓ Tighter internal spacing */
+  padding: 1px 1px;
   text-align: center;
   min-width: 180px;
-  flex: 1 1 180px;             /* Allow tighter wrap and sizing */
+  flex: 1 1 180px;
   max-width: 220px;
-  margin: 0;                   /* Remove any default margin */
+  margin: 0;
 }
 
 .stat-block h2 {
@@ -272,33 +262,12 @@ header {
   text-align: center;
 }
 
-/* Add this to your main CSS file */
-
-.claim-button.claim-available {
-    background-color: #007bff; /* Un color azul llamativo */
-    color: white;
-    cursor: pointer;
-}
-
-.claim-button.claim-blink {
-    animation: blink-animation 1.5s infinite;
-}
-
-@keyframes blink-animation {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
-}
-
-
-/* --- Secciones de Texto (e.g., .explain, .snapshot-sentence from your CSS) --- */
+/* --- Secciones de Texto --- */
 .explain, .snapshot-sentence {
     text-align: center; font-size: 1rem; margin: 20px auto; line-height: 1.5;
     max-width: 800px;
-    padding: 0 15px; /* Consistent side padding */
+    padding: 0 15px;
 }
-
-/* --- Snapshot Info (text above table, if different from .page-header-info) --- */
 .snapshot-info {
     text-align: center; margin: 20px auto; width: 100%;
     max-width: 800px;
@@ -315,7 +284,7 @@ header {
 }
 .token-table-container {
     width: 100%;
-    overflow-x: auto; /* Crucial for mobile table responsiveness */
+    overflow-x: auto;
     margin-top: 10px;
 }
 .gecko-link-container { text-align: center; margin-bottom: 10px; width: 100%; }
@@ -324,8 +293,8 @@ header {
 
 table.token-table {
     border-collapse: collapse;
-    width: 100%; /* Fill scrollable container */
-    min-width: 600px; /* Table scrolls below this width */
+    width: 100%;
+    min-width: 600px;
     margin-top: 0;
     border: none;
 }
@@ -344,81 +313,75 @@ table.token-table td:last-child { border-right: none; }
 table.token-table tbody tr:last-child td { border-bottom: none; }
 
 
-/* --- Button Styling --- */
-.buy-button {
-    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
+/* --- Button Styling (Refactored) --- */
+/* 1. Common styles for all action buttons */
+.buy-button, .lp-create-button, .lp-claim-button, #connect-wallet, .action-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
     color: #ffffff;
-    background-color: #e67e22; /* ORANGE */
-    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
     transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    margin: 5px; min-width: 180px;
-}
-.buy-button:hover {
-    background-color: #d35400; /* Darker Orange */
-    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-.buy-button:active {
-    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    margin: 5px;
+    min-width: 180px;
 }
 
-.lp-create-button, #connect-wallet {
-    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
-    color: #ffffff;
-    background-color: #27ae60; /* GREEN */
-    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    margin: 5px; min-width: 180px;
+/* 2. Common hover and active states */
+.buy-button:hover, .lp-create-button:hover, .lp-claim-button:hover, #connect-wallet:hover, .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
-#connect-wallet {
-    margin-bottom: 10px; /* Original, kept for .top-right context before mobile */
-}
-.lp-create-button:hover, #connect-wallet:hover {
-    background-color: #229954;
-    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-.lp-create-button:active, #connect-wallet:active {
-    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+.buy-button:active, .lp-create-button:active, .lp-claim-button:active, #connect-wallet:active, .action-button:active {
+    transform: translateY(0px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.lp-claim-button {
-    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
-    color: #ffffff;
-    background-color: #3498db; /* BLUE */
-    border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    margin: 5px; min-width: 180px;
+/* 3. Specific background colors for each button type */
+.buy-button { background-color: #e67e22; /* ORANGE */ }
+.buy-button:hover { background-color: #d35400; }
+
+.lp-create-button, #connect-wallet { background-color: #27ae60; /* GREEN */ }
+.lp-create-button:hover, #connect-wallet:hover { background-color: #229954; }
+
+.lp-claim-button { background-color: #3498db; /* BLUE */ }
+.lp-claim-button:hover { background-color: #2980b9; }
+
+/* 4. Claim LP Button States (Blinking Effect) */
+@keyframes blink-effect {
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
 }
-.lp-claim-button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+.lp-claim-button.claim-available {
+  background-color: #007bff; /* A more vibrant blue to stand out */
+  border-color: #0069d9;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
-.lp-claim-button:active {
-    transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+.lp-claim-button.claim-available:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
-.action-button { /* Generic action button, if used */
-    display: inline-block; padding: 10px 20px; font-size: 1em; font-weight: bold;
-    color: #ffffff; border: none; border-radius: 6px; cursor: pointer;
-    text-decoration: none; text-align: center;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); margin: 5px; min-width: 180px;
+.lp-claim-button.claim-blink {
+  animation: blink-effect 1.5s infinite;
 }
-.action-button:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-.action-button:active { transform: translateY(0px); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
 
+/* --- Other Sections --- */
 .buy-button-container {
     text-align: center;
     margin: 30px auto;
     width: 100%;
     max-width: 900px;
-    padding: 0 15px; /* Consistent padding */
+    padding: 0 15px;
 }
 
-
-/* --- Footer --- */
 footer {
     width: 100%; padding: 30px 20px; margin-top: auto;
     background-color: #222; color: #fff; text-align: center;
@@ -449,54 +412,10 @@ footer {
 .mobile-daily-content {
     display: none;
     width: 100%;
-    max-width: 680px; /* To match your existing stacked column max-width */
+    max-width: 680px;
     margin: 10px auto;
     padding: 0 15px;
 }
-
-/* Your existing media query where the 3-column layout stacks */
-@media (max-width: 992px) {
-    /* Hide the original desktop 3-column content parts */
-    #daily-logs-sidebar,
-    #daily-main-content, /* This contains the original full table */
-    #ticket-transactions-sidebar {
-        display: none !important; /* Use !important if necessary to override other display rules */
-    }
-
-    /* Show the new mobile-specific content block */
-    .mobile-daily-content {
-        display: block;
-    }
-
-    /*
-       The .daily-page-wrapper itself might still be useful as a container
-       if .mobile-daily-content is placed inside it.
-       If .mobile-daily-content is *outside* .daily-page-wrapper, you might hide .daily-page-wrapper too:
-    */
-    /* .daily-page-wrapper {
-        display: none;
-    } */
-
-    /* You might need to adjust styles for the mobile table if they differ from the desktop one */
-    #mobile-token-table th,
-    #mobile-token-table td {
-        font-size: 11px; /* Example: Adjust font size for mobile table */
-        padding: 5px;
-    }
-}
-
-/* For even smaller screens, you might further refine */
-@media (max-width: 480px) {
-    #mobile-token-table th,
-    #mobile-token-table td {
-        font-size: 10px;
-        padding: 4px;
-    }
-    #mobile-last-transaction {
-        font-size: 0.8em;
-    }
-}
-
 
 /* --- Message Container Styles --- */
 .message-container {
@@ -504,7 +423,7 @@ footer {
     font-size: 0.9em; text-align: center; display: none;
     border: 1px solid transparent;
     max-width: 600px;
-    width: calc(100% - 30px); /* Allows padding on sides */
+    width: calc(100% - 30px);
 }
 .message-info { color: #00529B; background-color: #BDE5F8; border-color: #75c5f0; }
 .message-success { color: #270; background-color: #DFF2BF; border-color: #b2d393; }
@@ -550,7 +469,7 @@ footer {
     border-radius: 0;
     padding: 8px 2px;
     font-size: 1em;
-    width: 100%; /* Take full width when stacked */
+    width: 100%;
 }
 .input-section input[type="text"]::placeholder,
 .input-section input[type="number"]::placeholder { color: #050505; opacity: 1;}
@@ -591,14 +510,10 @@ footer {
     border-radius: 0;
 }
 
-#allTicketsColumn {
-    /* No specific styles needed when stacked initially */
-}
-
 #specificRoundColumn {
     border-left: none; /* Remove border for stacked mobile view by default */
-    padding-left: 10px; /* Keep its own internal padding */
-    margin-top: 20px; /* Add space when stacked below the first column */
+    padding-left: 10px;
+    margin-top: 20px;
 }
 
 .info-column h3, .info-column h4 {
@@ -612,7 +527,7 @@ footer {
 .ticket-block {
     background-color: transparent !important;
     border: none;
-    border-bottom: 1px dotted #ccc; /* Light separator */
+    border-bottom: 1px dotted #ccc;
     padding: 5px 0;
     margin-bottom: 15px;
     color: inherit;
@@ -646,307 +561,186 @@ footer {
 
 /* === Responsive Adjustments (Media Queries) === */
 
-/* Medium devices (tablets, starting from where things might need to change from mobile-like stack) */
-@media (min-width: 769px) {
-    /* Restore original header layout if it was more complex */
+/* Large devices (Desktops) */
+@media (min-width: 993px) {
     .top-right {
-        position: absolute; /* Restore if needed for larger screens */
+        position: absolute;
         top: 10px;
         right: 10px;
-        align-items: flex-end; /* Default alignment for desktop */
     }
     .logo-container {
-        transform: translate(-110px, -18px); /* Restore original transform */
+        transform: translate(-110px, -18px);
     }
-    header {
-        flex-direction: row; /* If it was changed for mobile */
-    }
-    .header-container {
-        text-align: left; /* Default alignment */
-    }
-    .title {
-        text-align: left; /* Default alignment */
-    }
-    .slogan {
-        text-align: left; /* Default alignment */
-    }
-
-
-    .input-row {
-        flex-direction: row; /* Inputs side-by-side on tablets and up */
-    }
-    .info-columns-container {
-        flex-direction: row; /* Columns side-by-side */
-        gap: 20px; /* Gap between columns */
-    }
-    #specificRoundColumn {
-        border-left: 1px solid #000; /* Add dividing line back */
-        padding-left: 20px; /* Space after dividing line */
-        margin-top: 0; /* Reset margin-top */
-    }
-
-    /* Restore daily page layout if it was stacked for mobile */
-    .daily-page-wrapper {
-        flex-direction: row; /* Sidebars and content area side-by-side */
-        align-items: flex-start; /* Or your preferred alignment */
-    }
-    .daily-logs-sidebar, .ticket-transactions-sidebar {
-        flex-basis: 270px;
-        max-height: 60vh; /* Restore max-height */
-        margin-left: 0; /* Ensure no extra margin from mobile */
-    }
-     .daily-main-content-area {
-        flex-basis: 0; /* Or its original basis if different */
-    }
-
-
-    /* Restore stats row layout */
-    .stats-row {
-        flex-direction: row; /* Side-by-side */
-        justify-content: space-around;
-    }
-    .stat-block {
-        flex-basis: 200px; /* Or original basis */
-        max-width: 240px;
-        margin-bottom: 0; /* Reset mobile stacking margin */
-    }
-
-    /* Restore button row layout */
-    .button-row {
-        flex-direction: row; /* Side-by-side */
-        align-items: center;
-        /* max-width: 1100px; /* Or parent's max-width */
-    }
-    .button-row .buy-button,
-    .button-row .lp-create-button,
-    .button-row .lp-claim-button,
-    .button-row .action-button,
-    #connect-wallet { /* Ensure #connect-wallet is also targeted if it's in a .button-row */
-        width: auto; /* Reset full width */
-        min-width: 180px; /* Restore min-width */
-        margin-bottom: 5px; /* Default margin */
-        font-size: 1em;
-        padding: 10px 20px;
-    }
-    /* Ensure #connect-wallet in .top-right retains its specific margin if needed */
-    .top-right #connect-wallet {
-        margin-bottom: 10px;
+    #mobile-daily-content {
+        display: none;
     }
 }
 
-
-/* Targeting general small tablet / large phone landscape and below */
-@media (max-width: 992px) { /* Breakpoint where sidebars might stack */
+/* Medium devices (Tablets, landscape) */
+@media (max-width: 992px) {
     .daily-page-wrapper {
         flex-direction: column;
-        align-items: center; /* Center stacked items if desired */
+        align-items: center;
     }
     .daily-logs-sidebar, .ticket-transactions-sidebar, .daily-main-content-area {
-        flex-basis: 100%; /* Take full width of the centered wrapper */
+        flex-basis: 100%;
         width: 100%;
-        max-width: 680px; /* Constrain width for readability */
-        max-height: none; /* Allow content to flow */
-        margin-left: 0; /* Reset any specific desktop margins */
-        margin-right: 0;
+        max-width: 680px;
+        max-height: none;
     }
-    .daily-logs-sidebar h3, .ticket-transactions-sidebar h3 {
-        margin-left: 0; /* Ensure no odd indents */
-        /* Consider text-align: center if you centered the parent */
+    #daily-logs-sidebar, #daily-main-content, #ticket-transactions-sidebar {
+        display: none !important;
     }
-
-    /* Header adjustments for slightly smaller screens if needed */
-    .title { font-size: 3rem; } /* Was 3rem */
-    .slogan { font-size: 1.3rem; } /* Was 1.3rem */
-    /* .logo-img { width: 250px; } /* Was 250px */
-    /* .logo-container { transform: translate(-80px, -15px); } /* Was -80px, -15px */
+    .mobile-daily-content {
+        display: block;
+    }
+    #mobile-token-table th, #mobile-token-table td {
+        font-size: 11px;
+        padding: 5px;
+    }
+    .title { font-size: 3rem; }
+    .slogan { font-size: 1.3rem; }
 }
 
-/* Smaller tablets / Phones in landscape / Larger phones in portrait */
+
+/* Small devices (Tablets, portrait and large phones) */
 @media (max-width: 768px) {
-    html, body { font-size: 15px; } /* Slightly smaller base font */
+    html, body { font-size: 15px; }
 
     header {
-        flex-direction: column; /* Stack title/slogan and top-right */
+        flex-direction: column;
         padding: 15px;
-        align-items: center; /* Center the items within the header */
+        align-items: center;
     }
     .header-container {
-        text-align: center; /* Center title/slogan block */
-        flex-basis: auto; /* Allow natural height */
-        min-width: 0; /* Allow it to shrink */
-        margin-bottom: 15px; /* Space before top-right content */
+        text-align: center;
+        flex-basis: auto;
+        min-width: 0;
+        margin-bottom: 15px;
     }
     .title {
         font-size: 2.5rem;
-        text-align: center; /* Ensure title itself is centered */
+        text-align: center;
     }
     .slogan {
         font-size: 1.1rem;
-        text-align: center; /* Ensure slogan is centered */
-        max-width: 100%; /* Allow full width of its container */
-        margin-top: 5px; /* Adjusted from 8px for slightly tighter feel */
+        text-align: center;
+        max-width: 100%;
+        margin-top: 5px;
     }
 
     .top-right {
-        position: static; /* Remove absolute positioning, make it part of the flow */
+        position: static;
         width: 100%;
-        align-items: center; /* Center its children (button, logo) */
-        padding: 0; /* Remove padding if children are centered */
-        /* margin-top: 15px; /* Already handled by .header-container margin-bottom */
-    }
-    #connect-wallet {
-        margin-bottom: 15px; /* Space between button and logo */
-        /* width: auto; /* If not using full-width button style from .button-row below */
+        align-items: center;
+        padding: 0;
     }
     .logo-container {
-        transform: none; /* Reset transform */
-        margin-top: 0; /* Reset margin if button has margin-bottom */
-        /* display: flex; justify-content: center; /* This is good for the logo image itself */
+        transform: none;
+        margin-top: 0;
     }
     .logo-img { width: 200px; }
-
-    .main-nav {
-        padding: 5px 10px; /* Reduce side padding slightly */
+    #connect-wallet {
+        margin-bottom: 15px;
     }
+
     .nav-list {
-        flex-direction: column; /* Stack nav items */
-        align-items: center; /* Center stacked items */
-        gap: 0; /* Remove gap for full-width items */
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
     }
     .nav-list li {
-        margin: 0; /* Remove horizontal margins */
-        width: 100%; /* Make list items take available width */
-        text-align: center; /* Center text within the li */
-        border-bottom: 1px dotted rgba(0,0,0,0.1); /* Minimalist separator */
+        margin: 0;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px dotted rgba(0,0,0,0.1);
     }
     .nav-list li:last-child {
         border-bottom: none;
     }
     .nav-list li a {
-        display: block; /* Make anchor take full width of li */
-        padding: 12px 10px; /* Increase padding for touch, make it feel like a button */
+        display: block;
+        padding: 12px 10px;
         font-size: 1.05rem;
     }
 
     .page-header-info { font-size: 0.85rem; padding: 10px; }
 
     .stats-row {
-        flex-direction: column; /* Stack stat blocks */
-        align-items: center; /* Center items if not full width */
-        gap: 15px; /* Spacing between stacked blocks */
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
     }
     .stat-block {
-        flex-basis: auto; /* Allow natural width or full width if stretched */
-        width: 100%; /* Make stat blocks take full width of their container */
-        max-width: 400px; /* Optional: constrain width for aesthetics */
-        margin-bottom: 0; /* Gap handles spacing */
-        /* padding: 15px; /* Slightly more padding for touch and spacing */
-    }
-    .stat-block h2 { font-size: 1.6em; } /* Was 1.5em */
-    .stat-block p { font-size: 1em; } /* Was 1.1em, adjust for consistency */
-
-    .action-and-stats-wrapper {
-        padding: 0 10px; /* Reduce side padding */
+        width: 100%;
+        max-width: 400px;
     }
     .button-row {
         flex-direction: column;
         align-items: stretch; /* Make buttons take full width */
-        width: 100%;
-        max-width: 380px; /* Constrain button width on mobile (slightly less than stat-block) */
+        max-width: 380px;
         margin-left: auto;
         margin-right: auto;
-        gap: 12px; /* Space between buttons */
+        gap: 12px;
     }
-    .button-row .buy-button,
-    .button-row .lp-create-button,
-    .button-row .lp-claim-button,
-    .button-row .action-button {
-        width: 100%; /* Full width of .button-row's max-width */
-        margin: 0; /* Remove individual margins as gap handles it */
+    .button-row > .action-button, .button-row > .buy-button, .button-row > .lp-create-button, .button-row > .lp-claim-button {
+        width: 100%;
+        margin: 0;
         font-size: 1.05em;
         padding: 12px 15px;
     }
-    /* Special handling for #connect-wallet if it's NOT in a .button-row but needs similar stacking */
-    .top-right #connect-wallet { /* If it's directly in .top-right and .top-right is centered */
-        width: auto; /* Don't make it full width unless that's the design for it alone */
-        min-width: 200px; /* Or a suitable min-width */
-        padding: 10px 20px; /* Default button padding */
-    }
-
 
     table.token-table th, table.token-table td {
-        font-size: 10px; /* Smaller font for table content */
-        padding: 6px 4px; /* Adjust padding */
+        font-size: 10px;
+        padding: 6px 4px;
     }
-    .gecko-link-container a { font-size: 0.75em; }
 
-    /* Player Info Page Specifics for this breakpoint */
-    .input-section { padding: 20px 10px; }
-    #playerSummaryDisplay, .player-summary-block { padding: 0 10px; }
-    .info-columns-container { padding: 0 10px; }
-    #specificRoundColumn {
-        margin-top: 25px; /* Ensure good space when stacked */
-        padding-left: 10px; /* Reset from desktop if it had more */
-        border-left: none; /* Ensure no border */
+    .info-columns-container {
+        flex-direction: row; /* On tablets, they should be side-by-side */
     }
-    .picks-grid { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); } /* Slightly smaller minmax */
+    #specificRoundColumn {
+        border-left: 1px solid #000;
+        padding-left: 20px;
+        margin-top: 0;
+    }
 }
 
-/* Extra small devices (phones, portrait) */
+
+/* Extra small devices (Phones, portrait) */
 @media (max-width: 480px) {
-    html, body { font-size: 14px; } /* Further reduce base font if needed */
+    html, body { font-size: 14px; }
 
-    .title { font-size: 2.2rem; } /* Was 2rem */
-    .slogan { font-size: 1rem; margin-top: 3px; } /* Was 0.9rem */
-    .logo-img { width: 160px; } /* Was 150px */
+    .title { font-size: 2.2rem; }
+    .slogan { font-size: 1rem; margin-top: 3px; }
+    .logo-img { width: 160px; }
 
-    .nav-list li a {
-        font-size: 1rem; /* Keep readable */
-        padding: 10px 8px;
-    }
-
-    .page-header-info { padding: 10px 5px; }
-    .page-header-info p { font-size: 0.8rem; } /* Was 0.85rem */
+    .page-header-info p { font-size: 0.8rem; }
     #snapshot-time, #current-round, #ticket-price, #sales-status-message, #time-remaining, #current-time-utc {
-        font-size: 0.95em; /* Was 1em */
+        font-size: 0.95em;
     }
 
-    .stat-block { max-width: 320px; } /* Further constrain if needed */
-    .stat-block h2 { font-size: 1.4em; } /* Was 1.3em */
-    .stat-block p { font-size: 0.95em; } /* Was 1em */
-    .stat-block p.usd-value, .stat-block p.percentage-value { font-size: 0.8em; }
-
+    .stat-block { max-width: 320px; }
+    .stat-block h2 { font-size: 1.4em; }
+    .stat-block p { font-size: 0.95em; }
     .button-row { max-width: 300px; gap: 10px; }
-    .button-row .buy-button,
-    .button-row .lp-create-button,
-    .button-row .lp-claim-button,
-    .button-row .action-button {
-        font-size: 1em; /* Adjust if too large */
-        padding: 10px 12px;
-    }
 
+    .explain, .snapshot-sentence { font-size: 0.85rem; padding: 0 10px; }
 
-    .explain, .snapshot-sentence { font-size: 0.85rem; padding: 0 10px; } /* Was 0.9rem */
-
-    .token-table-container { margin-top: 5px; }
-    table.token-table { min-width: 300px; } /* Allow table to be narrower before scroll */
+    table.token-table { min-width: 300px; }
     table.token-table th { font-size: 9px; padding: 4px 3px; }
-    table.token-table td { font-size: 9.5px; padding: 4px 3px; white-space: normal; } /* Allow text to wrap in cells */
+    table.token-table td { font-size: 9.5px; padding: 4px 3px; white-space: normal; }
 
-    .footer-links { gap: 15px 25px; } /* Adjust gap */
-    .footer-links a { font-size: 0.85rem; } /* Was 0.9rem */
-    .footer-links a img { width: 22px; height: 22px; } /* Was 24px */
-    .footer-note { font-size: 11px; } /* Was 12px */
+    .footer-links { gap: 15px 25px; }
+    .footer-links a { font-size: 0.85rem; }
+    .footer-links a img { width: 22px; height: 22px; }
+    .footer-note { font-size: 11px; }
 
-    .input-section { padding: 15px 5px; }
-    .input-row input[type="text"],
-    .input-row input[type="number"] { padding: 8px 0; font-size: 0.95em; }
-
-    #playerSummaryDisplay, .player-summary-block { padding: 0 5px; }
-    .info-columns-container { padding: 0 5px; }
-    .info-column { padding: 0 5px; }
-    #specificRoundColumn { margin-top: 20px; }
-    .ticket-block p { font-size: 0.9em; }
-    .picks-grid { grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); gap: 3px 5px; }
-    .pick-item { font-size: 0.85em; }
+    .info-columns-container {
+        flex-direction: column; /* Stack columns on smallest screens */
+    }
+    #specificRoundColumn {
+        border-left: none;
+        padding-left: 10px; /* Or same as .info-column */
+        margin-top: 20px;
+    }
 }
