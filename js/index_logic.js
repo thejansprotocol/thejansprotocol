@@ -567,73 +567,52 @@ async function handleCreateLP() {
         }
         showGlobalMessage(`LP Creation Failed: ${detailedMessage}`, "error", 0, "global-message-main");
     }
-}/**
+}
+/**
  * Handles the LP rewards claim transaction.
+ * This function now reads the claimable ID from the button's data attribute.
  */
 async function handleClaimLpRewards() {
-    const statusDiv = document.getElementById("lp-claim-status");    
+    const statusDiv = document.getElementById("lp-claim-status");
     const claimButton = document.getElementById("claim-lp-rewards-button");
-    if (!statusDiv || !claimButton) { showGlobalMessage("LP claim UI elements missing (DOM IDs 'lp-claim-status' or 'claim-lp-rewards-button').", "error", 0, GLOBAL_MESSAGE_ID_INDEX); return; }
-    
-    clearGlobalMessage(GLOBAL_MESSAGE_ID_INDEX);    
-    statusDiv.textContent = "Preparing to claim LP rewards...";        
-    statusDiv.style.color = "#f39c12"; // Orange for processing
-    statusDiv.style.display = 'block'; // Ensure status div is visible
-    claimButton.disabled = true; // Disable button during processing
 
-    const localReadOnlyContract = getReadOnlyJansGameContract();
-    if (!isIndexAppInitialized || !ethersInstance || !localReadOnlyContract) {    
+    // Get the claimable ID that was stored on the button by updateClaimLpButtonStatus
+    const claimableIdString = claimButton.dataset.claimId;
+    if (!claimableIdString) {
+        showGlobalMessage("No claimable distribution ID found on the button.", "error", 0, GLOBAL_MESSAGE_ID_INDEX);
+        return;
+    }
+    const distributionIdToClaim = BigInt(claimableIdString);
+
+    clearGlobalMessage(GLOBAL_MESSAGE_ID_INDEX);
+    statusDiv.textContent = "Preparing to claim LP rewards...";
+    statusDiv.style.color = "#f39c12";
+    statusDiv.style.display = 'block';
+    claimButton.disabled = true;
+
+    if (!isIndexAppInitialized || !ethersInstance) {
         showGlobalMessage("Application not ready. Please refresh.", "error", 0, GLOBAL_MESSAGE_ID_INDEX);
-        statusDiv.textContent = "Failed: App not ready."; statusDiv.style.color = "#e74c3c"; // Red
+        statusDiv.textContent = "Failed: App not ready."; statusDiv.style.color = "#e74c3c";
         return;
     }
 
     try {
         statusDiv.textContent = "Connecting wallet...";
-        const { signer, gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
-        console.log(`LP Claim attempt by: ${userAddress}`);
+        const { gameContractWithSigner, userAddress } = await connectWalletAndGetSignerInstances();
+        console.log(`LP Claim attempt by: ${userAddress} for Distribution ID: ${distributionIdToClaim}`);
 
-        const currentDistroId = await localReadOnlyContract.currentLpDistributionId();
-        if (currentDistroId === 0n) {
-            showGlobalMessage("No active LP distribution period to claim from.", "info", 6000, GLOBAL_MESSAGE_ID_INDEX);
-            statusDiv.textContent = "No active distribution."; statusDiv.style.color = "#3498db"; // Blue for info
-            updateClaimLpButtonStatus(); return;
-        }
-
-        const snapshot = await localReadOnlyContract.distributionSnapshots(currentDistroId);
-        if (!snapshot.finalized) {
-            showGlobalMessage(`LP Distribution Period ${currentDistroId.toString()} is not yet finalized.`, "info", 8000, GLOBAL_MESSAGE_ID_INDEX);
-            statusDiv.textContent = "Distribution not finalized."; statusDiv.style.color = "#3498db";
-            updateClaimLpButtonStatus(); return;
-        }
-
-        const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(currentDistroId, userAddress);
-        if (hasClaimed) {
-            showGlobalMessage(`Already claimed rewards for distribution period ${currentDistroId.toString()}.`, "info", 8000, GLOBAL_MESSAGE_ID_INDEX);
-            statusDiv.textContent = "Already claimed for this period."; statusDiv.style.color = "#2ecc71"; // Green
-            updateClaimLpButtonStatus(); return;
-        }
-
-        const userJansPoolShares = await localReadOnlyContract.jansPoolShares(userAddress);
-        if (userJansPoolShares === 0n) {
-            showGlobalMessage("You have no JANS Pool Shares to claim LP rewards with.", "info", 8000, GLOBAL_MESSAGE_ID_INDEX);
-            statusDiv.textContent = "No shares to claim."; statusDiv.style.color = "#3498db";
-            updateClaimLpButtonStatus(); return;
-        }
-        console.log(`User has ${userJansPoolShares.toString()} JANS Pool Shares.`);
-
-        statusDiv.textContent = `Claiming for Distribution ID ${currentDistroId.toString()}... Confirm in wallet.`;
-        const tx = await gameContractWithSigner.claimMyLpReward(currentDistroId, { gasLimit: 500000 }); // Fixed gas limit
+        statusDiv.textContent = `Claiming for Distribution ID ${distributionIdToClaim.toString()}... Confirm in wallet.`;
+        const tx = await gameContractWithSigner.claimMyLpReward(distributionIdToClaim, { gasLimit: 500000 });
 
         statusDiv.textContent = `Claim Tx Sent (${shortenAddress(tx.hash, 6)})... Waiting for confirmation...`;
         const receipt = await tx.wait(1);
 
         if (receipt && receipt.status === 1) {
-            showGlobalMessage(`LP Rewards for period ${currentDistroId.toString()} claimed successfully!`, "success", 10000, GLOBAL_MESSAGE_ID_INDEX);
+            showGlobalMessage(`LP Rewards for period ${distributionIdToClaim.toString()} claimed successfully!`, "success", 10000, GLOBAL_MESSAGE_ID_INDEX);
             statusDiv.textContent = `Claimed! Tx: ${shortenAddress(receipt.transactionHash || tx.hash, 10)}`;
-            statusDiv.style.color = "#2ecc71"; // Green
+            statusDiv.style.color = "#2ecc71";
         } else {
-            throw new Error(`LP Reward Claim Tx failed. Period: ${currentDistroId.toString()}. Hash: ${receipt ? receipt.transactionHash : tx.hash}. Status: ${receipt ? receipt.status : 'unknown'}`);
+            throw new Error(`LP Reward Claim Tx failed. Period: ${distributionIdToClaim.toString()}. Hash: ${receipt ? receipt.transactionHash : tx.hash}.`);
         }
 
     } catch (error) {
@@ -641,78 +620,89 @@ async function handleClaimLpRewards() {
         let userMessage = error.reason || (error.data && error.data.message) || error.message || 'Unknown LP claim error.';
         if (error.code === "ACTION_REJECTED") userMessage = "Transaction rejected by user.";
         
-        showGlobalMessage(`LP Claim Failed: ${userMessage.substring(0,150)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
-        statusDiv.textContent = `Failed: ${userMessage.substring(0,100)}`;
-        statusDiv.style.color = "#e74c3c"; // Red
+        showGlobalMessage(`LP Claim Failed: ${userMessage.substring(0, 150)}`, "error", 0, GLOBAL_MESSAGE_ID_INDEX);
+        statusDiv.textContent = `Failed: ${userMessage.substring(0, 100)}`;
+        statusDiv.style.color = "#e74c3c";
     } finally {
-        fetchAllStatsAndUpdateDisplay(); // Always refresh UI after attempt
+        // After any attempt, re-check status. It will find the next claimable period if one exists.
+        updateClaimLpButtonStatus(); 
+        fetchAllStatsAndUpdateDisplay();
     }
 }
 
-/**
- * Updates the visual status of the LP claim button, including a blinking effect.
- */
-// --- Replace your entire updateClaimLpButtonStatus function with this one ---
 
+/**
+ * Updates the visual status of the LP claim button by checking past distribution periods.
+ * This is the corrected version that loops backwards to find a claimable period.
+ */
 async function updateClaimLpButtonStatus() {
     const claimButton = document.getElementById("claim-lp-rewards-button");
     if (!claimButton) return;
 
-    const localReadOnlyContract = getReadOnlyJansGameContract();
-
-    // Reset styles and state before checks
+    // --- 1. Reset button to its default disabled state ---
     claimButton.disabled = true;
     claimButton.classList.remove('claim-available', 'claim-blink');
     claimButton.style.backgroundColor = ''; // Let CSS handle the disabled style
+    claimButton.title = "Checking for claimable LP rewards...";
+    delete claimButton.dataset.claimId; // Clear any previously stored claim ID
 
-    if (!localIsAppInitialized || !ethersInstance || !localReadOnlyContract) {
+    const localReadOnlyContract = getReadOnlyJansGameContract();
+    if (!isIndexAppInitialized || !ethersInstance || !localReadOnlyContract) {
         claimButton.title = "Status cannot be determined yet (app not ready).";
         return;
     }
 
     try {
-        claimButton.title = "Checking LP claim status...";
-
-        const currentDistroId = await localReadOnlyContract.currentLpDistributionId();
-        if (currentDistroId === 0n) {
-            claimButton.title = "No active LP distribution period.";
-            return;
-        }
-
-        const snapshot = await localReadOnlyContract.distributionSnapshots(currentDistroId);
-        if (!snapshot.finalized) {
-            claimButton.title = `Distribution period ${currentDistroId.toString()} is not finalized yet.`;
-            return;
-        }
-
         let playerAddress = null;
         if (window.ethereum && window.ethereum.selectedAddress) {
             playerAddress = ethersInstance.getAddress(window.ethereum.selectedAddress);
         }
 
-        if (playerAddress) {
-            const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(currentDistroId, playerAddress);
-            if (hasClaimed) {
-                claimButton.title = `Already claimed for distribution ${currentDistroId.toString()}.`;
-                claimButton.style.backgroundColor = '#28a745'; // Green (claimed)
-                return;
-            }
-            
-            const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
-            if (userJansPoolShares === 0n) {
-                claimButton.title = `No JANS Pool Shares to claim LP rewards for distribution ${currentDistroId.toString()}.`;
-                return;
-            }
-
-            // --- SUCCESS CASE ---
-            // If all checks pass, enable the button and make it blink
-            claimButton.disabled = false;
-            claimButton.title = `CLAIM LP REWARDS NOW for distribution period ${currentDistroId.toString()}!`;
-            claimButton.classList.add('claim-available', 'claim-blink');
-
-        } else {
-            claimButton.title = `Connect wallet to check LP claim status for distribution ${currentDistroId.toString()}.`;
+        if (!playerAddress) {
+            claimButton.title = "Connect wallet to check for LP rewards.";
+            return;
         }
+        
+        const userJansPoolShares = await localReadOnlyContract.jansPoolShares(playerAddress);
+        if (userJansPoolShares === 0n) {
+            claimButton.title = "You have no JANS Pool Shares to claim rewards with.";
+            return;
+        }
+
+        const latestDistroId = await localReadOnlyContract.currentLpDistributionId();
+        if (latestDistroId === 0n) {
+            claimButton.title = "No active LP distribution periods yet.";
+            return;
+        }
+
+        // --- 2. Loop backwards from the latest period to find one to claim ---
+        // We check from latestDistroId - 1 because the current one is never finalized.
+        for (let i = latestDistroId; i >= 1; i--) {
+            const idToCheck = BigInt(i);
+
+            const hasClaimed = await localReadOnlyContract.hasClaimedLpReward(idToCheck, playerAddress);
+            if (hasClaimed) {
+                // If we've claimed this period, continue to check older ones
+                continue; 
+            }
+
+            const snapshot = await localReadOnlyContract.distributionSnapshots(idToCheck);
+            if (snapshot.finalized) {
+                // --- SUCCESS CASE: Found a finalized, unclaimed period ---
+                claimButton.disabled = false;
+                claimButton.title = `CLAIM LP REWARDS NOW for distribution period ${idToCheck.toString()}!`;
+                claimButton.classList.add('claim-available', 'claim-blink');
+                
+                // Store the ID we found on the button itself, so the handler knows which one to claim
+                claimButton.dataset.claimId = idToCheck.toString(); 
+                
+                // We found the most recent claimable period, so we can stop searching.
+                return; 
+            }
+        }
+        
+        // --- 3. If the loop finishes without finding anything ---
+        claimButton.title = "No claimable LP reward periods found at this time.";
 
     } catch (error) {
         console.warn("Could not update claim button status:", error.message);
