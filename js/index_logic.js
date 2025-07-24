@@ -624,9 +624,11 @@ async function handleClaimLpRewards() {
         statusDiv.textContent = `Failed: ${userMessage.substring(0, 100)}`;
         statusDiv.style.color = "#e74c3c";
     } finally {
-        // After any attempt, re-check status. It will find the next claimable period if one exists.
-        updateClaimLpButtonStatus(); 
-        fetchAllStatsAndUpdateDisplay();
+        showGlobalMessage("Updating status in a moment...", "info", 2000, GLOBAL_MESSAGE_ID_INDEX);
+        setTimeout(() => {
+            console.log("Refreshing UI after claim...");
+            fetchAllStatsAndUpdateDisplay();
+            }, 2000); // Espera de 2 segundos
     }
 }
 
