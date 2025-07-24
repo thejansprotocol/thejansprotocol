@@ -1,51 +1,43 @@
 [
   {
-    "name": "FOMOG",
-    "price": "1.76328649482574",
+    "name": "STIVUN",
+    "price": "0.0000070910370403353",
     "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-4.41",
-    "fdv": "$21,159.44"
-  },
-  {
-    "name": "ETH",
-    "price": "3247.78604621718",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0.2",
-    "fdv": "$14,406.06"
-  },
-  {
-    "name": "TSWAP",
-    "price": "0.00138744719947368",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0.62",
-    "fdv": "$1,387,447.20"
+    "price_change_6h": "6.26",
+    "price_change_24h": "6.26",
+    "fdv": "$7,091.04"
   },
   {
     "name": "MST",
-    "price": "0.0954011777492642",
-    "price_change_1h": "-0.06",
-    "price_change_6h": "-0.71",
-    "price_change_24h": "-6.02",
-    "fdv": "$84,525.27"
-  },
-  {
-    "name": "CHDPU",
-    "price": "0.0000809941894191028",
+    "price": "0.0941394480296569",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "0.95",
-    "fdv": "$80,986.09"
+    "price_change_24h": "-4.19",
+    "fdv": "$83,407.38"
   },
   {
-    "name": "TXTR",
-    "price": "0.014989180801608",
+    "name": "SMASH",
+    "price": "0.0187215783713462",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$14,989.18"
+    "fdv": "$12,169.03"
+  },
+  {
+    "name": "LARA",
+    "price": "0.000537692278403482",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$537,692.28"
+  },
+  {
+    "name": "BTR",
+    "price": "611.646078290256",
+    "price_change_1h": "0",
+    "price_change_6h": "-1.42",
+    "price_change_24h": "-1.42",
+    "fdv": "$61,164.61"
   },
   {
     "name": "JANS",
@@ -64,19 +56,27 @@
     "fdv": "$21,095.96"
   },
   {
-    "name": "SMASH",
-    "price": "0.0196511800743422",
+    "name": "ETH",
+    "price": "3247.78604621718",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$12,773.27"
+    "fdv": "$14,406.06"
   },
   {
-    "name": "STIVUN",
-    "price": "0.00000712410807341293",
+    "name": "FARTAX",
+    "price": "0.00000018766736939063",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$7,124.11"
+    "fdv": "$18,766.74"
+  },
+  {
+    "name": "TSWAP",
+    "price": "0.00154270829",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "0",
+    "fdv": "$1,542,708.29"
   }
 ]
