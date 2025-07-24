@@ -23,6 +23,14 @@
     "isAborted": false,
     "isEvaluated": true
   },
+  "4": {
+    "date": "2025-07-24",
+    "file": "DATA_ROUND_4.txt",
+    "timestamp": "2025-07-24T18:17:45.020Z",
+    "roundLogged": "4",
+    "isAborted": false,
+    "isEvaluated": true
+  },
   "9": {
     "date": "2025-07-21",
     "file": "round_9_2025-07-21T19-48-42-329Z.log.txt",
