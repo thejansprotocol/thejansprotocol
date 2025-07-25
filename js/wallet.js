@@ -2,7 +2,7 @@
 // Manages constants, ABI loading, Ethers.js core setup, shared utilities, and data fetching services.
 
 // --- Core Contract and Network Configuration ---
-export const JANS_GAME_CONTRACT_ADDRESS = "0xeBAE83260752567201faca0C11937fB2FA7Bc86A"; 
+export const JANS_GAME_CONTRACT_ADDRESS = "0x13Cbecb3D4d8957a9176a24378B6A75464516334"; 
 export const TARGET_CHAIN_ID = 841n; // Taraxa Mainnet Chain ID
 export const TARGET_NETWORK_NAME = "Taraxa Mainnet";
 export const TARAXA_RPC_URL = "https://rpc.mainnet.taraxa.io/";
