@@ -1,7 +1,7 @@
 [
   {
     "rank": 1,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "GRUMPY",
     "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
     "base_token_price_usd": "0.000000125233929622577",
@@ -12,7 +12,7 @@
   },
   {
     "rank": 2,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "STIVUN",
     "pool_address": "0x7944e09006504c062816d4ef083a5184c0929bb5",
     "base_token_price_usd": "0.0000124230665613125",
@@ -23,7 +23,7 @@
   },
   {
     "rank": 3,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "GRUMPY",
     "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
     "base_token_price_usd": "0.000000121362504066042",
@@ -34,7 +34,7 @@
   },
   {
     "rank": 4,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "LARA",
     "pool_address": "0xe6a69cd4ff127ad8e53c21a593f7bac4c608945e",
     "base_token_price_usd": "0.0005376922784",
@@ -45,7 +45,7 @@
   },
   {
     "rank": 5,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "TXTR",
     "pool_address": "0xbbe79c01e55d6f88cc008a32bca613f083ee7374",
     "base_token_price_usd": "0.0120713180969616",
@@ -56,7 +56,7 @@
   },
   {
     "rank": 6,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "FOMOG",
     "pool_address": "0x4afcfbf183c743362cee976e5e94a3e5fb729935",
     "base_token_price_usd": "1.68058215290532",
@@ -67,7 +67,7 @@
   },
   {
     "rank": 7,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "JANS",
     "pool_address": "0xa52fc8bd9b64cb971cca78b558de8de8615c9a28",
     "base_token_price_usd": "0.0000000000126660422886883",
@@ -78,7 +78,7 @@
   },
   {
     "rank": 8,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "SMASH",
     "pool_address": "0xeda40f838f514aafcfa82911be5130bc9caa09e8",
     "base_token_price_usd": "0.0190068630699111",
@@ -89,7 +89,7 @@
   },
   {
     "rank": 9,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "TSWAP",
     "pool_address": "0x712037beab9a29216650b8d032b4d9a59af8ad6c",
     "base_token_price_usd": "0.00154270829",
@@ -100,7 +100,7 @@
   },
   {
     "rank": 10,
-    "is_active_round": true,
+    "is_active_round": false,
     "pool_name": "FOMOG",
     "pool_address": "0x4afcfbf183c743362cee976e5e94a3e5fb729935",
     "base_token_price_usd": "1.67233267349951",
