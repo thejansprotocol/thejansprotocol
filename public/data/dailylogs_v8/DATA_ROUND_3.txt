@@ -5,23 +5,23 @@ ROUND SUMMARY
   Aborted: false
   Results Evaluated: true
 [Timing]
-  Start Time (Local): Thu, 24 Jul 2025 04:33:32 GMT
-  End Time (Local): Thu, 24 Jul 2025 11:11:32 GMT
+  Start Time (Local): Mon, 28 Jul 2025 21:01:11 GMT
+  End Time (Local): Tue, 29 Jul 2025 21:00:17 GMT
 [Prices & Outcomes]
-  | #  | Token Address                               | Start Price            | End Price              | Outcome |
-  |----|---------------------------------------------|------------------------|------------------------|---------|
-  | 1  | 0x7944e09006504c062816d4EF083A5184c0929BB5 | 0.0(5)7091   | 0.0(5)8542   | UP      |
-  | 2  | 0x8B7FCf9934E58674D9bC6FC9aD8E684380DA1FD4 | 0.0941394480296569 | 0.1001248599 | UP      |
-  | 3  | 0xEDA40f838f514AAfCfA82911be5130bc9CaA09E8 | 0.0187215783713462 | 0.0187215783713462 | DOWN    |
-  | 4  | 0xE6A69cD4FF127ad8E53C21a593F7BaC4c608945e | 0.0(3)5376   | 0.0(3)5376   | DOWN    |
-  | 5  | 0xf9BA22c56c04040115224c8048C21406fc8Ac1a7 | 611.646078290256 | 616.465588903149 | UP      |
-  | 6  | 0xA52fc8BD9b64cb971cCa78b558de8DE8615c9a28 | 0.0(10)1302  | 0.0(10)1302  | DOWN    |
-  | 7  | 0x4AFCfbf183c743362cEE976e5e94a3E5FB729935 | 1.75799681015142 | 2.1680254663 | UP      |
-  | 8  | 0x39b1fC930C43606af5C353e90a55db10bCaF4087 | 3247.78604621718 | 3247.78604621718 | DOWN    |
-  | 9  | 0x2F38caB64A252a87c68414BF24A1d01F977E6fbe | 0.0(6)1876   | 0.0(6)1876   | DOWN    |
-  | 10 | 0x712037beab9a29216650B8d032b4D9A59AF8AD6C | 0.00154270829 | 0.00154270829 | DOWN    |
+  | #  | Token Address                                  | Start Price            | End Price              | Outcome |
+  |----|------------------------------------------|------------------------|------------------------|---------|
+  | 1  | 0xE6A69cD4FF127ad8E53C21a593F7BaC4c608945e | 0.0(3)5814               | 0.0(3)4603               | DOWN    |
+  | 2  | 0x7944e09006504c062816d4EF083A5184c0929BB5 | 0.0(4)1012               | 0.0(4)2235               | UP      |
+  | 3  | 0x2F38caB64A252a87c68414BF24A1d01F977E6fbe | 0.0(6)1876               | 0.0(6)1759               | DOWN    |
+  | 4  | 0x4AFCfbf183c743362cEE976e5e94a3E5FB729935 | 1.85157995466908         | 1.84403443455856         | DOWN    |
+  | 5  | 0xEDA40f838f514AAfCfA82911be5130bc9CaA09E8 | 0.0236303266440044       | 0.0205087202439863       | DOWN    |
+  | 6  | 0xacB8b71500B616c20fE18c48fc965D0981538D54 | 0.0(6)1530               | 0.0(6)1413               | DOWN    |
+  | 7  | 0xf9BA22c56c04040115224c8048C21406fc8Ac1a7 | 427.886074437435         | 347.798012722225         | DOWN    |
+  | 8  | 0xaad94Afea296DCF8c97D05dbf3733A245c3Ea78F | 0.0(4)7709               | 0.0(4)6492               | DOWN    |
+  | 9  | 0x96B86CCe868FcC6681d8AB2c8E53C93E9750bA3A | 0.0(3)1869               | 0.0(3)1976               | UP      |
+  | 10 | 0x8B7FCf9934E58674D9bC6FC9aD8E684380DA1FD4 | 0.0988367887822784       | 0.0944230620388643       | DOWN    |
 [Winners & Distribution]
   Highest Score Achieved: 0
   Total Prize JANS Distributed: 0.0 JANS
-  Evaluation Transaction Hash: 0xce72345a59561725e3b85ef28e8958ae97bfa86b941e53df023e886fe1a66071
+  Evaluation Transaction Hash: 0x1625562cc49ffe71e416c3e7dc0a56a334793d48753730c3551642753cd9ddd0
 ===================================================
