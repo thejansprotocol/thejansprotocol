@@ -2,61 +2,6 @@
   {
     "rank": 1,
     "is_active_round": true,
-    "pool_name": "FOMOG",
-    "pool_address": "0x4afcfbf183c743362cee976e5e94a3e5fb729935",
-    "base_token_price_usd": "1.66876189376123",
-    "fdv_usd": "$20,025.14",
-    "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
-  },
-  {
-    "rank": 2,
-    "is_active_round": true,
-    "pool_name": "CHDPU",
-    "pool_address": "0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
-    "base_token_price_usd": "0.0000646401736952709",
-    "fdv_usd": "$64,633.45",
-    "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "-1.66"
-  },
-  {
-    "rank": 3,
-    "is_active_round": true,
-    "pool_name": "GRUMPY",
-    "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
-    "base_token_price_usd": "0.000000175582166114598",
-    "fdv_usd": "$87,791.08",
-    "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
-  },
-  {
-    "rank": 4,
-    "is_active_round": true,
-    "pool_name": "SMASH",
-    "pool_address": "0xeda40f838f514aafcfa82911be5130bc9caa09e8",
-    "base_token_price_usd": "0.0299180339260701",
-    "fdv_usd": "$19,446.72",
-    "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
-  },
-  {
-    "rank": 5,
-    "is_active_round": true,
-    "pool_name": "PKEY",
-    "pool_address": "0x96b86cce868fcc6681d8ab2c8e53c93e9750ba3a",
-    "base_token_price_usd": "0.00019769809030919",
-    "fdv_usd": "$6,326.34",
-    "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
-  },
-  {
-    "rank": 6,
-    "is_active_round": true,
     "pool_name": "TXTR",
     "pool_address": "0xbbe79c01e55d6f88cc008a32bca613f083ee7374",
     "base_token_price_usd": "0.0114366456095939",
@@ -66,47 +11,102 @@
     "price_change_percentage_24h": "0"
   },
   {
+    "rank": 2,
+    "is_active_round": true,
+    "pool_name": "CHDPU",
+    "pool_address": "0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
+    "base_token_price_usd": "0.0000557194872366458",
+    "fdv_usd": "$55,713.69",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "-4.62",
+    "price_change_percentage_24h": "-10.61"
+  },
+  {
+    "rank": 3,
+    "is_active_round": true,
+    "pool_name": "SMASH",
+    "pool_address": "0xeda40f838f514aafcfa82911be5130bc9caa09e8",
+    "base_token_price_usd": "0.0317604754778075",
+    "fdv_usd": "$20,644.31",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "19.03"
+  },
+  {
+    "rank": 4,
+    "is_active_round": true,
+    "pool_name": "TGLD",
+    "pool_address": "0x3ba8e4dcfcd0971a318d1e5fd0810f6af72ff8d1",
+    "base_token_price_usd": "100.4345480612",
+    "fdv_usd": "$5,034.31",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "0"
+  },
+  {
+    "rank": 5,
+    "is_active_round": true,
+    "pool_name": "GRUMPY",
+    "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
+    "base_token_price_usd": "0.0000001413199734",
+    "fdv_usd": "$70,659.99",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "0"
+  },
+  {
+    "rank": 6,
+    "is_active_round": true,
+    "pool_name": "FOMOG",
+    "pool_address": "0x4afcfbf183c743362cee976e5e94a3e5fb729935",
+    "base_token_price_usd": "2.09470599132095",
+    "fdv_usd": "$25,136.47",
+    "price_change_percentage_1h": "0",
+    "price_change_percentage_6h": "0",
+    "price_change_percentage_24h": "3.28"
+  },
+  {
     "rank": 7,
     "is_active_round": true,
-    "pool_name": "BTR",
-    "pool_address": "0xf9ba22c56c04040115224c8048c21406fc8ac1a7",
-    "base_token_price_usd": "351.355947221748",
-    "fdv_usd": "$35,135.59",
+    "pool_name": "CHDPU",
+    "pool_address": "0xaad94afea296dcf8c97d05dbf3733a245c3ea78f",
+    "base_token_price_usd": "0.0000558799593473664",
+    "fdv_usd": "$55,874.14",
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "2.02",
-    "price_change_percentage_24h": "4.07"
+    "price_change_percentage_6h": "-4.62",
+    "price_change_percentage_24h": "-10.62"
   },
   {
     "rank": 8,
     "is_active_round": true,
     "pool_name": "TSWAP",
     "pool_address": "0x712037beab9a29216650b8d032b4d9a59af8ad6c",
-    "base_token_price_usd": "0.00129716041959788",
-    "fdv_usd": "$1,297,160.42",
+    "base_token_price_usd": "0.00102765139297575",
+    "fdv_usd": "$1,027,651.39",
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "-1.26",
-    "price_change_percentage_24h": "-0.23"
+    "price_change_percentage_6h": "-0.83",
+    "price_change_percentage_24h": "-19.98"
   },
   {
     "rank": 9,
     "is_active_round": true,
-    "pool_name": "LARA",
-    "pool_address": "0xe6a69cd4ff127ad8e53c21a593f7bac4c608945e",
-    "base_token_price_usd": "0.000472017227012826",
-    "fdv_usd": "$472,017.23",
+    "pool_name": "GRUMPY",
+    "pool_address": "0xacb8b71500b616c20fe18c48fc965d0981538d54",
+    "base_token_price_usd": "0.000000162310524322959",
+    "fdv_usd": "$81,155.26",
     "price_change_percentage_1h": "0",
-    "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
+    "price_change_percentage_6h": "-0.71",
+    "price_change_percentage_24h": "-1.91"
   },
   {
     "rank": 10,
     "is_active_round": true,
-    "pool_name": "TGLD",
-    "pool_address": "0x3ba8e4dcfcd0971a318d1e5fd0810f6af72ff8d1",
-    "base_token_price_usd": "100.434548061235",
-    "fdv_usd": "$5,034.31",
+    "pool_name": "LARA",
+    "pool_address": "0xe6a69cd4ff127ad8e53c21a593f7bac4c608945e",
+    "base_token_price_usd": "0.000448143991547538",
+    "fdv_usd": "$448,143.99",
     "price_change_percentage_1h": "0",
     "price_change_percentage_6h": "0",
-    "price_change_percentage_24h": "0"
+    "price_change_percentage_24h": "-1.16"
   }
 ]
