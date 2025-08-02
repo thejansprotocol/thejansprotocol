@@ -1,14 +1,14 @@
 {
   "date": "2025-08-02",
-  "processedAtUTC": "2025-08-02T21:00:21.178Z",
-  "jobDurationSeconds": "51.79",
+  "processedAtUTC": "2025-08-02T21:27:26.958Z",
+  "jobDurationSeconds": "6.67",
   "finalChainRoundIdFromScriptEnd": "7",
   "roundClosedInfo": null,
   "roundStartedInfo": {
     "roundId": "8",
     "status": "Skipped_WeekendPause",
     "isFirstRound": false,
-    "currentTimeUTC": "2025-08-02T21:01:12.846Z"
+    "currentTimeUTC": "2025-08-02T21:27:33.444Z"
   },
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"
