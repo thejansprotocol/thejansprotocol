@@ -1,14 +1,31 @@
 {
-  "date": "2025-08-02",
-  "processedAtUTC": "2025-08-02T21:27:26.958Z",
-  "jobDurationSeconds": "6.67",
-  "finalChainRoundIdFromScriptEnd": "7",
+  "date": "2025-08-03",
+  "processedAtUTC": "2025-08-03T21:00:00.840Z",
+  "jobDurationSeconds": "28.93",
+  "finalChainRoundIdFromScriptEnd": "8",
   "roundClosedInfo": null,
   "roundStartedInfo": {
     "roundId": "8",
-    "status": "Skipped_WeekendPause",
+    "status": "StartSnapshotSubmittedThisRun",
+    "txHash": "0xa1aeaf89fe7925d299dd12b55980ea359d3bfd2b4879b639553e5b2035e51cf5",
+    "blockNumberOfStart": "20234245",
     "isFirstRound": false,
-    "currentTimeUTC": "2025-08-02T21:27:33.444Z"
+    "selectedPoolsActualCount": 10,
+    "paddedTo": 10,
+    "startTimeOnChain": "1754254821",
+    "startPrices": [
+      "2429761974916860000",
+      "10814295",
+      "180974914500",
+      "36993891208520800",
+      "797078834891807",
+      "60436190658880",
+      "59051869850151",
+      "184746321124",
+      "91019340959637600",
+      "2347748541163750000"
+    ],
+    "startChecksum": "0x7c1cbcc36d7836590d48bc17571582713432dfb934e28712ee54f6c3b295632e"
   },
   "overallSuccess": true,
   "scriptVersion": "V9_With_1h_6h_24h_Percentages"

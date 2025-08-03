@@ -1,82 +1,82 @@
 [
   {
-    "name": "TXTR",
-    "price": "0.0114366456095939",
+    "name": "FOMOG",
+    "price": "2.42976197491686",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "14.31",
+    "fdv": "$29,157.14"
+  },
+  {
+    "name": "JANS",
+    "price": "0.00000000001081429582",
     "price_change_1h": "0",
     "price_change_6h": "0",
     "price_change_24h": "0",
-    "fdv": "$11,436.65"
+    "fdv": "$7,461.70"
   },
   {
-    "name": "CHDPU",
-    "price": "0.0000557194872366458",
-    "price_change_1h": "0",
-    "price_change_6h": "-4.62",
-    "price_change_24h": "-10.61",
-    "fdv": "$55,713.69"
+    "name": "GRUMPY",
+    "price": "0.000000180974914500279",
+    "price_change_1h": "-0.53",
+    "price_change_6h": "-6.55",
+    "price_change_24h": "3.91",
+    "fdv": "$90,487.46"
   },
   {
     "name": "SMASH",
-    "price": "0.0317604754778075",
+    "price": "0.0369938912085208",
     "price_change_1h": "0",
     "price_change_6h": "0",
-    "price_change_24h": "19.03",
-    "fdv": "$20,644.31"
-  },
-  {
-    "name": "TGLD",
-    "price": "100.4345480612",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$5,034.31"
-  },
-  {
-    "name": "GRUMPY",
-    "price": "0.0000001413199734",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "0",
-    "fdv": "$70,659.99"
-  },
-  {
-    "name": "FOMOG",
-    "price": "2.09470599132095",
-    "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "3.28",
-    "fdv": "$25,136.47"
-  },
-  {
-    "name": "CHDPU",
-    "price": "0.0000558799593473664",
-    "price_change_1h": "0",
-    "price_change_6h": "-4.62",
-    "price_change_24h": "-10.62",
-    "fdv": "$55,874.14"
+    "price_change_24h": "12.94",
+    "fdv": "$24,046.03"
   },
   {
     "name": "TSWAP",
-    "price": "0.00102765139297575",
+    "price": "0.000797078834891807",
     "price_change_1h": "0",
-    "price_change_6h": "-0.83",
-    "price_change_24h": "-19.98",
-    "fdv": "$1,027,651.39"
+    "price_change_6h": "0",
+    "price_change_24h": "-12.31",
+    "fdv": "$797,078.83"
+  },
+  {
+    "name": "CHDPU",
+    "price": "0.0000604361906588802",
+    "price_change_1h": "0",
+    "price_change_6h": "0.01",
+    "price_change_24h": "1.82",
+    "fdv": "$60,429.90"
+  },
+  {
+    "name": "CHDPU",
+    "price": "0.0000590518698501515",
+    "price_change_1h": "0",
+    "price_change_6h": "0",
+    "price_change_24h": "6.65",
+    "fdv": "$59,045.72"
   },
   {
     "name": "GRUMPY",
-    "price": "0.000000162310524322959",
+    "price": "0.000000184746321124063",
     "price_change_1h": "0",
-    "price_change_6h": "-0.71",
-    "price_change_24h": "-1.91",
-    "fdv": "$81,155.26"
+    "price_change_6h": "-0.23",
+    "price_change_24h": "2.85",
+    "fdv": "$92,373.16"
   },
   {
-    "name": "LARA",
-    "price": "0.000448143991547538",
+    "name": "MST",
+    "price": "0.0910193409596376",
     "price_change_1h": "0",
-    "price_change_6h": "0",
-    "price_change_24h": "-1.16",
-    "fdv": "$448,143.99"
+    "price_change_6h": "-0.09",
+    "price_change_24h": "9.46",
+    "fdv": "$80,642.97"
+  },
+  {
+    "name": "FOMOG",
+    "price": "2.34774854116375",
+    "price_change_1h": "0",
+    "price_change_6h": "-4.3",
+    "price_change_24h": "14.44",
+    "fdv": "$28,172.98"
   }
 ]
