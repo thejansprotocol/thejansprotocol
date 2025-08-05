@@ -1,8 +1,8 @@
 {
-  "date": "2025-08-04",
-  "processedAtUTC": "2025-08-04T21:30:24.637Z",
-  "jobDurationSeconds": "10.67",
-  "finalChainRoundIdFromScriptEnd": "9",
+  "date": "2025-08-05",
+  "processedAtUTC": "2025-08-05T21:30:29.218Z",
+  "jobDurationSeconds": "4.50",
+  "finalChainRoundIdFromScriptEnd": "10",
   "roundClosedInfo": null,
   "roundStartedInfo": null,
   "overallSuccess": true,
